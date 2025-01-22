@@ -8,7 +8,7 @@ import {
 } from "@elizaos/core";
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
 import { createNodePlugin } from "@elizaos/plugin-node";
-import createConfluxPlugin from "@elizaos/plugin-conflux";
+import createAIfluxPlugin from "@elizaos/plugin-aiflux";
 import fs from "fs";
 import net from "net";
 import path from "path";
@@ -49,7 +49,7 @@ export async function createAgent(
 
   nodePlugin ??= createNodePlugin();
 
-  const confluxPlugin = await createConfluxPlugin((key: string) => {
+  const confluxPlugin = await createAIfluxPlugin((key: string) => {
     return character.settings?.secrets?.[key] || process.env[key];
   });
 

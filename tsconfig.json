@@ -19,6 +19,11 @@
     "checkJs": false,
     "noEmitOnError": false,
     "moduleDetection": "force",
-    "allowArbitraryExtensions": true
-  }
+    "allowArbitraryExtensions": true,
+    "baseUrl": ".",
+    "paths": {
+      "@elizaos/plugin-aiflux": ["src/plugin-aiflux/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"]
 }

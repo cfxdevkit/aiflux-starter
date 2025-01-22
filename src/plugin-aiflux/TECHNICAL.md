@@ -1,6 +1,7 @@
 # Conflux Plugin Technical Documentation
 
 ## Table of Contents
+
 1. [Environment Variables](#environment-variables)
 2. [Architecture](#architecture)
 3. [Function Listings](#function-listings)
@@ -10,14 +11,15 @@
 
 The Conflux plugin relies on several environment variables for configuration. The plugin's functionality is determined by the combination of these variables.
 
-
 ### Critical Variables
+
 ```env
 # Required - Plugin will not activate without this
 CONFLUX_TARGET=mainnet|testnet              # Network target for all operations
 ```
 
 ### Authentication Methods
+
 ```env
 # Option 1: Mnemonic (enables both networks)
 CONFLUX_MNEMONIC=<mnemonic>                 # Mnemonic phrase for key derivation
@@ -28,6 +30,7 @@ CONFLUX_ESPACE_PRIVATE_KEY=<private-key>    # Private key for eSpace network
 ```
 
 ### Network RPC URLs
+
 ```env
 # Optional - Defaults to chain-specific RPC endpoints
 CONFLUX_CORE_RPC_URL=<rpc-url>             # Custom RPC endpoint for Core network (defaults to cive chains)
@@ -37,14 +40,17 @@ CONFLUX_ESPACE_RPC_URL=<rpc-url>           # Custom RPC endpoint for eSpace netw
 ### Default RPC Endpoints
 
 #### Core Network (via `cive` chains)
+
 - Mainnet: `https://main.confluxrpc.com`
 - Testnet: `https://test.confluxrpc.com`
 
 #### eSpace Network (via `viem` chains)
+
 - Mainnet: `https://evm.confluxrpc.com`
 - Testnet: `https://evmtestnet.confluxrpc.com`
 
 ### API Integration Variables
+
 ```env
 # Optional - Falls back to rate-limited access
 CONFLUX_CORE_CONFLUXSCAN_APIKEY=<api-key>   # API key for ConfluxScan Core
@@ -57,24 +63,26 @@ CONFLUX_ESPACE_CONFLUXSCAN_HOST=<host>      # Custom ConfluxScan eSpace host
 
 ### Feature Availability Matrix
 
-| Configuration State | Available Features |
-|--------------------|-------------------|
-| No CONFLUX_TARGET | Plugin deactivated |
-| CONFLUX_TARGET only | Read-only API access via ConfluxScan |
-| + CONFLUX_MNEMONIC | All features on both networks using default chain RPCs |
-| + CONFLUX_CORE_PRIVATE_KEY | Core network actions using cive default RPC |
-| + CONFLUX_ESPACE_PRIVATE_KEY | eSpace network actions using viem default RPC |
-| + Custom RPC URLs | Same features using custom RPC endpoints |
+| Configuration State          | Available Features                                     |
+| ---------------------------- | ------------------------------------------------------ |
+| No CONFLUX_TARGET            | Plugin deactivated                                     |
+| CONFLUX_TARGET only          | Read-only API access via ConfluxScan                   |
+| + CONFLUX_MNEMONIC           | All features on both networks using default chain RPCs |
+| + CONFLUX_CORE_PRIVATE_KEY   | Core network actions using cive default RPC            |
+| + CONFLUX_ESPACE_PRIVATE_KEY | eSpace network actions using viem default RPC          |
+| + Custom RPC URLs            | Same features using custom RPC endpoints               |
 
 ### Network-Specific Features
 
 #### Core Network
+
 - Transfer CFX/Tokens
 - Bridge to eSpace
 - Network statistics
 - Account data
 
 #### eSpace Network
+
 - Transfer CFX/Tokens
 - Token swaps
 - Network statistics
@@ -83,19 +91,21 @@ CONFLUX_ESPACE_CONFLUXSCAN_HOST=<host>      # Custom ConfluxScan eSpace host
 ### Configuration Hierarchy
 
 1. **Base Configuration**
+
    ```typescript
    if (!target || !["mainnet", "testnet"].includes(target)) {
-       return null; // Plugin deactivates
+     return null; // Plugin deactivates
    }
    ```
 
 2. **Wallet Initialization**
+
    ```typescript
    // Priority: Private Key > Mnemonic
    if (privateKey) {
-       initializeWithPrivateKey();
+     initializeWithPrivateKey();
    } else if (mnemonic) {
-       initializeWithDerivedKey();
+     initializeWithDerivedKey();
    }
    ```
 
@@ -108,21 +118,25 @@ CONFLUX_ESPACE_CONFLUXSCAN_HOST=<host>      # Custom ConfluxScan eSpace host
 ### Configuration Notes
 
 1. **Network Target**:
+
    - Required for any functionality
    - Must be either 'mainnet' or 'testnet'
    - Affects all components consistently
 
 2. **Authentication Flexibility**:
+
    - Mnemonic activates both networks
    - Private keys can be used independently
    - Mix of mnemonic and private keys is supported
 
 3. **API Access**:
+
    - ConfluxScan access available without wallets
    - API keys optional but recommended
    - Custom endpoints for special deployments
 
 4. **Security Considerations**:
+
    - Never commit private keys or mnemonics
    - Use environment variables or secure secrets management
    - API keys should be properly secured
@@ -207,7 +221,7 @@ config:
 ---
 graph LR
     subgraph Core Dependencies
-        EP[@elizaos/plugin-conflux] --> EC[@elizaos/core]
+        EP[@elizaos/plugin-aiflux] --> EC[@elizaos/core]
         EP --> CIVE[@cive:0.8.1]
         EP --> SCURE1[@scure/bip32]
         EP --> SCURE2[@scure/bip39]
@@ -231,6 +245,7 @@ graph LR
 ### 1. Actions
 
 #### Bridge Operations
+
 ```typescript
 createBridgeAction(config: ValidatedConfig): Action
 - Name: "BRIDGE_CFX"
@@ -245,6 +260,7 @@ createBridgeAction(config: ValidatedConfig): Action
 ```
 
 #### CFX Transfer
+
 ```typescript
 createCfxTransferAction(config: ValidatedConfig): Action
 - Name: "SEND_CFX"
@@ -260,6 +276,7 @@ createCfxTransferAction(config: ValidatedConfig): Action
 ```
 
 #### Token Transfer
+
 ```typescript
 createTokenTransferAction(config: ValidatedConfig): Action
 - Name: "SEND_TOKEN"
@@ -275,6 +292,7 @@ createTokenTransferAction(config: ValidatedConfig): Action
 ```
 
 #### eSpace Swap
+
 ```typescript
 createEspaceSwapAction(config: ValidatedConfig): Action
 - Name: "SWAP_ESPACE"
@@ -291,6 +309,7 @@ createEspaceSwapAction(config: ValidatedConfig): Action
 ```
 
 #### ConfiPump Operations
+
 ```typescript
 confiPump: Action
 - Name: "CONFI_PUMP_ESPACE"
@@ -317,6 +336,7 @@ confiPump: Action
 ```
 
 #### Address Lookup
+
 ```typescript
 createAddressLookupAction(config: ValidatedConfig): Action
 - Name: "ADDRESS_LOOKUP"
