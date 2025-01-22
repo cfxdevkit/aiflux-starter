@@ -7,10 +7,12 @@ Open `src/character.ts` to modify the default character. Uncomment and edit.
 ### Custom characters
 
 To load custom characters instead:
+
 - Use `pnpm start --characters="path/to/your/character.json"`
 - Multiple character files can be loaded simultaneously
 
 ### Add clients
+
 ```
 # in character.ts
 clients: [Clients.TWITTER, Clients.DISCORD],
@@ -28,6 +30,7 @@ cp .env.example .env
 \* Fill out the .env file with your own values.
 
 ### Add login credentials and keys to .env
+
 ```
 DISCORD_APPLICATION_ID="discord-application-id"
 DISCORD_API_TOKEN="discord-api-token"
@@ -44,6 +47,7 @@ TWITTER_EMAIL="your@email.com"
 ```bash
 pnpm i && pnpm start
 ```
+
 Note: this requires node to be at least version 22 when you install packages and run the agent.
 
 ## Run with Docker
@@ -54,9 +58,9 @@ Note: this requires node to be at least version 22 when you install packages and
 
 ```yaml
 services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
+  eliza:
+    environment:
+      - OPENROUTER_API_KEY=blahdeeblahblahblah
 ```
 
 #### Run the image
@@ -78,9 +82,9 @@ docker buildx build --platform linux/amd64 -t eliza-starter:v1 --load .
 
 ```yaml
 services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
+  eliza:
+    environment:
+      - OPENROUTER_API_KEY=blahdeeblahblahblah
 ```
 
 #### Run the image

@@ -41,12 +41,10 @@ CONFLUX_ESPACE_CONFLUXSCAN_APIKEY=<api-key> # API key for ConfluxScan eSpace
 ### Basic Integration
 
 ```typescript
-import createAIfluxPlugin from "@elizaos/plugin-aiflux";
+import createAIfluxPlugin from '@elizaos/plugin-aiflux';
 
 // Initialize the plugin with a secret resolver
-const confluxPlugin = await createAIfluxPlugin((secret) =>
-  getSecret(character, secret)
-);
+const confluxPlugin = await createAIfluxPlugin((secret) => getSecret(character, secret));
 
 // The plugin can be added to your runtime configuration
 const runtime = new AgentRuntime({
@@ -62,33 +60,33 @@ const runtime = new AgentRuntime({
 
 ```typescript
 // Core Space Transfer
-"Send 5 CFX to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
-"Transfer 10 FC to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
+'Send 5 CFX to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
+'Transfer 10 FC to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
 
 // eSpace Transfer
-"Send 2.5 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
-"Transfer 100 USDT to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
+'Send 2.5 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
+'Transfer 100 USDT to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
 
 // Cross-Space Bridge
-"Bridge 10 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
+'Bridge 10 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
 
 // eSpace Token Swap
-"Swap 1 CFX for USDT";
-"Exchange 50 USDT for ETH";
+'Swap 1 CFX for USDT';
+'Exchange 50 USDT for ETH';
 
 // ConfiPump Operations
-"Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace";
-"Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace";
-"Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace";
+'Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace';
+'Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace';
+'Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace';
 
 // Address Lookup
-"Look up address cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
-"Check balance of 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
+'Look up address cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
+'Check balance of 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
 
 // Data & Analytics Queries
 "What's the current price of CFX?";
-"Show me the trading volume for USDT token";
-"Get the list of the top miners";
+'Show me the trading volume for USDT token';
+'Get the list of the top miners';
 "What's the pool with the most liquidity?";
 "What's the total supply of CFX?";
 ```

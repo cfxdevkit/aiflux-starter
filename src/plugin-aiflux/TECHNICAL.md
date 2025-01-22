@@ -93,7 +93,7 @@ CONFLUX_ESPACE_CONFLUXSCAN_HOST=<host>      # Custom ConfluxScan eSpace host
 1. **Base Configuration**
 
    ```typescript
-   if (!target || !["mainnet", "testnet"].includes(target)) {
+   if (!target || !['mainnet', 'testnet'].includes(target)) {
      return null; // Plugin deactivates
    }
    ```

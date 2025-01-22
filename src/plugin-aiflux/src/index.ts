@@ -1,8 +1,8 @@
-import type { Plugin } from "@elizaos/core";
-import { ConfluxActions } from "./actions";
-import { ConfluxEvaluators } from "./evaluators";
-import { ConfluxProviders } from "./providers";
-import { validateConfig } from "./utils";
+import type { Plugin } from '@elizaos/core';
+import { ConfluxActions } from './actions';
+import { ConfluxEvaluators } from './evaluators';
+import { ConfluxProviders } from './providers';
+import { validateConfig } from './utils';
 async function createAIfluxPlugin(
   getSetting: (key: string) => string | undefined
 ): Promise<Plugin | null> {
@@ -17,9 +17,9 @@ async function createAIfluxPlugin(
   const evaluators = new ConfluxEvaluators(config);
 
   return {
-    name: "conflux",
+    name: 'conflux',
     description:
-      "Plugin for interacting with the Conflux network, supporting both Core Space and eSpace.",
+      'Plugin for interacting with the Conflux network, supporting both Core Space and eSpace.',
     providers: providers.getAllProviders(),
     evaluators: evaluators.getAllEvaluators(),
     actions: actions.getAllActions(),
