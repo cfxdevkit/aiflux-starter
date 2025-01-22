@@ -18,15 +18,10 @@ class ESpaceFormatter extends BaseFormatter {
                           });
 
                 const valueInCFX = formatEther(BigInt(normalizedValue));
-                elizaLogger.debug(
-                    `Formatted CFX value: ${valueInCFX} from ${value}`
-                );
+                elizaLogger.debug(`Formatted CFX value: ${valueInCFX} from ${value}`);
                 return `${this.formatUtils.number(valueInCFX)} CFX`;
             } catch (error) {
-                elizaLogger.error(
-                    `Error formatting CFX value: ${value}`,
-                    error
-                );
+                elizaLogger.error(`Error formatting CFX value: ${value}`, error);
                 return "0 CFX";
             }
         },
@@ -39,18 +34,9 @@ class ESpaceFormatter extends BaseFormatter {
 
     // Implement specific formatters
     public formatters = {
-        activeAccounts: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Active Accounts"
-        ),
-        cfxHolders: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "CFX Holders"
-        ),
-        accountGrowth: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Account Growth"
-        ),
+        activeAccounts: this.createBasicStatsFormatter((item) => item.count, "Active Accounts"),
+        cfxHolders: this.createBasicStatsFormatter((item) => item.count, "CFX Holders"),
+        accountGrowth: this.createBasicStatsFormatter((item) => item.count, "Account Growth"),
         contracts: (data: any): string => {
             const list = this.getDataList(data);
             if (!list?.[0]) return "No data available";
@@ -60,10 +46,7 @@ class ESpaceFormatter extends BaseFormatter {
                 `Total Contracts: ${this.formatUtils.number(item.total)}`,
             ].join("\n");
         },
-        transactions: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Transactions"
-        ),
+        transactions: this.createBasicStatsFormatter((item) => item.count, "Transactions"),
         cfxTransfers: this.commonFormatters.cfxTransfers,
         tps: this.commonFormatters.tps,
         gasUsed: (data: any): string => {
@@ -77,10 +60,7 @@ class ESpaceFormatter extends BaseFormatter {
             const totalGas =
                 data?.result?.gasTotal ||
                 data?.data?.gasTotal ||
-                list.reduce(
-                    (sum: number, item: any) => sum + Number(item.gas || 0),
-                    0
-                );
+                list.reduce((sum: number, item: any) => sum + Number(item.gas || 0), 0);
 
             elizaLogger.debug(`Total gas used: ${totalGas}`);
 
@@ -95,12 +75,8 @@ class ESpaceFormatter extends BaseFormatter {
                 ),
             ].join("\n--------------\n");
         },
-        cfxSenders: this.createRankedListFormatter((value) =>
-            this.formatUtils.cfx(value)
-        ),
-        cfxReceivers: this.createRankedListFormatter((value) =>
-            this.formatUtils.cfx(value)
-        ),
+        cfxSenders: this.createRankedListFormatter((value) => this.formatUtils.cfx(value)),
+        cfxReceivers: this.createRankedListFormatter((value) => this.formatUtils.cfx(value)),
         transactionSenders: this.createRankedListFormatter((value) =>
             this.formatUtils.number(value)
         ),

@@ -8,13 +8,8 @@ export const baseFormatUtils = {
         const numStr = Number(num).toString();
         if (numStr === "NaN") return "0";
         const [integerPart, decimalPart] = numStr.split(".");
-        const formattedInteger = integerPart.replace(
-            /\B(?=(\d{3})+(?!\d))/g,
-            ","
-        );
-        return decimalPart
-            ? `${formattedInteger}.${decimalPart}`
-            : formattedInteger;
+        const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
     },
     percentage: (num: string | number): string => {
         if (!num) return "0%";
@@ -24,9 +19,7 @@ export const baseFormatUtils = {
         return this.number(Number(value) / 1e9);
     },
     timestamp: (value: string | number): string => {
-        const date = new Date(
-            typeof value === "string" ? value : Number(value) * 1000
-        );
+        const date = new Date(typeof value === "string" ? value : Number(value) * 1000);
         return date.toLocaleString();
     },
     formatTokens: (
@@ -41,9 +34,7 @@ export const baseFormatUtils = {
             .filter((token: any) => token.type === options.tokenType)
             .filter((token: any) => {
                 if (token.decimals === 0) return true;
-                const formattedAmount = Number(
-                    options.formatAmount(BigInt(token.amount))
-                );
+                const formattedAmount = Number(options.formatAmount(BigInt(token.amount)));
                 return formattedAmount >= 0.000001 || formattedAmount === 0;
             });
 
@@ -66,10 +57,7 @@ export const baseFormatUtils = {
                         return `${key}: ${value}`;
                     })
                     .join("\n");
-                return (
-                    formatted +
-                    (index < tokens.length - 1 ? "\n---------------\n" : "")
-                );
+                return formatted + (index < tokens.length - 1 ? "\n---------------\n" : "");
             })
             .join("");
     },
@@ -82,10 +70,7 @@ export abstract class BaseFormatter {
     };
     protected abstract dataPath: { list: string; total: string };
 
-    protected createBasicStatsFormatter(
-        dataExtractor: (item: StatItem) => number,
-        label: string
-    ) {
+    protected createBasicStatsFormatter(dataExtractor: (item: StatItem) => number, label: string) {
         return (data: DataStructure): string => {
             const list = this.getDataList(data) as StatItem[];
             if (!list?.[0]) return "No data available";

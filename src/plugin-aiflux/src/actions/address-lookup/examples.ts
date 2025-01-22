@@ -14,7 +14,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🔍 Detective mode activated! Let me investigate this address in the Conflux blockchain archives...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -31,7 +31,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🕵️ Time to decode this contract's secrets! Diving into the blockchain...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -48,7 +48,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🎭 Ah, a mysterious address! Let me unmask its true identity...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -65,7 +65,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "📊 Opening the blockchain ledger to check this address's story...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -82,7 +82,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🎨 Time to explore this digital art gallery! Scanning for NFTs and tokens...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -99,7 +99,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🔬 Contract analysis mode engaged! Let me examine this closely...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -116,7 +116,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🧐 Let me validate this address format first...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],
@@ -133,7 +133,7 @@ export const addressLookupExamples: ActionExample[][] = [
             content: {
                 text: "🔭 Exploring the depths of Conflux for this address...",
                 action: "ADDRESS_LOOKUP",
-                suppressResponse: true
+                suppressResponse: true,
             },
         },
     ],

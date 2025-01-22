@@ -1,31 +1,31 @@
 {
-  "name": "@elizaos/plugin-aiflux",
-  "version": "0.1.7",
-  "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+    "name": "@elizaos/plugin-aiflux",
+    "version": "0.1.7",
+    "type": "module",
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js",
+            "types": "./dist/index.d.ts"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "dependencies": {
+        "@conflux-lib/openapi-sdk-core": "^1.0.0",
+        "@conflux-lib/openapi-sdk-evm": "^1.0.0",
+        "@elizaos/core": "0.1.7",
+        "@scure/bip32": "^1.6.1",
+        "@scure/bip39": "^1.5.1",
+        "cive": "0.8.1",
+        "viem": "^2.22.11",
+        "zod": "workspace:*"
+    },
+    "scripts": {
+        "build": "tsup --format esm --dts",
+        "dev": "tsup --format esm --dts --watch"
     }
-  },
-  "files": [
-    "dist"
-  ],
-  "dependencies": {
-    "@conflux-lib/openapi-sdk-core": "^1.0.0",
-    "@conflux-lib/openapi-sdk-evm": "^1.0.0",
-    "@elizaos/core": "0.1.7",
-    "@scure/bip32": "^1.6.1",
-    "@scure/bip39": "^1.5.1",
-    "cive": "0.8.1",
-    "viem": "^2.22.11",
-    "zod": "workspace:*"
-  },
-  "scripts": {
-    "build": "tsup --format esm --dts",
-    "dev": "tsup --format esm --dts --watch"
-  }
 }

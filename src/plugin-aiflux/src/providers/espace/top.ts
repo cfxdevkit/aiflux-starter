@@ -1,11 +1,11 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
 
-export function getEspaceTopGasUsedProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopGasUsedProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top Gas Used provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top Gas Used provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top Gas Used provider initialized");
@@ -25,7 +25,7 @@ export function getEspaceTopGasUsedProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top Gas Used:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -47,11 +47,11 @@ export function getEspaceTopGasUsedProvider(
     };
 }
 
-export function getEspaceTopCfxSendersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopCfxSendersProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top CFX Senders provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top CFX Senders provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top CFX Senders provider initialized");
@@ -71,7 +71,7 @@ export function getEspaceTopCfxSendersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top CFX Senders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -93,11 +93,11 @@ export function getEspaceTopCfxSendersProvider(
     };
 }
 
-export function getEspaceTopCfxReceiversProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopCfxReceiversProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top CFX Receivers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top CFX Receivers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top CFX Receivers provider initialized");
@@ -117,7 +117,7 @@ export function getEspaceTopCfxReceiversProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top CFX Receivers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -139,11 +139,11 @@ export function getEspaceTopCfxReceiversProvider(
     };
 }
 
-export function getEspaceTopTransactionSendersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopTransactionSendersProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top Transaction Senders provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top Transaction Senders provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top Transaction Senders provider initialized");
@@ -156,14 +156,16 @@ export function getEspaceTopTransactionSendersProvider(
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[eSpaceProvider] Top Transaction Senders provider get method called");
+            elizaLogger.debug(
+                "[eSpaceProvider] Top Transaction Senders provider get method called"
+            );
             const cache = runtime.cacheManager;
             const cacheKey = `conflux:espace:confluxscan:top_tx_senders`;
 
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top Transaction Senders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -175,7 +177,9 @@ export function getEspaceTopTransactionSendersProvider(
                 const statText = `Top Transaction Senders:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
-                elizaLogger.debug("[eSpaceProvider] Successfully cached Top Transaction Senders data");
+                elizaLogger.debug(
+                    "[eSpaceProvider] Successfully cached Top Transaction Senders data"
+                );
                 return statText;
             } catch (error) {
                 elizaLogger.error("Error in eSpace Top Transaction Senders provider:", error);
@@ -185,11 +189,11 @@ export function getEspaceTopTransactionSendersProvider(
     };
 }
 
-export function getEspaceTopTransactionReceiversProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopTransactionReceiversProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top Transaction Receivers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top Transaction Receivers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top Transaction Receivers provider initialized");
@@ -202,14 +206,16 @@ export function getEspaceTopTransactionReceiversProvider(
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[eSpaceProvider] Top Transaction Receivers provider get method called");
+            elizaLogger.debug(
+                "[eSpaceProvider] Top Transaction Receivers provider get method called"
+            );
             const cache = runtime.cacheManager;
             const cacheKey = `conflux:espace:confluxscan:top_tx_receivers`;
 
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top Transaction Receivers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -221,7 +227,9 @@ export function getEspaceTopTransactionReceiversProvider(
                 const statText = `Top Transaction Receivers:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
-                elizaLogger.debug("[eSpaceProvider] Successfully cached Top Transaction Receivers data");
+                elizaLogger.debug(
+                    "[eSpaceProvider] Successfully cached Top Transaction Receivers data"
+                );
                 return statText;
             } catch (error) {
                 elizaLogger.error("Error in eSpace Top Transaction Receivers provider:", error);
@@ -231,11 +239,11 @@ export function getEspaceTopTransactionReceiversProvider(
     };
 }
 
-export function getEspaceTopTokenParticipantsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopTokenParticipantsProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top Token Participants provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top Token Participants provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top Token Participants provider initialized");
@@ -255,7 +263,7 @@ export function getEspaceTopTokenParticipantsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top Token Participants:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -267,7 +275,9 @@ export function getEspaceTopTokenParticipantsProvider(
                 const statText = `Top Token Participants:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
-                elizaLogger.debug("[eSpaceProvider] Successfully cached Top Token Participants data");
+                elizaLogger.debug(
+                    "[eSpaceProvider] Successfully cached Top Token Participants data"
+                );
                 return statText;
             } catch (error) {
                 elizaLogger.error("Error in eSpace Top Token Participants provider:", error);
@@ -277,11 +287,11 @@ export function getEspaceTopTokenParticipantsProvider(
     };
 }
 
-export function getEspaceTopTokenTransfersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTopTokenTransfersProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Top Token Transfers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Top Token Transfers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Top Token Transfers provider initialized");
@@ -301,7 +311,7 @@ export function getEspaceTopTokenTransfersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Top Token Transfers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {

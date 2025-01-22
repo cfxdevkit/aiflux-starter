@@ -41,11 +41,7 @@ export class ConfluxScanESpace extends ConfluxScanBase {
 
     private contractsApi: ReturnType<typeof ConfluxScanEvm.ContractsApiFp>;
 
-    constructor(
-        apiKey?: string,
-        host?: string,
-        target: ConfluxTarget = "mainnet"
-    ) {
+    constructor(apiKey?: string, host?: string, target: ConfluxTarget = "mainnet") {
         super(
             target,
             "https://evmapi.confluxscan.io",
@@ -75,9 +71,7 @@ export class ConfluxScanESpace extends ConfluxScanBase {
 
     // eSpace-specific methods
     async getTopTokenParticipants(period: StatsPeriod = "24h") {
-        elizaLogger.debug(
-            `Fetching top token participants for period: ${period}`
-        );
+        elizaLogger.debug(`Fetching top token participants for period: ${period}`);
         return this.getTopStats("statisticsTopTokenParticipantGet", period);
     }
 
@@ -147,16 +141,12 @@ export class ConfluxScanESpace extends ConfluxScanBase {
         return formatCfxReceivers(stats);
     }
 
-    async getFormattedTopTransactionSenders(
-        period: "24h" | "1w" | "1m" = "24h"
-    ) {
+    async getFormattedTopTransactionSenders(period: "24h" | "1w" | "1m" = "24h") {
         const stats = await this.getTopTransactionSenders(period);
         return formatTransactionSenders(stats);
     }
 
-    async getFormattedTopTransactionReceivers(
-        period: "24h" | "1w" | "1m" = "24h"
-    ) {
+    async getFormattedTopTransactionReceivers(period: "24h" | "1w" | "1m" = "24h") {
         const stats = await this.getTopTransactionReceivers(period);
         return formatTransactionReceivers(stats);
     }
@@ -165,9 +155,7 @@ export class ConfluxScanESpace extends ConfluxScanBase {
         elizaLogger.debug(`Getting contract ABI for address: ${address}`);
         try {
             const requestFunction =
-                await this.contractsApi.apimodulecontractactiongetabiGet(
-                    address
-                );
+                await this.contractsApi.apimodulecontractactiongetabiGet(address);
             const response = await requestFunction();
             return response.data;
         } catch (error) {

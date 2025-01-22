@@ -46,17 +46,11 @@ export async function validateConfig(
     elizaLogger.debug("Initializing ConfluxScan clients");
     const coreConfluxScanApiKey = getSetting("CONFLUX_CORE_CONFLUXSCAN_APIKEY");
     const coreConfluxScanHost = getSetting("CONFLUX_CORE_CONFLUXSCAN_HOST");
-    coreConfluxScan = new ConfluxScanCore(
-        coreConfluxScanApiKey,
-        coreConfluxScanHost,
-        target
-    );
+    this.coreConfluxScan = new ConfluxScanCore(coreConfluxScanApiKey, coreConfluxScanHost, target);
 
-    const espaceConfluxScanApiKey = getSetting(
-        "CONFLUX_ESPACE_CONFLUXSCAN_APIKEY"
-    );
+    const espaceConfluxScanApiKey = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_APIKEY");
     const espaceConfluxScanHost = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_HOST");
-    espaceConfluxScan = new ConfluxScanESpace(
+    this.espaceConfluxScan = new ConfluxScanESpace(
         espaceConfluxScanApiKey,
         espaceConfluxScanHost,
         target
@@ -68,16 +62,9 @@ export async function validateConfig(
     if (corePrivateKey) {
         elizaLogger.debug("Initializing Core wallet with private key");
         try {
-            coreWallet = new CoreWallet(
-                corePrivateKey as `0x${string}`,
-                target,
-                coreRpcUrl
-            );
+            coreWallet = new CoreWallet(corePrivateKey as `0x${string}`, target, coreRpcUrl);
         } catch (error) {
-            elizaLogger.error(
-                "Failed to initialize Core wallet with private key:",
-                error
-            );
+            elizaLogger.error("Failed to initialize Core wallet with private key:", error);
         }
     } else if (mnemonic) {
         elizaLogger.debug("Initializing Core wallet with mnemonic");
@@ -85,10 +72,7 @@ export async function validateConfig(
             const derivedKey = deriveCoreKey(mnemonic);
             coreWallet = new CoreWallet(derivedKey, target, coreRpcUrl);
         } catch (error) {
-            elizaLogger.error(
-                "Failed to initialize Core wallet with mnemonic:",
-                error
-            );
+            elizaLogger.error("Failed to initialize Core wallet with mnemonic:", error);
         }
     }
 
@@ -104,10 +88,7 @@ export async function validateConfig(
                 espaceRpcUrl
             );
         } catch (error) {
-            elizaLogger.error(
-                "Failed to initialize eSpace wallet with private key:",
-                error
-            );
+            elizaLogger.error("Failed to initialize eSpace wallet with private key:", error);
         }
     } else if (mnemonic) {
         elizaLogger.debug("Initializing eSpace wallet with mnemonic");
@@ -115,10 +96,7 @@ export async function validateConfig(
             const derivedKey = deriveESpaceKey(mnemonic);
             espaceWallet = new EspaceWallet(derivedKey, target, espaceRpcUrl);
         } catch (error) {
-            elizaLogger.error(
-                "Failed to initialize eSpace wallet with mnemonic:",
-                error
-            );
+            elizaLogger.error("Failed to initialize eSpace wallet with mnemonic:", error);
         }
     }
 
@@ -131,7 +109,7 @@ export async function validateConfig(
         defiLlama = new DeFiLlama();
     }
 
-    tokenListManager = new TokenListManager(
+    this.tokenListManager = new TokenListManager(
         geckoTerminal,
         espaceConfluxScan,
         espaceWallet?.getAddress()
@@ -142,10 +120,10 @@ export async function validateConfig(
         target,
         coreWallet,
         espaceWallet,
-        coreConfluxScan,
-        espaceConfluxScan,
+        coreConfluxScan: this.coreConfluxScan,
+        espaceConfluxScan: this.espaceConfluxScan,
         geckoTerminal,
-        tokenListManager,
+        tokenListManager: this.tokenListManager,
         defiLlama,
     };
 
@@ -156,7 +134,7 @@ export async function validateConfig(
         hasEspaceConfluxScan: !!espaceConfluxScan,
         hasGeckoTerminal: !!geckoTerminal,
         hasTokenListManager: !!tokenListManager,
-        hasDefiLlama: !!defiLlama
+        hasDefiLlama: !!defiLlama,
     });
 
     return result;

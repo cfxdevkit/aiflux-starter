@@ -48,8 +48,7 @@ export abstract class ConfluxScanBase {
         host?: string
     ) {
         elizaLogger.debug(`Initializing ConfluxScan client for ${target}`);
-        const defaultHost =
-            target === "mainnet" ? defaultMainnetHost : defaultTestnetHost;
+        const defaultHost = target === "mainnet" ? defaultMainnetHost : defaultTestnetHost;
 
         this.config = new ConfigClass({
             basePath: host || defaultHost,
@@ -94,13 +93,9 @@ export abstract class ConfluxScanBase {
     }
 
     protected async getTopStats(method: string, period: StatsPeriod = "24h") {
-        elizaLogger.debug(
-            `Fetching top stats for method: ${method}, period: ${period}`
-        );
+        elizaLogger.debug(`Fetching top stats for method: ${method}, period: ${period}`);
         try {
-            const requestFunction = await (this.statisticsApi as any)[method](
-                period
-            );
+            const requestFunction = await (this.statisticsApi as any)[method](period);
             const response = await requestFunction();
             return response.data;
         } catch (error) {
@@ -115,8 +110,7 @@ export abstract class ConfluxScanBase {
             throw new Error("Invalid address format");
         }
         try {
-            const requestFunction =
-                await this.accountsApi.accountTokensGet(address);
+            const requestFunction = await this.accountsApi.accountTokensGet(address);
             const response = (await requestFunction()) as TokenResponse;
             return getTokenList(response);
         } catch (error) {
@@ -124,13 +118,8 @@ export abstract class ConfluxScanBase {
         }
     }
 
-    async filterAccountTokens(
-        address: string,
-        filter: string
-    ): Promise<TokenData[]> {
-        elizaLogger.debug(
-            `Filtering tokens for address: ${address}, filter: ${filter}`
-        );
+    async filterAccountTokens(address: string, filter: string): Promise<TokenData[]> {
+        elizaLogger.debug(`Filtering tokens for address: ${address}, filter: ${filter}`);
         if (!filter) {
             elizaLogger.error("Empty filter string provided");
             throw new Error("Filter string cannot be empty");
@@ -142,15 +131,11 @@ export abstract class ConfluxScanBase {
 
             if (this.validateAddress(filter)) {
                 elizaLogger.debug("Filtering by contract address");
-                return tokens.filter(
-                    (token) => token.contract?.toLowerCase() === lowerFilter
-                );
+                return tokens.filter((token) => token.contract?.toLowerCase() === lowerFilter);
             }
 
             elizaLogger.debug("Filtering by symbol");
-            return tokens.filter((token) =>
-                token.symbol?.toLowerCase().includes(lowerFilter)
-            );
+            return tokens.filter((token) => token.symbol?.toLowerCase().includes(lowerFilter));
         } catch (error) {
             return handleError(error, "filtering account tokens");
         }
@@ -283,8 +268,5 @@ export abstract class ConfluxScanBase {
 
     // Abstract methods that must be implemented by derived classes
     protected abstract validateAddress(address: string): boolean;
-    abstract getFormattedAccountTokens(
-        address: string,
-        options: any
-    ): Promise<string>;
+    abstract getFormattedAccountTokens(address: string, options: any): Promise<string>;
 }

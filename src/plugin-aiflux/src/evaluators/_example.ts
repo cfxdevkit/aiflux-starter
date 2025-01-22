@@ -1,10 +1,4 @@
-import {
-    Evaluator,
-    IAgentRuntime,
-    Memory,
-    State,
-    elizaLogger,
-} from "@elizaos/core";
+import { Evaluator, IAgentRuntime, Memory, State, elizaLogger } from "@elizaos/core";
 
 /**
  * Configuration interface for the evaluator
@@ -73,9 +67,7 @@ export function getEvaluator(config: EvaluatorConfig): Evaluator | null {
                 if (!messageText) return false;
 
                 // Example: Check if any trigger words are present
-                const shouldProcess = triggers.some((trigger) =>
-                    messageText.includes(trigger)
-                );
+                const shouldProcess = triggers.some((trigger) => messageText.includes(trigger));
 
                 if (shouldProcess) {
                     // Example: Cache invalidation or other pre-processing
@@ -93,11 +85,7 @@ export function getEvaluator(config: EvaluatorConfig): Evaluator | null {
         /**
          * Handles the evaluation scoring
          */
-        handler: async (
-            runtime: IAgentRuntime,
-            memory: Memory,
-            state: State
-        ) => {
+        handler: async (_runtime: IAgentRuntime, memory: Memory, _state: State) => {
             elizaLogger.log("Evaluating data in template evaluator...");
 
             try {
@@ -110,14 +98,9 @@ export function getEvaluator(config: EvaluatorConfig): Evaluator | null {
 
                 // Example scoring logic
                 const messageText = memory.content.text.toLowerCase();
-                const matchedTriggers = triggers.filter((trigger) =>
-                    messageText.includes(trigger)
-                );
+                const matchedTriggers = triggers.filter((trigger) => messageText.includes(trigger));
 
-                const score =
-                    matchedTriggers.length / triggers.length >= threshold
-                        ? 1
-                        : 0;
+                const score = matchedTriggers.length / triggers.length >= threshold ? 1 : 0;
 
                 return {
                     score,
@@ -127,10 +110,7 @@ export function getEvaluator(config: EvaluatorConfig): Evaluator | null {
                             : "No matching triggers found",
                 };
             } catch (error) {
-                elizaLogger.error(
-                    "Error in template evaluator handler:",
-                    error
-                );
+                elizaLogger.error("Error in template evaluator handler:", error);
                 return {
                     score: 0,
                     reason: "Error during evaluation",

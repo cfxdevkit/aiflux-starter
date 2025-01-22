@@ -41,18 +41,18 @@ CONFLUX_ESPACE_CONFLUXSCAN_APIKEY=<api-key> # API key for ConfluxScan eSpace
 ### Basic Integration
 
 ```typescript
-import createAIfluxPlugin from '@elizaos/plugin-aiflux';
+import createAIfluxPlugin from "@elizaos/plugin-aiflux";
 
 // Initialize the plugin with a secret resolver
 const confluxPlugin = await createAIfluxPlugin((secret) => getSecret(character, secret));
 
 // The plugin can be added to your runtime configuration
 const runtime = new AgentRuntime({
-  // ... other runtime options ...
-  plugins: [
-    confluxPlugin,
-    // ... other plugins ...
-  ],
+    // ... other runtime options ...
+    plugins: [
+        confluxPlugin,
+        // ... other plugins ...
+    ],
 });
 ```
 
@@ -60,33 +60,33 @@ const runtime = new AgentRuntime({
 
 ```typescript
 // Core Space Transfer
-'Send 5 CFX to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
-'Transfer 10 FC to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
+"Send 5 CFX to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
+"Transfer 10 FC to cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
 
 // eSpace Transfer
-'Send 2.5 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
-'Transfer 100 USDT to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
+"Send 2.5 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
+"Transfer 100 USDT to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
 
 // Cross-Space Bridge
-'Bridge 10 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
+"Bridge 10 CFX to 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
 
 // eSpace Token Swap
-'Swap 1 CFX for USDT';
-'Exchange 50 USDT for ETH';
+"Swap 1 CFX for USDT";
+"Exchange 50 USDT for ETH";
 
 // ConfiPump Operations
-'Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace';
-'Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace';
-'Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace';
+"Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace";
+"Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace";
+"Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace";
 
 // Address Lookup
-'Look up address cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5';
-'Check balance of 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752';
+"Look up address cfx:aaejuaaaaaaaaaaaaaaaaaaaaaaaaaaaa2eaeg85p5";
+"Check balance of 0x119DA8bbe74B1C5c987D0c64D10eC1dB301d4752";
 
 // Data & Analytics Queries
 "What's the current price of CFX?";
-'Show me the trading volume for USDT token';
-'Get the list of the top miners';
+"Show me the trading volume for USDT token";
+"Get the list of the top miners";
 "What's the pool with the most liquidity?";
 "What's the total supply of CFX?";
 ```
@@ -97,27 +97,27 @@ The plugin includes several data providers that can be queried using natural lan
 
 1. **Common Providers**
 
-   - Token information and management
-   - GeckoTerminal price feeds and market data
-   - DeFiLlama TVL and protocol analytics
-   - Market analysis and trends
+    - Token information and management
+    - GeckoTerminal price feeds and market data
+    - DeFiLlama TVL and protocol analytics
+    - Market analysis and trends
 
 2. **Core Network Providers**
 
-   - Wallet operations
-   - Account statistics and growth
-   - Transaction data and TPS
-   - Top miners and gas users
-   - CFX transfers and holders
-   - Contract interactions
+    - Wallet operations
+    - Account statistics and growth
+    - Transaction data and TPS
+    - Top miners and gas users
+    - CFX transfers and holders
+    - Contract interactions
 
 3. **eSpace Network Providers**
-   - Wallet operations
-   - Account statistics
-   - Transaction data
-   - Token analytics
-   - Top senders and receivers
-   - Gas usage statistics
+    - Wallet operations
+    - Account statistics
+    - Transaction data
+    - Token analytics
+    - Top senders and receivers
+    - Gas usage statistics
 
 ## API Reference
 
@@ -189,33 +189,33 @@ Swaps tokens on eSpace network using Swappi.
 
 1. **Plugin Activation**
 
-   - Ensure CONFLUX_TARGET is set to 'mainnet' or 'testnet'
-   - At least one authentication method must be configured
+    - Ensure CONFLUX_TARGET is set to 'mainnet' or 'testnet'
+    - At least one authentication method must be configured
 
 2. **Network Features**
 
-   - Core features require Core wallet configuration
-   - eSpace features require eSpace wallet configuration
-   - Bridge operations require Core wallet configuration
-   - Swaps only available on eSpace network
+    - Core features require Core wallet configuration
+    - eSpace features require eSpace wallet configuration
+    - Bridge operations require Core wallet configuration
+    - Swaps only available on eSpace network
 
 3. **Transaction Failures**
-   - Verify sufficient balance for transactions and gas
-   - Check correct address format (cfx: for Core, 0x for eSpace)
-   - Ensure RPC endpoint connectivity
+    - Verify sufficient balance for transactions and gas
+    - Check correct address format (cfx: for Core, 0x for eSpace)
+    - Ensure RPC endpoint connectivity
 
 ## Security Best Practices
 
 1. **Private Key Management**
 
-   - Store private keys/mnemonic securely using environment variables
-   - Never expose private keys in code or logs
-   - Use separate accounts for development and production
+    - Store private keys/mnemonic securely using environment variables
+    - Never expose private keys in code or logs
+    - Use separate accounts for development and production
 
 2. **Network Configuration**
-   - Use API keys for better rate limits
-   - Consider using custom RPC endpoints for production
-   - Keep consistent network targets across components
+    - Use API keys for better rate limits
+    - Consider using custom RPC endpoints for production
+    - Keep consistent network targets across components
 
 ## License
 
@@ -248,57 +248,57 @@ pnpm run test
 
 1. **Network Selection**
 
-   - Use testnet for development
-   - Test both Core and eSpace features independently
-   - Validate cross-space operations last
+    - Use testnet for development
+    - Test both Core and eSpace features independently
+    - Validate cross-space operations last
 
 2. **Testing**
-   - Unit tests for utility functions
-   - Integration tests for network operations
-   - End-to-end tests for complex flows
+    - Unit tests for utility functions
+    - Integration tests for network operations
+    - End-to-end tests for complex flows
 
 ## Future Enhancements
 
 1. **Token Management**
 
-   - Token list customization
-   - Token metadata enrichment
-   - Token allowance management
-   - Batch token transfers
+    - Token list customization
+    - Token metadata enrichment
+    - Token allowance management
+    - Batch token transfers
 
 2. **Bridge Operations**
 
-   - Bridge transaction status tracking
-   - Bridge fee estimation
-   - Cross-space batch operations
-   - Bridge history and analytics
+    - Bridge transaction status tracking
+    - Bridge fee estimation
+    - Cross-space batch operations
+    - Bridge history and analytics
 
 3. **Swap Improvements**
 
-   - Multiple DEX support
-   - Price impact calculations
-   - Slippage customization
-   - Route optimization
+    - Multiple DEX support
+    - Price impact calculations
+    - Slippage customization
+    - Route optimization
 
 4. **Network Statistics**
 
-   - Enhanced metrics collection
-   - Historical data analysis
-   - Network health monitoring
-   - Performance analytics
+    - Enhanced metrics collection
+    - Historical data analysis
+    - Network health monitoring
+    - Performance analytics
 
 5. **Developer Experience**
 
-   - CLI tools for common operations
-   - Better error messages
-   - Debugging utilities
-   - Documentation improvements
+    - CLI tools for common operations
+    - Better error messages
+    - Debugging utilities
+    - Documentation improvements
 
 6. **Security & Performance**
-   - Transaction simulation
-   - Gas optimization
-   - Rate limiting improvements
-   - Cache optimization
+    - Transaction simulation
+    - Gas optimization
+    - Rate limiting improvements
+    - Cache optimization
 
 ## Credits
 

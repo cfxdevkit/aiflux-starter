@@ -58,9 +58,9 @@ Note: this requires node to be at least version 22 when you install packages and
 
 ```yaml
 services:
-  eliza:
-    environment:
-      - OPENROUTER_API_KEY=blahdeeblahblahblah
+    eliza:
+        environment:
+            - OPENROUTER_API_KEY=blahdeeblahblahblah
 ```
 
 #### Run the image
@@ -82,9 +82,9 @@ docker buildx build --platform linux/amd64 -t eliza-starter:v1 --load .
 
 ```yaml
 services:
-  eliza:
-    environment:
-      - OPENROUTER_API_KEY=blahdeeblahblahblah
+    eliza:
+        environment:
+            - OPENROUTER_API_KEY=blahdeeblahblahblah
 ```
 
 #### Run the image

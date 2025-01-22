@@ -48,8 +48,8 @@ export function getProvider(config: ProviderConfig): Provider | null {
          */
         get: async (
             runtime: IAgentRuntime,
-            message: Memory,
-            state?: State
+            _message: Memory,
+            _state?: State
         ): Promise<string | null> => {
             const cache = runtime.cacheManager;
             const cacheKey = "namespace:provider:data";

@@ -12,15 +12,9 @@ export const TokenTransferParamsSchema = z.object({
     network: z.enum(["core", "espace"], {
         required_error: "Network must be either 'core' or 'espace'",
     }),
-    toAddress: z
-        .string()
-        .refine(
-            (address) => isEspaceAddress(address) || isCoreAddress(address),
-            {
-                message:
-                    "toAddress must be a valid Conflux Core or eSpace address",
-            }
-        ),
+    toAddress: z.string().refine((address) => isEspaceAddress(address) || isCoreAddress(address), {
+        message: "toAddress must be a valid Conflux Core or eSpace address",
+    }),
     amount: z.string().regex(/^\d+(\.\d+)?$/, {
         message: "amount must be a valid number string",
     }),

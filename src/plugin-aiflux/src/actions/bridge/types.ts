@@ -8,8 +8,7 @@ export const BridgeParamsSchema = z.object({
     }),
     fromNetwork: z.literal("core", {
         required_error: "Bridge operation is only supported from Core network",
-        invalid_type_error:
-            "Bridge operation is only supported from Core network",
+        invalid_type_error: "Bridge operation is only supported from Core network",
     }),
     toNetwork: z.literal("espace", {
         required_error: "Bridge operation can only be to eSpace network",

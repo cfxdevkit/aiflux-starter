@@ -92,59 +92,59 @@ CONFLUX_ESPACE_CONFLUXSCAN_HOST=<host>      # Custom ConfluxScan eSpace host
 
 1. **Base Configuration**
 
-   ```typescript
-   if (!target || !['mainnet', 'testnet'].includes(target)) {
-     return null; // Plugin deactivates
-   }
-   ```
+    ```typescript
+    if (!target || !["mainnet", "testnet"].includes(target)) {
+        return null; // Plugin deactivates
+    }
+    ```
 
 2. **Wallet Initialization**
 
-   ```typescript
-   // Priority: Private Key > Mnemonic
-   if (privateKey) {
-     initializeWithPrivateKey();
-   } else if (mnemonic) {
-     initializeWithDerivedKey();
-   }
-   ```
+    ```typescript
+    // Priority: Private Key > Mnemonic
+    if (privateKey) {
+        initializeWithPrivateKey();
+    } else if (mnemonic) {
+        initializeWithDerivedKey();
+    }
+    ```
 
 3. **Feature Activation**
-   - ConfluxScan APIs initialize regardless of wallet availability
-   - Token List Manager requires network target only
-   - GeckoTerminal initializes for mainnet only
-   - Transaction features require respective network wallet
+    - ConfluxScan APIs initialize regardless of wallet availability
+    - Token List Manager requires network target only
+    - GeckoTerminal initializes for mainnet only
+    - Transaction features require respective network wallet
 
 ### Configuration Notes
 
 1. **Network Target**:
 
-   - Required for any functionality
-   - Must be either 'mainnet' or 'testnet'
-   - Affects all components consistently
+    - Required for any functionality
+    - Must be either 'mainnet' or 'testnet'
+    - Affects all components consistently
 
 2. **Authentication Flexibility**:
 
-   - Mnemonic activates both networks
-   - Private keys can be used independently
-   - Mix of mnemonic and private keys is supported
+    - Mnemonic activates both networks
+    - Private keys can be used independently
+    - Mix of mnemonic and private keys is supported
 
 3. **API Access**:
 
-   - ConfluxScan access available without wallets
-   - API keys optional but recommended
-   - Custom endpoints for special deployments
+    - ConfluxScan access available without wallets
+    - API keys optional but recommended
+    - Custom endpoints for special deployments
 
 4. **Security Considerations**:
 
-   - Never commit private keys or mnemonics
-   - Use environment variables or secure secrets management
-   - API keys should be properly secured
+    - Never commit private keys or mnemonics
+    - Use environment variables or secure secrets management
+    - API keys should be properly secured
 
 5. **Network Consistency**:
-   - All components use the same network target
-   - Cannot mix mainnet/testnet in the same instance
-   - Bridge operations require Core wallet configuration
+    - All components use the same network target
+    - Cannot mix mainnet/testnet in the same instance
+    - Bridge operations require Core wallet configuration
 
 ## Architecture
 

@@ -1,11 +1,11 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
 
-export function getCoreActiveAccountsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreActiveAccountsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Active Accounts provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Active Accounts provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Active Accounts provider initialized");
@@ -27,7 +27,7 @@ export function getCoreActiveAccountsProvider(
                 elizaLogger.debug("[CoreProvider] Cache check for Active Accounts:", {
                     provider: "core-stats",
                     statType: "active-accounts",
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -49,9 +49,7 @@ export function getCoreActiveAccountsProvider(
     };
 }
 
-export function getCoreCfxHoldersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreCfxHoldersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] CFX Holders provider not initialized - missing config");
         return null;
@@ -73,7 +71,7 @@ export function getCoreCfxHoldersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for CFX Holders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -95,11 +93,11 @@ export function getCoreCfxHoldersProvider(
     };
 }
 
-export function getCoreAccountGrowthProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreAccountGrowthProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Account Growth provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Account Growth provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Account Growth provider initialized");
@@ -119,7 +117,7 @@ export function getCoreAccountGrowthProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Account Growth:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -141,9 +139,7 @@ export function getCoreAccountGrowthProvider(
     };
 }
 
-export function getCoreContractsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreContractsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] Contracts provider not initialized - missing config");
         return null;
@@ -165,7 +161,7 @@ export function getCoreContractsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Contracts:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -187,9 +183,7 @@ export function getCoreContractsProvider(
     };
 }
 
-export function getCoreSupplyProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreSupplyProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] Supply provider not initialized - missing config");
         return null;
@@ -211,7 +205,7 @@ export function getCoreSupplyProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Supply:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -233,9 +227,7 @@ export function getCoreSupplyProvider(
     };
 }
 
-export function getCoreTransactionsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTransactionsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] Transactions provider not initialized - missing config");
         return null;
@@ -257,7 +249,7 @@ export function getCoreTransactionsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Transactions:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -279,9 +271,7 @@ export function getCoreTransactionsProvider(
     };
 }
 
-export function getCoreCfxTransfersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreCfxTransfersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] CFX Transfers provider not initialized - missing config");
         return null;
@@ -303,7 +293,7 @@ export function getCoreCfxTransfersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for CFX Transfers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -325,9 +315,7 @@ export function getCoreCfxTransfersProvider(
     };
 }
 
-export function getCoreTpsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTpsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] TPS provider not initialized - missing config");
         return null;
@@ -349,7 +337,7 @@ export function getCoreTpsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for TPS:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {

@@ -1,9 +1,7 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
 
-export function getCoreTopMinersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopMinersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] Top Miners provider not initialized - missing config");
         return null;
@@ -25,7 +23,7 @@ export function getCoreTopMinersProvider(
             try {
                 const cachedStat = (await cache.get(cacheKey)) as string;
                 elizaLogger.debug("[CoreProvider] Cache check for Top Miners:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
                 if (cachedStat) {
                     return cachedStat;
@@ -46,9 +44,7 @@ export function getCoreTopMinersProvider(
     };
 }
 
-export function getCoreTopGasUsedProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopGasUsedProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
         elizaLogger.debug("[CoreProvider] Top Gas Used provider not initialized - missing config");
         return null;
@@ -70,7 +66,7 @@ export function getCoreTopGasUsedProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Top Gas Used:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -92,11 +88,11 @@ export function getCoreTopGasUsedProvider(
     };
 }
 
-export function getCoreTopCfxSendersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopCfxSendersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Top CFX Senders provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Top CFX Senders provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Top CFX Senders provider initialized");
@@ -116,7 +112,7 @@ export function getCoreTopCfxSendersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Top CFX Senders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -138,11 +134,11 @@ export function getCoreTopCfxSendersProvider(
     };
 }
 
-export function getCoreTopCfxReceiversProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopCfxReceiversProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Top CFX Receivers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Top CFX Receivers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Top CFX Receivers provider initialized");
@@ -162,7 +158,7 @@ export function getCoreTopCfxReceiversProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Top CFX Receivers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -184,11 +180,11 @@ export function getCoreTopCfxReceiversProvider(
     };
 }
 
-export function getCoreTopTransactionSendersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopTransactionSendersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Top Transaction Senders provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Top Transaction Senders provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Top Transaction Senders provider initialized");
@@ -208,7 +204,7 @@ export function getCoreTopTransactionSendersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Top Transaction Senders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -220,7 +216,9 @@ export function getCoreTopTransactionSendersProvider(
                 const statText = `Top Transaction Senders:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Top Transaction Senders data");
+                elizaLogger.debug(
+                    "[CoreProvider] Successfully cached Top Transaction Senders data"
+                );
                 return statText;
             } catch (error) {
                 elizaLogger.error("Error in Core Top Transaction Senders provider:", error);
@@ -230,11 +228,11 @@ export function getCoreTopTransactionSendersProvider(
     };
 }
 
-export function getCoreTopTransactionReceiversProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getCoreTopTransactionReceiversProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Top Transaction Receivers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[CoreProvider] Top Transaction Receivers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[CoreProvider] Top Transaction Receivers provider initialized");
@@ -247,14 +245,16 @@ export function getCoreTopTransactionReceiversProvider(
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Top Transaction Receivers provider get method called");
+            elizaLogger.debug(
+                "[CoreProvider] Top Transaction Receivers provider get method called"
+            );
             const cache = runtime.cacheManager;
             const cacheKey = `conflux:core:confluxscan:top_tx_receivers`;
 
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[CoreProvider] Cache check for Top Transaction Receivers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -266,7 +266,9 @@ export function getCoreTopTransactionReceiversProvider(
                 const statText = `Top Transaction Receivers:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Top Transaction Receivers data");
+                elizaLogger.debug(
+                    "[CoreProvider] Successfully cached Top Transaction Receivers data"
+                );
                 return statText;
             } catch (error) {
                 elizaLogger.error("Error in Core Top Transaction Receivers provider:", error);

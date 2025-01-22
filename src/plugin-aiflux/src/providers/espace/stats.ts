@@ -1,11 +1,11 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
 
-export function getEspaceActiveAccountsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceActiveAccountsProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Active Accounts provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Active Accounts provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Active Accounts provider initialized");
@@ -25,7 +25,7 @@ export function getEspaceActiveAccountsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Active Accounts:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -47,9 +47,7 @@ export function getEspaceActiveAccountsProvider(
     };
 }
 
-export function getEspaceCfxHoldersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceCfxHoldersProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
         elizaLogger.debug("[eSpaceProvider] CFX Holders provider not initialized - missing config");
         return null;
@@ -71,7 +69,7 @@ export function getEspaceCfxHoldersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for CFX Holders:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -93,11 +91,11 @@ export function getEspaceCfxHoldersProvider(
     };
 }
 
-export function getEspaceAccountGrowthProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceAccountGrowthProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Account Growth provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Account Growth provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Account Growth provider initialized");
@@ -117,7 +115,7 @@ export function getEspaceAccountGrowthProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Account Growth:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -139,9 +137,7 @@ export function getEspaceAccountGrowthProvider(
     };
 }
 
-export function getEspaceContractsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceContractsProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
         elizaLogger.debug("[eSpaceProvider] Contracts provider not initialized - missing config");
         return null;
@@ -163,7 +159,7 @@ export function getEspaceContractsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Contracts:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -185,11 +181,11 @@ export function getEspaceContractsProvider(
     };
 }
 
-export function getEspaceTransactionsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTransactionsProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] Transactions provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] Transactions provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] Transactions provider initialized");
@@ -209,7 +205,7 @@ export function getEspaceTransactionsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for Transactions:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -231,11 +227,11 @@ export function getEspaceTransactionsProvider(
     };
 }
 
-export function getEspaceCfxTransfersProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceCfxTransfersProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
-        elizaLogger.debug("[eSpaceProvider] CFX Transfers provider not initialized - missing config");
+        elizaLogger.debug(
+            "[eSpaceProvider] CFX Transfers provider not initialized - missing config"
+        );
         return null;
     }
     elizaLogger.debug("[eSpaceProvider] CFX Transfers provider initialized");
@@ -255,7 +251,7 @@ export function getEspaceCfxTransfersProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for CFX Transfers:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {
@@ -277,9 +273,7 @@ export function getEspaceCfxTransfersProvider(
     };
 }
 
-export function getEspaceTpsProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getEspaceTpsProvider(config: ValidatedConfig): Provider | null {
     if (!config.espaceConfluxScan) {
         elizaLogger.debug("[eSpaceProvider] TPS provider not initialized - missing config");
         return null;
@@ -301,7 +295,7 @@ export function getEspaceTpsProvider(
             try {
                 const cachedStat = await cache.get(cacheKey);
                 elizaLogger.debug("[eSpaceProvider] Cache check for TPS:", {
-                    hasCachedData: cachedStat !== null
+                    hasCachedData: cachedStat !== null,
                 });
 
                 if (cachedStat) {

@@ -22,7 +22,7 @@ import { ContractCheckResult } from "./types";
 
 const DEX_ROUTER = {
     mainnet: "0x62b0873055bf896dd869e172119871ac24aea305",
-    testnet: "0x873789aaf553fd0b4252d0d2b72c6331c47aff2e"
+    testnet: "0x873789aaf553fd0b4252d0d2b72c6331c47aff2e",
 } as const;
 
 export class EspaceWallet {
@@ -32,17 +32,12 @@ export class EspaceWallet {
     private dexRouter: Address;
     private contractDetector: EspaceContractDetector;
 
-    constructor(
-        privateKey: `0x${string}`,
-        target: ConfluxTarget,
-        rpcUrl?: string
-    ) {
+    constructor(privateKey: `0x${string}`, target: ConfluxTarget, rpcUrl?: string) {
         if (!privateKey.startsWith("0x")) {
             throw new Error("Private key must start with 0x");
         }
 
-        const chain =
-            target === "testnet" ? confluxESpaceTestnet : confluxESpace;
+        const chain = target === "testnet" ? confluxESpaceTestnet : confluxESpace;
 
         this.account = privateKeyToAccount(privateKey);
 
@@ -116,9 +111,7 @@ export class EspaceWallet {
         tokenAddress: Address;
         decimals?: number;
     }) {
-        elizaLogger.debug(
-            `Sending ${amount} tokens (${tokenAddress}) to ${to} on eSpace`
-        );
+        elizaLogger.debug(`Sending ${amount} tokens (${tokenAddress}) to ${to} on eSpace`);
         const value = parseUnits(amount, decimals);
 
         const hash = await this.walletClient.writeContract({
@@ -133,10 +126,7 @@ export class EspaceWallet {
         return hash;
     }
 
-    async approveToken(
-        tokenAddress: Address,
-        amount: bigint
-    ): Promise<`0x${string}`> {
+    async approveToken(tokenAddress: Address, amount: bigint): Promise<`0x${string}`> {
         elizaLogger.debug(
             `Approving ${amount} tokens (${tokenAddress}) for ${this.account.address}`
         );
@@ -166,9 +156,7 @@ export class EspaceWallet {
         path: Address[];
         deadline: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(
-            `Swapping ${amountIn} tokens through path: ${path.join(" -> ")}`
-        );
+        elizaLogger.debug(`Swapping ${amountIn} tokens through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -176,13 +164,7 @@ export class EspaceWallet {
             address: this.dexRouter,
             abi: SwappiRouterABI,
             functionName: "swapExactTokensForTokens",
-            args: [
-                amountIn,
-                amountOutMin,
-                path,
-                this.account.address,
-                deadline,
-            ],
+            args: [amountIn, amountOutMin, path, this.account.address, deadline],
         });
 
         elizaLogger.debug(`Swap transaction sent: ${hash}`);
@@ -200,9 +182,7 @@ export class EspaceWallet {
         deadline: bigint;
         value: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(
-            `Swapping ${value} CFX through path: ${path.join(" -> ")}`
-        );
+        elizaLogger.debug(`Swapping ${value} CFX through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -229,9 +209,7 @@ export class EspaceWallet {
         path: Address[];
         deadline: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(
-            `Swapping ${amountIn} tokens for CFX through path: ${path.join(" -> ")}`
-        );
+        elizaLogger.debug(`Swapping ${amountIn} tokens for CFX through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -239,13 +217,7 @@ export class EspaceWallet {
             address: this.dexRouter,
             abi: SwappiRouterABI,
             functionName: "swapExactTokensForETH",
-            args: [
-                amountIn,
-                amountOutMin,
-                path,
-                this.account.address,
-                deadline,
-            ],
+            args: [amountIn, amountOutMin, path, this.account.address, deadline],
         });
 
         elizaLogger.debug(`Swap transaction sent: ${hash}`);
@@ -257,9 +229,7 @@ export class EspaceWallet {
         path: Address[],
         slippage: number = 5
     ): Promise<{ amounts: readonly bigint[]; amountOutMin: bigint }> {
-        elizaLogger.debug(
-            `Getting amounts out for ${amountIn} through path: ${path.join(" -> ")}`
-        );
+        elizaLogger.debug(`Getting amounts out for ${amountIn} through path: ${path.join(" -> ")}`);
 
         const amounts = await this.publicClient.readContract({
             address: this.dexRouter,
@@ -268,8 +238,7 @@ export class EspaceWallet {
             args: [amountIn, path],
         });
 
-        const amountOutMin =
-            amounts[1] - (amounts[1] * BigInt(slippage)) / BigInt(100);
+        const amountOutMin = amounts[1] - (amounts[1] * BigInt(slippage)) / BigInt(100);
 
         elizaLogger.debug(`Amounts out: ${amounts.join(" -> ")}`);
         elizaLogger.debug(`amountOutMin: ${amountOutMin}`);
@@ -326,7 +295,7 @@ export class EspaceWallet {
 
         elizaLogger.debug("[eSpace Wallet] Token balance result", {
             rawBalance: balance.toString(),
-            formattedBalance: formatted
+            formattedBalance: formatted,
         });
         return formatted;
     }
@@ -336,7 +305,7 @@ export class EspaceWallet {
     }
 
     formatTokenAmount(amount: bigint | string, decimals: number): string {
-        const amountBigInt = typeof amount === 'string' ? BigInt(amount) : amount;
+        const amountBigInt = typeof amount === "string" ? BigInt(amount) : amount;
         const formatted = formatUnits(amountBigInt, decimals);
         return Number(formatted).toFixed(4);
     }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Content, elizaLogger } from "@elizaos/core";
+import { elizaLogger } from "@elizaos/core";
 
 export const TransferSchema = z.object({
     to: z.string(),
@@ -44,11 +44,7 @@ export const PumpSellSchema = z.object({
     }),
 });
 
-export const PumpSchema = z.union([
-    PumpCreateSchema,
-    PumpBuySchema,
-    PumpSellSchema,
-]);
+export const PumpSchema = z.union([PumpCreateSchema, PumpBuySchema, PumpSellSchema]);
 
 export type PumpContent = z.infer<typeof PumpSchema>;
 export type PumpCreateContent = z.infer<typeof PumpCreateSchema>;
@@ -120,9 +116,7 @@ export const ERC20TransferSchema = z.object({
 
 export type ERC20TransferContent = z.infer<typeof ERC20TransferSchema>;
 
-export function isERC20TransferContent(
-    object: unknown
-): object is ERC20TransferContent {
+export function isERC20TransferContent(object: unknown): object is ERC20TransferContent {
     elizaLogger.debug("Validating ERC20 transfer content:", object);
     const result = ERC20TransferSchema.safeParse(object);
     if (!result.success) {

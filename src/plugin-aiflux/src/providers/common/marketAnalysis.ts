@@ -3,10 +3,10 @@ import { TokenListManager } from "../../utils/config/tokenList";
 import { POOL_ANALYSIS_INSTRUCTIONS } from "../../analysis/instructions";
 import { DeFiLlama } from "../../utils/defillama";
 
-const DEFAULT_CHAIN = 'conflux';
+const DEFAULT_CHAIN = "conflux";
 const CACHE_KEYS = {
     CHAIN_TVL: (chain: string) => `defillama:tvl:chain:${chain}`,
-    PROTOCOLS_TVL: (chain: string) => `defillama:tvl:protocols:${chain}`
+    PROTOCOLS_TVL: (chain: string) => `defillama:tvl:protocols:${chain}`,
 } as const;
 
 interface MarketAnalysisConfig {
@@ -17,17 +17,21 @@ interface MarketAnalysisConfig {
 }
 
 type AnalysisType =
-    | 'gainers'
-    | 'losers'
-    | 'volume'
-    | 'trades'
-    | 'age'
-    | 'buyPressure'
-    | 'sellPressure'
-    | 'full'
-    | 'tvl';
+    | "gainers"
+    | "losers"
+    | "volume"
+    | "trades"
+    | "age"
+    | "buyPressure"
+    | "sellPressure"
+    | "full"
+    | "tvl";
 
-async function getTVLAnalysis(chain: string, runtime: IAgentRuntime, defiLlama: DeFiLlama): Promise<string> {
+async function getTVLAnalysis(
+    chain: string,
+    runtime: IAgentRuntime,
+    defiLlama: DeFiLlama
+): Promise<string> {
     const chainCacheKey = CACHE_KEYS.CHAIN_TVL(chain);
     const protocolsCacheKey = CACHE_KEYS.PROTOCOLS_TVL(chain);
 
@@ -35,7 +39,7 @@ async function getTVLAnalysis(chain: string, runtime: IAgentRuntime, defiLlama: 
         // Check both chain and protocols cache
         const [chainData, protocolsData] = await Promise.all([
             runtime.cacheManager.get<string>(chainCacheKey),
-            runtime.cacheManager.get<string>(protocolsCacheKey)
+            runtime.cacheManager.get<string>(protocolsCacheKey),
         ]);
 
         const hasCachedData = chainData !== null && protocolsData !== null;
@@ -65,36 +69,39 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
         return null;
     }
 
-    const cacheDuration = config.cacheDuration || 300;
+    const _cacheDuration = config.cacheDuration || 300;
     const tlm = config.tokenListManager;
     const chain = config.chain || DEFAULT_CHAIN;
     const defiLlama = config.defiLlama || new DeFiLlama();
 
-    const getAnalysisData = async (runtime: IAgentRuntime, request: { type: AnalysisType; limit?: number }): Promise<string> => {
+    const getAnalysisData = async (
+        runtime: IAgentRuntime,
+        request: { type: AnalysisType; limit?: number }
+    ): Promise<string> => {
         const limit = request.limit || 5;
 
         switch (request.type) {
-            case 'tvl':
+            case "tvl":
                 return getTVLAnalysis(chain, runtime, defiLlama);
-            case 'full':
+            case "full":
                 const [marketAnalysis, tvlAnalysis] = await Promise.all([
                     tlm.getMarketAnalysis(),
-                    getTVLAnalysis(chain, runtime, defiLlama)
+                    getTVLAnalysis(chain, runtime, defiLlama),
                 ]);
                 return `${marketAnalysis}\n\n${tvlAnalysis}`;
-            case 'gainers':
+            case "gainers":
                 return tlm.getTopGainers(limit);
-            case 'losers':
+            case "losers":
                 return tlm.getTopLosers(limit);
-            case 'volume':
+            case "volume":
                 return tlm.getTopVolume(limit);
-            case 'trades':
+            case "trades":
                 return tlm.getTopTrades(limit);
-            case 'age':
+            case "age":
                 return tlm.getPoolsByAge(true, limit);
-            case 'buyPressure':
+            case "buyPressure":
                 return tlm.getMostBuyPressure(limit);
-            case 'sellPressure':
+            case "sellPressure":
                 return tlm.getMostSellPressure(limit);
             default:
                 return "Invalid analysis type requested";
@@ -105,11 +112,11 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
         get: async (
             runtime: IAgentRuntime,
             message: Memory,
-            state?: State
+            _state?: State
         ): Promise<string | null> => {
             const analysisType = message.content?.analysisType as AnalysisType;
             const rawLimit = message.content?.limit;
-            const limit = typeof rawLimit === 'string' ? parseInt(rawLimit, 10) : undefined;
+            const limit = typeof rawLimit === "string" ? parseInt(rawLimit, 10) : undefined;
 
             if (!analysisType) {
                 return "No analysis type specified";
@@ -117,11 +124,10 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
 
             try {
                 return `${await getAnalysisData(runtime, { type: analysisType, limit })}\n\n${POOL_ANALYSIS_INSTRUCTIONS}`;
-
             } catch (error) {
                 elizaLogger.error("Error in market analysis provider:", error);
                 return null;
             }
-        }
+        },
     };
 }

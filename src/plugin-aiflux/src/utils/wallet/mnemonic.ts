@@ -1,10 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
 import { HDKey } from "@scure/bip32";
-import {
-    generateMnemonic as gm,
-    mnemonicToSeedSync,
-    validateMnemonic,
-} from "@scure/bip39";
+import { generateMnemonic as gm, mnemonicToSeedSync, validateMnemonic } from "@scure/bip39";
 import { wordlist } from "@scure/bip39/wordlists/english";
 
 /**
@@ -25,15 +21,10 @@ function isValidMnemonic(mnemonic: string): boolean {
  * @returns The private key as a hex string with 0x prefix
  * @throws Error if the mnemonic is invalid
  */
-export function deriveESpaceKey(
-    mnemonic: string,
-    index: number = 0
-): `0x${string}` {
+export function deriveESpaceKey(mnemonic: string, index: number = 0): `0x${string}` {
     elizaLogger.debug(`Deriving eSpace key for index: ${index}`);
     if (!isValidMnemonic(mnemonic)) {
-        elizaLogger.error(
-            "Invalid mnemonic phrase provided for eSpace key derivation"
-        );
+        elizaLogger.error("Invalid mnemonic phrase provided for eSpace key derivation");
         throw new Error("Invalid mnemonic phrase");
     }
     const seed = mnemonicToSeedSync(mnemonic);
@@ -54,15 +45,10 @@ export function deriveESpaceKey(
  * @returns The private key as a hex string with 0x prefix
  * @throws Error if the mnemonic is invalid
  */
-export function deriveCoreKey(
-    mnemonic: string,
-    index: number = 0
-): `0x${string}` {
+export function deriveCoreKey(mnemonic: string, index: number = 0): `0x${string}` {
     elizaLogger.debug(`Deriving Core key for index: ${index}`);
     if (!isValidMnemonic(mnemonic)) {
-        elizaLogger.error(
-            "Invalid mnemonic phrase provided for Core key derivation"
-        );
+        elizaLogger.error("Invalid mnemonic phrase provided for Core key derivation");
         throw new Error("Invalid mnemonic phrase");
     }
     const seed = mnemonicToSeedSync(mnemonic);

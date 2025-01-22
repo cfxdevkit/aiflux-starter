@@ -11,7 +11,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
         name: "CHECK_WALLET",
         description: "Check wallet balances for both Core and eSpace networks",
         suppressInitialMessage: true,
-        validate: async (runtime: IAgentRuntime, _message: Memory) => {
+        validate: async (_runtime: IAgentRuntime, _message: Memory) => {
             elizaLogger.debug("Validating wallet action configuration");
             return !!(config.coreWallet || config.espaceWallet);
         },
@@ -28,7 +28,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
                     content: {
                         text: "💼 Let's unlock the treasures in your wallet! Just a moment while I fetch your balance from the mystical realms of Conflux...✨",
                         action: "CHECK_WALLET",
-                        suppressResponse: true
+                        suppressResponse: true,
                     },
                 },
             ],
@@ -44,10 +44,10 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
                     content: {
                         text: "🎭 Time to count your crypto coins! Diving into the Conflux ledger of legends...",
                         action: "CHECK_WALLET",
-                        suppressResponse: true
+                        suppressResponse: true,
                     },
                 },
-            ]
+            ],
         ],
         similes: [
             "wallet",
@@ -56,7 +56,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
             "update wallet",
             "show wallet",
             "my wallet",
-            "the wallet"
+            "the wallet",
         ],
         handler: async (
             runtime: IAgentRuntime,
@@ -67,7 +67,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
         ): Promise<boolean> => {
             elizaLogger.debug("Wallet action handler called:", {
                 userId: memory.userId,
-                messageText: memory.content?.text
+                messageText: memory.content?.text,
             });
 
             try {
@@ -77,21 +77,30 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
                 if (config.coreWallet) {
                     const address = config.coreWallet.getAddress();
                     const balance = await config.coreWallet.getBalance();
-                    const tokens = config.coreConfluxScan ? await config.coreConfluxScan.getAccountTokens(address) : null;
+                    const tokens = config.coreConfluxScan
+                        ? await config.coreConfluxScan.getAccountTokens(address)
+                        : null;
 
                     elizaLogger.debug("Core wallet balance:", {
                         address,
-                        balance: balance.toString()
+                        balance: balance.toString(),
                     });
 
                     let tokenList = "";
                     if (tokens && tokens.length > 0) {
-                        const filteredTokens = tokens.filter(token => token.symbol !== 'CFX');
+                        const filteredTokens = tokens.filter((token) => token.symbol !== "CFX");
                         if (filteredTokens.length > 0) {
-                            const maxLength = Math.max(...filteredTokens.map(token => token.symbol.length));
-                            tokenList = "\n━━(Tokens)━━\n" + filteredTokens.map(token =>
-                                `• ${token.symbol.padEnd(maxLength)} : ${config.coreWallet!.formatTokenAmount(token.amount, token.decimals)}`
-                            ).join("\n");
+                            const maxLength = Math.max(
+                                ...filteredTokens.map((token) => token.symbol.length)
+                            );
+                            tokenList =
+                                "\n━━(Tokens)━━\n" +
+                                filteredTokens
+                                    .map(
+                                        (token) =>
+                                            `• ${token.symbol.padEnd(maxLength)} : ${config.coreWallet!.formatTokenAmount(token.amount, token.decimals)}`
+                                    )
+                                    .join("\n");
                         }
                     }
 
@@ -105,21 +114,30 @@ Balance: ${balance} CFX${tokenList}`);
                 if (config.espaceWallet) {
                     const address = config.espaceWallet.getAddress();
                     const balance = await config.espaceWallet.getBalance();
-                    const tokens = config.espaceConfluxScan ? await config.espaceConfluxScan.getAccountTokens(address) : null;
+                    const tokens = config.espaceConfluxScan
+                        ? await config.espaceConfluxScan.getAccountTokens(address)
+                        : null;
 
                     elizaLogger.debug("eSpace wallet balance:", {
                         address,
-                        balance: balance.toString()
+                        balance: balance.toString(),
                     });
 
                     let tokenList = "";
                     if (tokens && tokens.length > 0) {
-                        const filteredTokens = tokens.filter(token => token.symbol !== 'CFX');
+                        const filteredTokens = tokens.filter((token) => token.symbol !== "CFX");
                         if (filteredTokens.length > 0) {
-                            const maxLength = Math.max(...filteredTokens.map(token => token.symbol.length));
-                            tokenList = "\n━━(Tokens)━━\n" + filteredTokens.map(token =>
-                                `• ${token.symbol.padEnd(maxLength)} : ${config.espaceWallet!.formatTokenAmount(token.amount, token.decimals)}`
-                            ).join("\n");
+                            const maxLength = Math.max(
+                                ...filteredTokens.map((token) => token.symbol.length)
+                            );
+                            tokenList =
+                                "\n━━(Tokens)━━\n" +
+                                filteredTokens
+                                    .map(
+                                        (token) =>
+                                            `• ${token.symbol.padEnd(maxLength)} : ${config.espaceWallet!.formatTokenAmount(token.amount, token.decimals)}`
+                                    )
+                                    .join("\n");
                         }
                     }
 
@@ -130,31 +148,40 @@ Balance: ${balance} CFX${tokenList}`);
                 }
 
                 if (sections.length === 0) {
-                    callback({
-                        text: "❌ No wallet information available. Please check your wallet configuration.",
-                        action: "CHECK_WALLET",
-                        blockResponse: true
-                    }, []);
+                    callback(
+                        {
+                            text: "❌ No wallet information available. Please check your wallet configuration.",
+                            action: "CHECK_WALLET",
+                            blockResponse: true,
+                        },
+                        []
+                    );
                     return false;
                 }
 
-                const response = `━━ 💼 Wallet Dashboard\n\n${sections.join('\n\n')}`;
+                const response = `━━ 💼 Wallet Dashboard\n\n${sections.join("\n\n")}`;
 
-                callback({
-                    text: response,
-                    action: "CHECK_WALLET",
-                    blockResponse: true
-                }, []);
+                callback(
+                    {
+                        text: response,
+                        action: "CHECK_WALLET",
+                        blockResponse: true,
+                    },
+                    []
+                );
                 return true;
             } catch (error) {
                 elizaLogger.error("Error in wallet action handler:", error);
-                callback({
-                    text: "❌ Sorry, I encountered an error while fetching your wallet information. Please try again.",
-                    action: "CHECK_WALLET",
-                    blockResponse: true
-                }, []);
+                callback(
+                    {
+                        text: "❌ Sorry, I encountered an error while fetching your wallet information. Please try again.",
+                        action: "CHECK_WALLET",
+                        blockResponse: true,
+                    },
+                    []
+                );
                 return false;
             }
-        }
+        },
     };
 }

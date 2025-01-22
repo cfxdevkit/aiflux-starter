@@ -1,21 +1,21 @@
 {
-  "name": "Node.js Development Container",
-  "dockerFile": "Dockerfile",
-  "forwardPorts": [3000],
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "ms-vscode.vscode-typescript-next"
-      ],
-      "settings": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "typescript.updateImportsOnFileMove.enabled": "always"
-      }
-    }
-  },
-  "postCreateCommand": "pnpm install",
-  "remoteUser": "node"
+    "name": "Node.js Development Container",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [3000],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "ms-vscode.vscode-typescript-next"
+            ],
+            "settings": {
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "typescript.updateImportsOnFileMove.enabled": "always"
+            }
+        }
+    },
+    "postCreateCommand": "pnpm install",
+    "remoteUser": "node"
 }

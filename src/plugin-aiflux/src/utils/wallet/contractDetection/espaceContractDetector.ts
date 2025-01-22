@@ -1,10 +1,5 @@
 import { Address, PublicClient, parseAbi } from "viem";
-import {
-    ContractCheckResult,
-    INTERFACE_IDS,
-    commonMetadataAbi,
-    nftSpecificAbi,
-} from "../types";
+import { ContractCheckResult, INTERFACE_IDS, commonMetadataAbi, nftSpecificAbi } from "../types";
 import { isAddress, getAddress } from "viem";
 import ERC20ABI from "../abi/erc20";
 
@@ -54,21 +49,15 @@ export class EspaceContractDetector {
         }
 
         // Extract URIs and configuration
-        const [
-            baseURI,
-            contractURI,
-            tokenURIPrefix,
-            paused,
-            maxSupply,
-            maxSupplyAlt,
-        ] = await Promise.all([
-            safeCall("baseURI"),
-            safeCall("contractURI"),
-            safeCall("tokenURIPrefix"),
-            safeCall("paused"),
-            safeCall("maxSupply"),
-            safeCall("MAX_SUPPLY"),
-        ]);
+        const [baseURI, contractURI, tokenURIPrefix, paused, maxSupply, maxSupplyAlt] =
+            await Promise.all([
+                safeCall("baseURI"),
+                safeCall("contractURI"),
+                safeCall("tokenURIPrefix"),
+                safeCall("paused"),
+                safeCall("maxSupply"),
+                safeCall("MAX_SUPPLY"),
+            ]);
 
         if (baseURI) metadata.baseURI = baseURI;
         if (contractURI) metadata.contractURI = contractURI;
@@ -108,10 +97,7 @@ export class EspaceContractDetector {
 
             const checksummedAddress = getAddress(address);
 
-            if (
-                checksummedAddress ===
-                "0x0000000000000000000000000000000000000000"
-            ) {
+            if (checksummedAddress === "0x0000000000000000000000000000000000000000") {
                 throw new Error("Cannot check null address");
             }
 
@@ -136,8 +122,7 @@ export class EspaceContractDetector {
                 details: {},
                 message: "",
                 category: undefined,
-                metadata:
-                    await this.extractContractMetadata(checksummedAddress),
+                metadata: await this.extractContractMetadata(checksummedAddress),
                 bytecodeSize: (bytecode.length - 2) / 2,
             };
 
@@ -150,9 +135,7 @@ export class EspaceContractDetector {
                 throw new Error("Network error: Please check your connection");
             }
             if (error.message.includes("rate limit")) {
-                throw new Error(
-                    "RPC rate limit exceeded: Please try again later"
-                );
+                throw new Error("RPC rate limit exceeded: Please try again later");
             }
             throw error;
         }
@@ -202,7 +185,8 @@ export class EspaceContractDetector {
                 decimals,
                 totalSupply: totalSupply.toString(),
             };
-        } catch (error) {
+        } catch (error: unknown) {
+            console.debug("Not an ERC20 token", error);
             // Not an ERC20 token
         }
 
@@ -210,9 +194,7 @@ export class EspaceContractDetector {
         try {
             const supportsERC165 = await this.publicClient.readContract({
                 address,
-                abi: parseAbi([
-                    "function supportsInterface(bytes4) view returns (bool)",
-                ]),
+                abi: parseAbi(["function supportsInterface(bytes4) view returns (bool)"]),
                 functionName: "supportsInterface",
                 args: [INTERFACE_IDS.ERC165 as `0x${string}`],
             });
@@ -222,24 +204,21 @@ export class EspaceContractDetector {
 
                 // Check all interfaces in parallel
                 const interfaceChecks = await Promise.all(
-                    Object.entries(INTERFACE_IDS).map(
-                        async ([name, interfaceId]) => {
-                            try {
-                                const supported =
-                                    await this.publicClient.readContract({
-                                        address,
-                                        abi: parseAbi([
-                                            "function supportsInterface(bytes4) view returns (bool)",
-                                        ]),
-                                        functionName: "supportsInterface",
-                                        args: [interfaceId as `0x${string}`],
-                                    });
-                                return { name, supported };
-                            } catch {
-                                return { name, supported: false };
-                            }
+                    Object.entries(INTERFACE_IDS).map(async ([name, interfaceId]) => {
+                        try {
+                            const supported = await this.publicClient.readContract({
+                                address,
+                                abi: parseAbi([
+                                    "function supportsInterface(bytes4) view returns (bool)",
+                                ]),
+                                functionName: "supportsInterface",
+                                args: [interfaceId as `0x${string}`],
+                            });
+                            return { name, supported };
+                        } catch {
+                            return { name, supported: false };
                         }
-                    )
+                    })
                 );
 
                 // Process interface check results
@@ -250,28 +229,22 @@ export class EspaceContractDetector {
                         // Set primary type if not already ERC20
                         if (!isERC20) {
                             if (name === "ERC721") result.type = "ERC721";
-                            else if (name === "ERC1155")
-                                result.type = "ERC1155";
-                            else if (name === "ERC4626")
-                                result.type = "ERC4626";
+                            else if (name === "ERC1155") result.type = "ERC1155";
+                            else if (name === "ERC4626") result.type = "ERC4626";
                         }
 
                         // Add feature flags
-                        if (name === "ERC721Metadata")
-                            result.features.push("METADATA");
-                        if (name === "ERC721Enumerable")
-                            result.features.push("ENUMERABLE");
-                        if (name === "ERC2981")
-                            result.features.push("ROYALTIES");
-                        if (name === "ERC4907")
-                            result.features.push("RENTABLE");
+                        if (name === "ERC721Metadata") result.features.push("METADATA");
+                        if (name === "ERC721Enumerable") result.features.push("ENUMERABLE");
+                        if (name === "ERC2981") result.features.push("ROYALTIES");
+                        if (name === "ERC4907") result.features.push("RENTABLE");
                         if (name === "Ownable") result.features.push("OWNABLE");
-                        if (name === "AccessControl")
-                            result.features.push("RBAC");
+                        if (name === "AccessControl") result.features.push("RBAC");
                     }
                 }
             }
-        } catch (error) {
+        } catch (error: unknown) {
+            console.debug("Contract doesn't implement ERC165", error);
             // Contract doesn't implement ERC165
             if (!isERC20) {
                 result.message =

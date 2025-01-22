@@ -8,7 +8,7 @@ import {
     parseCFX,
     parseUnits,
     PublicClient,
-    WalletClient
+    WalletClient,
 } from "cive";
 import { Account, privateKeyToAccount } from "cive/accounts";
 import { mainnet, testnet } from "cive/chains";
@@ -25,11 +25,7 @@ export class CoreWallet {
     private account: Account;
     private contractDetector: CoreContractDetector;
 
-    constructor(
-        privateKey: `0x${string}`,
-        target: ConfluxTarget,
-        rpcUrl?: string
-    ) {
+    constructor(privateKey: `0x${string}`, target: ConfluxTarget, rpcUrl?: string) {
         if (!privateKey.startsWith("0x")) {
             throw new Error("Private key must start with 0x");
         }
@@ -70,9 +66,11 @@ export class CoreWallet {
     }
 
     async getBalance(tokenAddress?: Address): Promise<string> {
-        elizaLogger.debug(tokenAddress
-            ? `Getting Core token balance for ${tokenAddress}`
-            : "Getting Core wallet balance");
+        elizaLogger.debug(
+            tokenAddress
+                ? `Getting Core token balance for ${tokenAddress}`
+                : "Getting Core wallet balance"
+        );
 
         try {
             if (!tokenAddress) {
@@ -89,13 +87,13 @@ export class CoreWallet {
                 this.publicClient.readContract({
                     address: tokenAddress,
                     abi: ERC20ABI,
-                    functionName: 'balanceOf',
+                    functionName: "balanceOf",
                     args: [this.account.address],
                 }),
                 this.publicClient.readContract({
                     address: tokenAddress,
                     abi: ERC20ABI,
-                    functionName: 'decimals',
+                    functionName: "decimals",
                 }),
             ]);
 
@@ -104,7 +102,7 @@ export class CoreWallet {
             elizaLogger.debug(`Core token balance: ${result}`);
             return result;
         } catch (error) {
-            elizaLogger.error('Error getting balance:', error);
+            elizaLogger.error("Error getting balance:", error);
             throw error;
         }
     }
@@ -121,16 +119,8 @@ export class CoreWallet {
         return hash;
     }
 
-    async crossSpaceCall({
-        to,
-        amount,
-    }: {
-        to: `0x${string}`;
-        amount: string;
-    }) {
-        elizaLogger.debug(
-            `Initiating cross-space transfer of ${amount} CFX to ${to}`
-        );
+    async crossSpaceCall({ to, amount }: { to: `0x${string}`; amount: string }) {
+        elizaLogger.debug(`Initiating cross-space transfer of ${amount} CFX to ${to}`);
         const tx = await this.walletClient.sendTransaction({
             account: this.account,
             chain: this.walletClient.chain,
@@ -160,9 +150,7 @@ export class CoreWallet {
         tokenAddress: Address;
         decimals?: number;
     }) {
-        elizaLogger.debug(
-            `Sending ${amount} tokens (${tokenAddress}) to ${to} on Core`
-        );
+        elizaLogger.debug(`Sending ${amount} tokens (${tokenAddress}) to ${to} on Core`);
         const value = parseUnits(amount, decimals);
 
         const hash = await this.walletClient.writeContract({
@@ -205,7 +193,7 @@ export class CoreWallet {
 
         elizaLogger.debug("[Core Wallet] Token balance result", {
             rawBalance: balance.toString(),
-            formattedBalance: formatted
+            formattedBalance: formatted,
         });
         return formatted;
     }
@@ -215,7 +203,7 @@ export class CoreWallet {
     }
 
     formatTokenAmount(amount: bigint | string, decimals: number): string {
-        const amountBigInt = typeof amount === 'string' ? BigInt(amount) : amount;
+        const amountBigInt = typeof amount === "string" ? BigInt(amount) : amount;
         const formatted = formatUnits(amountBigInt, decimals);
         return Number(formatted).toFixed(4);
     }

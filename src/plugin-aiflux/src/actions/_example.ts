@@ -31,8 +31,7 @@ interface ActionConfig {
  */
 const ActionParamsSchema = z.object({
     type: z.enum(["type1", "type2"], {
-        required_error:
-            "Type is required and must be exactly 'type1' or 'type2'",
+        required_error: "Type is required and must be exactly 'type1' or 'type2'",
         invalid_type_error: "Type must be a string, exactly 'type1' or 'type2'",
     }),
     amount: z
@@ -62,9 +61,7 @@ async function executeAction(
     try {
         // First validate that the type is one of the allowed types
         if (!["type1", "type2"].includes(params.type)) {
-            throw new Error(
-                "Invalid action type. Must be either 'type1' or 'type2'"
-            );
+            throw new Error("Invalid action type. Must be either 'type1' or 'type2'");
         }
 
         // Validate amount is non-negative
@@ -111,7 +108,7 @@ export function createAction(config: ActionConfig): Action {
         description: "Template for creating actions",
         similes: ["TEMPLATE", "EXECUTE_TEMPLATE", "RUN_TEMPLATE"],
         suppressInitialMessage: true,
-        validate: async (runtime: IAgentRuntime, _message: Memory) => {
+        validate: async (_runtime: IAgentRuntime, _message: Memory) => {
             elizaLogger.debug("[Template] Validating runtime configuration");
             elizaLogger.debug("[Template]", !!config.requiredService);
             return !!config.requiredService;
@@ -127,9 +124,7 @@ export function createAction(config: ActionConfig): Action {
 
             try {
                 if (!state) {
-                    elizaLogger.debug(
-                        "[Template] No state provided, composing new state"
-                    );
+                    elizaLogger.debug("[Template] No state provided, composing new state");
                     state = await runtime.composeState(message);
                 } else {
                     elizaLogger.debug("[Template] Updating existing state");
@@ -138,8 +133,7 @@ export function createAction(config: ActionConfig): Action {
 
                 // Pre-validate input and guide user if needed
                 const rawType = message.content.text.match(/type(\w+)/)?.[1];
-                const rawAmount =
-                    message.content.text.match(/amount\s+(\S+)/)?.[1];
+                const rawAmount = message.content.text.match(/amount\s+(\S+)/)?.[1];
 
                 const validationErrors = [];
 
@@ -160,9 +154,7 @@ Example: "execute type1 amount 5"`,
 
                 // Validate amount
                 if (!rawAmount) {
-                    validationErrors.push(
-                        "amount (must be a non-negative number)"
-                    );
+                    validationErrors.push("amount (must be a non-negative number)");
                 } else if (isNaN(Number(rawAmount)) || Number(rawAmount) < 0) {
                     callback(
                         {
@@ -217,19 +209,14 @@ Example invalid: "type45" (must error, do not try to convert to valid type)`,
                     schema: ActionParamsSchema,
                 })) as { object: ActionParams };
 
-                elizaLogger.debug(
-                    "[Template] Generated action details",
-                    actionDetails.object
-                );
+                elizaLogger.debug("[Template] Generated action details", actionDetails.object);
 
                 // Final validation of parsed values
                 if (
                     !actionDetails.object.type ||
                     !["type1", "type2"].includes(actionDetails.object.type)
                 ) {
-                    throw new Error(
-                        "Invalid action type. Must be exactly 'type1' or 'type2'"
-                    );
+                    throw new Error("Invalid action type. Must be exactly 'type1' or 'type2'");
                 }
 
                 if (
@@ -239,13 +226,9 @@ Example invalid: "type45" (must error, do not try to convert to valid type)`,
                     throw new Error("Amount must be a non-negative number");
                 }
 
-                const result = await executeAction(
-                    runtime,
-                    config,
-                    actionDetails.object
-                );
+                const result = await executeAction(runtime, config, actionDetails.object);
 
-                let responseText =
+                const responseText =
                     result.status === "Success"
                         ? `✅ Action completed successfully: ${result.data}: ${actionDetails.object.type} ${actionDetails.object.amount}`
                         : `❌ Action failed: ${result.error}`;

@@ -10,10 +10,7 @@ class CoreFormatter extends BaseFormatter {
                 const valueInCFX = formatCFX(BigInt(String(value)));
                 return `${this.formatUtils.number(valueInCFX)} CFX`;
             } catch (error) {
-                elizaLogger.error(
-                    `Error formatting CFX value: ${value}`,
-                    error
-                );
+                elizaLogger.error(`Error formatting CFX value: ${value}`, error);
                 return "0 CFX";
             }
         },
@@ -30,18 +27,9 @@ class CoreFormatter extends BaseFormatter {
 
     // Implement specific formatters
     public formatters = {
-        activeAccounts: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Active Accounts"
-        ),
-        cfxHolders: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "CFX Holders"
-        ),
-        accountGrowth: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Account Growth"
-        ),
+        activeAccounts: this.createBasicStatsFormatter((item) => item.count, "Active Accounts"),
+        cfxHolders: this.createBasicStatsFormatter((item) => item.count, "CFX Holders"),
+        accountGrowth: this.createBasicStatsFormatter((item) => item.count, "Account Growth"),
         contracts: (data: any): string => {
             const list = this.getDataList(data);
             if (!list?.[0]) return "No data available";
@@ -51,10 +39,7 @@ class CoreFormatter extends BaseFormatter {
                 `Total Contracts: ${this.formatUtils.number(item.total)}`,
             ].join("\n");
         },
-        transactions: this.createBasicStatsFormatter(
-            (item) => item.count,
-            "Transactions"
-        ),
+        transactions: this.createBasicStatsFormatter((item) => item.count, "Transactions"),
         cfxTransfers: this.commonFormatters.cfxTransfers,
         tps: this.commonFormatters.tps,
         miners: (data: any): string => {
@@ -62,19 +47,13 @@ class CoreFormatter extends BaseFormatter {
             if (!list) return "No data available";
 
             const totalHashRate =
-                list.reduce(
-                    (sum: number, curr: any) =>
-                        sum + (Number(curr.hashRate) || 0),
-                    0
-                ) / 1e9;
+                list.reduce((sum: number, curr: any) => sum + (Number(curr.hashRate) || 0), 0) /
+                1e9;
 
             return list
                 .map((item: any, index: number) => {
                     const hashRateInGH = Number(item.hashRate) / 1e9;
-                    const percentage =
-                        totalHashRate > 0
-                            ? (hashRateInGH / totalHashRate) * 100
-                            : 0;
+                    const percentage = totalHashRate > 0 ? (hashRateInGH / totalHashRate) * 100 : 0;
                     return [
                         `Rank: ${index + 1}`,
                         `Address: ${item.address}`,
@@ -86,16 +65,9 @@ class CoreFormatter extends BaseFormatter {
                 })
                 .join("\n--------------\n");
         },
-        gasUsed: this.createRankedListFormatter(
-            (value) => this.formatUtils.gas(value),
-            "gas"
-        ),
-        cfxSenders: this.createRankedListFormatter((value) =>
-            this.formatUtils.cfx(value)
-        ),
-        cfxReceivers: this.createRankedListFormatter((value) =>
-            this.formatUtils.cfx(value)
-        ),
+        gasUsed: this.createRankedListFormatter((value) => this.formatUtils.gas(value), "gas"),
+        cfxSenders: this.createRankedListFormatter((value) => this.formatUtils.cfx(value)),
+        cfxReceivers: this.createRankedListFormatter((value) => this.formatUtils.cfx(value)),
         transactionSenders: this.createRankedListFormatter((value) =>
             this.formatUtils.number(value)
         ),

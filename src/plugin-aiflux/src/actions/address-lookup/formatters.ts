@@ -9,13 +9,15 @@ export function formatBaseAddressInfo(
     isContract: boolean,
     target: ConfluxTarget
 ): string {
-    return `━━━━ ${isCoreAddress ? '🌐 Core Space' : '🌟 eSpace'} Address ━━━━
+    return `━━━━ ${isCoreAddress ? "🌐 Core Space" : "🌟 eSpace"} Address ━━━━
 [${address}](${getConfluxScanUrl(address, target)})
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Type: ${isContract ? "Contract" : "EOA"}`;
 }
 
-export function formatContractDetails(contractCheck: ContractCheckResult & { isContract: true }): string {
+export function formatContractDetails(
+    contractCheck: ContractCheckResult & { isContract: true }
+): string {
     const sections: string[] = [`━━(Contract Details)━━`];
 
     if (contractCheck.type) {
@@ -95,13 +97,16 @@ export function formatAccountBalance(balance: string): string {
     return `\n\n━━(Balance)━━\n• ${balance} CFX`;
 }
 
-export function formatTokenBalances(tokens: any[], formatTokenAmount: (amount: string, decimals: number) => string): string {
+export function formatTokenBalances(
+    tokens: any[],
+    formatTokenAmount: (amount: string, decimals: number) => string
+): string {
     if (tokens.length === 0) return "";
 
-    const filteredTokens = tokens.filter(token => token.symbol !== 'CFX');
+    const filteredTokens = tokens.filter((token) => token.symbol !== "CFX");
     if (filteredTokens.length === 0) return "";
 
-    const maxLength = Math.max(...filteredTokens.map(token => token.symbol.length));
+    const maxLength = Math.max(...filteredTokens.map((token) => token.symbol.length));
     const sections = [`\n\n━━(Tokens)━━`];
 
     for (const token of filteredTokens) {

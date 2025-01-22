@@ -1,9 +1,7 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
 
-export function getGeckoTerminalProvider(
-    config: ValidatedConfig
-): Provider | null {
+export function getGeckoTerminalProvider(config: ValidatedConfig): Provider | null {
     if (!config.geckoTerminal || !config.tokenListManager) {
         return null;
     }
@@ -24,7 +22,7 @@ export function getGeckoTerminalProvider(
                 const cachedPools = await cache.get(cacheKey);
                 elizaLogger.debug("GeckoTerminal provider cache check:", {
                     provider: "geckoterminal",
-                    hasCachedData: cachedPools !== null
+                    hasCachedData: cachedPools !== null,
                 });
 
                 if (cachedPools) {

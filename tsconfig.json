@@ -1,29 +1,29 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "lib": ["ESNext", "dom"],
-    "moduleResolution": "Bundler",
-    "outDir": "./dist",
-    "rootDir": ".",
-    "strict": false,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": false,
-    "allowImportingTsExtensions": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "resolveJsonModule": true,
-    "noImplicitAny": false,
-    "allowJs": true,
-    "checkJs": false,
-    "noEmitOnError": false,
-    "moduleDetection": "force",
-    "allowArbitraryExtensions": true,
-    "baseUrl": ".",
-    "paths": {
-      "@elizaos/plugin-aiflux": ["src/plugin-aiflux/src/index.ts"]
-    }
-  },
-  "include": ["src/**/*"]
+    "compilerOptions": {
+        "target": "ESNext",
+        "module": "ESNext",
+        "lib": ["ESNext", "dom"],
+        "moduleResolution": "Bundler",
+        "outDir": "./dist",
+        "rootDir": ".",
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": false,
+        "allowImportingTsExtensions": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "resolveJsonModule": true,
+        "noImplicitAny": false,
+        "allowJs": true,
+        "checkJs": false,
+        "noEmitOnError": false,
+        "moduleDetection": "force",
+        "allowArbitraryExtensions": true,
+        "baseUrl": ".",
+        "paths": {
+            "@elizaos/plugin-aiflux": ["src/plugin-aiflux/src/index.ts"]
+        }
+    },
+    "include": ["src/**/*"]
 }

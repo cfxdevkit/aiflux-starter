@@ -41,11 +41,7 @@ export class ConfluxScanCore extends ConfluxScanBase {
 
     private contractsApi: ReturnType<typeof ConfluxScan.ContractsApiFp>;
 
-    constructor(
-        apiKey?: string,
-        host?: string,
-        target: ConfluxTarget = "mainnet"
-    ) {
+    constructor(apiKey?: string, host?: string, target: ConfluxTarget = "mainnet") {
         super(
             target,
             "https://api.confluxscan.io",
@@ -77,8 +73,7 @@ export class ConfluxScanCore extends ConfluxScanBase {
     async getSupplyStats() {
         try {
             elizaLogger.debug("Fetching Core supply stats");
-            const requestFunction =
-                await this.statisticsApi.statisticsSupplyGet();
+            const requestFunction = await this.statisticsApi.statisticsSupplyGet();
             const response = await requestFunction();
             return response.data;
         } catch (error) {
@@ -152,16 +147,12 @@ export class ConfluxScanCore extends ConfluxScanBase {
         return formatCfxReceivers(stats);
     }
 
-    async getFormattedTopTransactionSenders(
-        period: "24h" | "1w" | "1m" = "24h"
-    ) {
+    async getFormattedTopTransactionSenders(period: "24h" | "1w" | "1m" = "24h") {
         const stats = await this.getTopTransactionSenders(period);
         return formatTransactionSenders(stats);
     }
 
-    async getFormattedTopTransactionReceivers(
-        period: "24h" | "1w" | "1m" = "24h"
-    ) {
+    async getFormattedTopTransactionReceivers(period: "24h" | "1w" | "1m" = "24h") {
         const stats = await this.getTopTransactionReceivers(period);
         return formatTransactionReceivers(stats);
     }
@@ -169,8 +160,7 @@ export class ConfluxScanCore extends ConfluxScanBase {
     async getContractABI(address: string) {
         elizaLogger.debug(`Getting contract ABI for address: ${address}`);
         try {
-            const requestFunction =
-                await this.contractsApi.contractGetabiGet(address);
+            const requestFunction = await this.contractsApi.contractGetabiGet(address);
             const response = await requestFunction();
             return response.data;
         } catch (error) {

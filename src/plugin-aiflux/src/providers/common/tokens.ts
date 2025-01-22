@@ -1,6 +1,6 @@
 import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
-import { TokenListManager } from "../../utils/config/tokenList";
-import { TokenInfo, TokenList } from "../../utils/config/types";
+// import { TokenListManager } from "../../utils/config/tokenList";
+// import { TokenInfo, TokenList } from "../../utils/config/types";
 import { ValidatedConfig } from "../../utils/config/configValidator";
 
 const CACHE_DURATION = 1800; // 30 minutes
@@ -26,7 +26,7 @@ export function getTokensProvider(config: ValidatedConfig): Provider | null {
                 const cachedData = await cache.get(cacheKey);
                 elizaLogger.debug("Tokens provider cache check:", {
                     provider: "tokens",
-                    hasCachedData: cachedData !== null
+                    hasCachedData: cachedData !== null,
                 });
 
                 if (cachedData) {
@@ -41,7 +41,10 @@ export function getTokensProvider(config: ValidatedConfig): Provider | null {
                 }
 
                 // Format tokens without triggering any API calls
-                const formattedTokens = tokenListManager.formatTokensToText(Object.values(tokenList), config.target);
+                const formattedTokens = tokenListManager.formatTokensToText(
+                    Object.values(tokenList),
+                    config.target
+                );
                 if (!formattedTokens) {
                     elizaLogger.error("Failed to format token list");
                     return null;
@@ -52,7 +55,7 @@ export function getTokensProvider(config: ValidatedConfig): Provider | null {
                     provider: "tokens",
                     cacheKey,
                     cacheDuration: CACHE_DURATION,
-                    tokenCount: Object.keys(tokenList).length
+                    tokenCount: Object.keys(tokenList).length,
                 });
 
                 return formattedTokens;
@@ -60,6 +63,6 @@ export function getTokensProvider(config: ValidatedConfig): Provider | null {
                 elizaLogger.error("Error in tokens provider:", error);
                 return null;
             }
-        }
+        },
     };
 }
