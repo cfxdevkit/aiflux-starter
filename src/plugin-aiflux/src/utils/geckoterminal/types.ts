@@ -24,6 +24,7 @@ export interface Pool extends BaseAttributes {
         quote_token_price_usd: string;
         base_token_price_native: string;
         quote_token_price_native: string;
+        base_token_price_native_currency: string;
         volume_usd: {
             h24: string;
             h6: string;

@@ -1,5 +1,12 @@
 import { DirectClient } from "@elizaos/client-direct";
-import { AgentRuntime, elizaLogger, settings, stringToUuid, type Character } from "@elizaos/core";
+import {
+    AgentRuntime,
+    elizaLogger,
+    settings,
+    stringToUuid,
+    type Character,
+    Plugin,
+} from "@elizaos/core";
 import { bootstrapPlugin } from "@elizaos/plugin-bootstrap";
 import { createNodePlugin } from "@elizaos/plugin-node";
 import createAIfluxPlugin from "@elizaos/plugin-aiflux";
@@ -13,6 +20,9 @@ import { startChat } from "./chat/index.ts";
 import { initializeClients } from "./clients/index.ts";
 import { getTokenForProvider, loadCharacters, parseArguments } from "./config/index.ts";
 import { initializeDatabase } from "./database/index.ts";
+import type { PostgresDatabaseAdapter } from "@elizaos/adapter-postgres";
+import type { SqliteDatabaseAdapter } from "@elizaos/adapter-sqlite";
+import type { CacheManager, DbCacheAdapter } from "@elizaos/core";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,9 +32,14 @@ export const wait = (minTime: number = 1000, maxTime: number = 3000) => {
     return new Promise((resolve) => setTimeout(resolve, waitTime));
 };
 
-let nodePlugin: any | undefined;
+let nodePlugin: Plugin | undefined;
 
-export async function createAgent(character: Character, db: any, cache: any, token: string) {
+export async function createAgent(
+    character: Character,
+    db: PostgresDatabaseAdapter | SqliteDatabaseAdapter,
+    cache: CacheManager<DbCacheAdapter>,
+    token: string
+) {
     elizaLogger.success(
         elizaLogger.successesTitle,
         "Creating runtime for character",

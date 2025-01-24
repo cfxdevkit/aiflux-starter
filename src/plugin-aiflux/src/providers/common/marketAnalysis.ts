@@ -84,11 +84,7 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
             case "tvl":
                 return getTVLAnalysis(chain, runtime, defiLlama);
             case "full":
-                const [marketAnalysis, tvlAnalysis] = await Promise.all([
-                    tlm.getMarketAnalysis(),
-                    getTVLAnalysis(chain, runtime, defiLlama),
-                ]);
-                return `${marketAnalysis}\n\n${tvlAnalysis}`;
+                return `${tlm.getMarketAnalysis()}\n\n${await getTVLAnalysis(chain, runtime, defiLlama)}`;
             case "gainers":
                 return tlm.getTopGainers(limit);
             case "losers":

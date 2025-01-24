@@ -62,7 +62,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
             runtime: IAgentRuntime,
             memory: Memory,
             state: State,
-            _options: any,
+            _options: { [key: string]: unknown },
             callback: HandlerCallback
         ): Promise<boolean> => {
             elizaLogger.debug("Wallet action handler called:", {

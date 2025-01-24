@@ -12,12 +12,20 @@ import {
 import { z } from "zod";
 
 /**
+ * Interface for the required service
+ */
+interface RequiredService {
+    process: (data: unknown) => Promise<unknown>;
+    // Add other methods/properties the service needs
+}
+
+/**
  * Configuration interface for the action
  * Extend this interface based on your specific needs
  */
 interface ActionConfig {
     // Example: Required services or configurations
-    requiredService?: any;
+    requiredService?: RequiredService;
     // Example: Optional configurations
     options?: {
         timeout?: number;
@@ -47,15 +55,21 @@ const ActionParamsSchema = z.object({
  */
 type ActionParams = z.infer<typeof ActionParamsSchema>;
 
+interface ActionResponse {
+    status: string;
+    data?: string; // Changed from any to string since the example returns string data
+    error?: string;
+}
+
 /**
  * Example execution function
  * Implement your actual execution logic here
  */
 async function executeAction(
-    runtime: IAgentRuntime,
-    config: ActionConfig,
+    _runtime: IAgentRuntime,
+    _config: ActionConfig,
     params: ActionParams
-): Promise<{ status: string; data?: any; error?: string }> {
+): Promise<ActionResponse> {
     elizaLogger.debug("[Template] Starting action execution", { params });
 
     try {
@@ -117,7 +131,7 @@ export function createAction(config: ActionConfig): Action {
             runtime: IAgentRuntime,
             message: Memory,
             state: State,
-            _options: any,
+            _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
             elizaLogger.debug("[Template] Starting action handler");

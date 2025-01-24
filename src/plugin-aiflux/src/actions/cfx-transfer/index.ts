@@ -195,7 +195,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
             runtime: IAgentRuntime,
             message: Memory,
             state: State,
-            _options: any,
+            _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
             elizaLogger.debug("Starting transfer handler", {

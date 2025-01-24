@@ -1,323 +1,325 @@
-import { Action, IAgentRuntime, Memory, State, HandlerCallback, elizaLogger } from "@elizaos/core";
-import { generateObject, composeContext, ModelClass } from "@elizaos/core";
-import {
-    createPublicClient,
-    createWalletClient,
-    http,
-    parseEther,
-    encodeFunctionData,
-    WalletClient,
-    Account,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { confluxESpaceTestnet, confluxESpace } from "viem/chains";
-import { parseUnits, getAddress } from "viem/utils";
-import { confiPumpTemplate } from "./template";
-import {
-    PumpSchema,
-    isPumpContent,
-    isPumpBuyContent,
-    isPumpCreateContent,
-    isPumpSellContent,
-} from "./types";
-import MEMEABI from "../../utils/wallet/abi/meme";
-import ERC20ABI from "../../utils/wallet/abi/erc20";
+//TODO: Implement ConfiPump action
 
-// Helper function to check and approve token allowance if needed
-async function ensureAllowance(
-    walletClient: WalletClient,
-    rpcUrl: string,
-    account: Account,
-    tokenAddress: `0x${string}`,
-    memeAddress: `0x${string}`,
-    amount: bigint
-) {
-    elizaLogger.debug(
-        `Checking allowance: token: ${tokenAddress} meme: ${memeAddress} amount: ${amount}`
-    );
+// import { Action, IAgentRuntime, Memory, State, HandlerCallback, elizaLogger } from "@elizaos/core";
+// import { generateObject, composeContext, ModelClass } from "@elizaos/core";
+// import {
+//     createPublicClient,
+//     createWalletClient,
+//     http,
+//     parseEther,
+//     encodeFunctionData,
+//     WalletClient,
+//     Account,
+// } from "viem";
+// import { privateKeyToAccount } from "viem/accounts";
+// import { confluxESpaceTestnet, confluxESpace } from "viem/chains";
+// import { parseUnits, getAddress } from "viem/utils";
+// import { confiPumpTemplate } from "./template";
+// import {
+//     PumpSchema,
+//     isPumpContent,
+//     isPumpBuyContent,
+//     isPumpCreateContent,
+//     isPumpSellContent,
+// } from "./types";
+// import MEMEABI from "../../utils/wallet/abi/meme";
+// import ERC20ABI from "../../utils/wallet/abi/erc20";
 
-    const publicClient = createPublicClient({
-        transport: http(rpcUrl),
-        chain: confluxESpaceTestnet,
-    });
+// // Helper function to check and approve token allowance if needed
+// async function ensureAllowance(
+//     walletClient: WalletClient,
+//     rpcUrl: string,
+//     account: Account,
+//     tokenAddress: `0x${string}`,
+//     memeAddress: `0x${string}`,
+//     amount: bigint
+// ) {
+//     elizaLogger.debug(
+//         `Checking allowance: token: ${tokenAddress} meme: ${memeAddress} amount: ${amount}`
+//     );
 
-    const allowance = await publicClient.readContract({
-        address: tokenAddress,
-        abi: ERC20ABI,
-        functionName: "allowance",
-        args: [account.address, memeAddress],
-    });
+//     const publicClient = createPublicClient({
+//         transport: http(rpcUrl),
+//         chain: confluxESpaceTestnet,
+//     });
 
-    elizaLogger.debug("allowance:", allowance);
+//     const allowance = await publicClient.readContract({
+//         address: tokenAddress,
+//         abi: ERC20ABI,
+//         functionName: "allowance",
+//         args: [account.address, memeAddress],
+//     });
 
-    if (allowance < amount) {
-        elizaLogger.debug(`allowance(${allowance}) is less than amount(${amount}), approving...`);
+//     elizaLogger.debug("allowance:", allowance);
 
-        const hash = await walletClient.sendTransaction({
-            account,
-            to: tokenAddress,
-            data: encodeFunctionData({
-                abi: ERC20ABI,
-                functionName: "approve",
-                args: [memeAddress, amount - allowance],
-            }),
-            chain: confluxESpaceTestnet,
-            kzg: null,
-        });
+//     if (allowance < amount) {
+//         elizaLogger.debug(`allowance(${allowance}) is less than amount(${amount}), approving...`);
 
-        elizaLogger.debug(`Approving hash: ${hash}`);
-        await publicClient.waitForTransactionReceipt({ hash });
-        elizaLogger.debug(`Approving success: ${hash}`);
-    } else {
-        elizaLogger.debug(`No need to approve`);
-    }
-}
+//         const hash = await walletClient.sendTransaction({
+//             account,
+//             to: tokenAddress,
+//             data: encodeFunctionData({
+//                 abi: ERC20ABI,
+//                 functionName: "approve",
+//                 args: [memeAddress, amount - allowance],
+//             }),
+//             chain: confluxESpaceTestnet,
+//             kzg: null,
+//         });
 
-// Main ConfiPump action definition
-export const confiPump: Action = {
-    name: "CONFI_PUMP_ESPACE",
-    description:
-        "Perform actions on ConfiPump on Conflux eSpace network. Create, buy, or sell tokens on the eSpace network.",
-    similes: ["SELL_TOKEN_ESPACE", "BUY_TOKEN_ESPACE", "CREATE_TOKEN_ESPACE"],
-    examples: [
-        // Create token example
-        [
-            {
-                user: "{{user1}}",
-                content: {
-                    text: "Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace",
-                },
-            },
-            {
-                user: "{{user2}}",
-                content: {
-                    text: "Token GLITCHIZA (GLITCHIZA) created successfully on eSpace network!\nContract Address: 0x1234567890abcdef\n",
-                    action: "CREATE_TOKEN_ESPACE",
-                    content: {
-                        tokenInfo: {
-                            symbol: "GLITCHIZA",
-                            address: "0x1234567890abcdef",
-                            creator: "0x9876543210fedcba",
-                            name: "GLITCHIZA",
-                            description: "A GLITCHIZA token on Conflux eSpace",
-                        },
-                        amount: "1",
-                    },
-                },
-            },
-        ],
-        // Buy token example
-        [
-            {
-                user: "{{user1}}",
-                content: {
-                    text: "Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace",
-                },
-            },
-            {
-                user: "{{user2}}",
-                content: {
-                    text: "0.00069 CFX bought successfully on eSpace network!",
-                    action: "BUY_TOKEN_ESPACE",
-                    content: {
-                        address: "0x1234567890abcdef",
-                        amount: "0.00069",
-                    },
-                },
-            },
-        ],
-        // Sell token example
-        [
-            {
-                user: "{{user1}}",
-                content: {
-                    text: "Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace",
-                },
-            },
-            {
-                user: "{{user2}}",
-                content: {
-                    text: "0.00069 CFX sold successfully on eSpace network: 0x1234567890abcdef",
-                    action: "SELL_TOKEN_ESPACE",
-                    content: {
-                        address: "0x1234567890abcdef",
-                        amount: "0.00069",
-                    },
-                },
-            },
-        ],
-    ],
+//         elizaLogger.debug(`Approving hash: ${hash}`);
+//         await publicClient.waitForTransactionReceipt({ hash });
+//         elizaLogger.debug(`Approving success: ${hash}`);
+//     } else {
+//         elizaLogger.debug(`No need to approve`);
+//     }
+// }
 
-    validate: async (runtime: IAgentRuntime, message: Memory) => {
-        return true; // No extra validation needed
-    },
+// // Main ConfiPump action definition
+// export const confiPump: Action = {
+//     name: "CONFI_PUMP_ESPACE",
+//     description:
+//         "Perform actions on ConfiPump on Conflux eSpace network. Create, buy, or sell tokens on the eSpace network.",
+//     similes: ["SELL_TOKEN_ESPACE", "BUY_TOKEN_ESPACE", "CREATE_TOKEN_ESPACE"],
+//     examples: [
+//         // Create token example
+//         [
+//             {
+//                 user: "{{user1}}",
+//                 content: {
+//                     text: "Create a new token called GLITCHIZA with symbol GLITCHIZA and generate a description about it on eSpace",
+//                 },
+//             },
+//             {
+//                 user: "{{user2}}",
+//                 content: {
+//                     text: "Token GLITCHIZA (GLITCHIZA) created successfully on eSpace network!\nContract Address: 0x1234567890abcdef\n",
+//                     action: "CREATE_TOKEN_ESPACE",
+//                     content: {
+//                         tokenInfo: {
+//                             symbol: "GLITCHIZA",
+//                             address: "0x1234567890abcdef",
+//                             creator: "0x9876543210fedcba",
+//                             name: "GLITCHIZA",
+//                             description: "A GLITCHIZA token on Conflux eSpace",
+//                         },
+//                         amount: "1",
+//                     },
+//                 },
+//             },
+//         ],
+//         // Buy token example
+//         [
+//             {
+//                 user: "{{user1}}",
+//                 content: {
+//                     text: "Buy 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace",
+//                 },
+//             },
+//             {
+//                 user: "{{user2}}",
+//                 content: {
+//                     text: "0.00069 CFX bought successfully on eSpace network!",
+//                     action: "BUY_TOKEN_ESPACE",
+//                     content: {
+//                         address: "0x1234567890abcdef",
+//                         amount: "0.00069",
+//                     },
+//                 },
+//             },
+//         ],
+//         // Sell token example
+//         [
+//             {
+//                 user: "{{user1}}",
+//                 content: {
+//                     text: "Sell 0.00069 CFX worth of GLITCHIZA(0x1234567890abcdef) on eSpace",
+//                 },
+//             },
+//             {
+//                 user: "{{user2}}",
+//                 content: {
+//                     text: "0.00069 CFX sold successfully on eSpace network: 0x1234567890abcdef",
+//                     action: "SELL_TOKEN_ESPACE",
+//                     content: {
+//                         address: "0x1234567890abcdef",
+//                         amount: "0.00069",
+//                     },
+//                 },
+//             },
+//         ],
+//     ],
 
-    handler: async (
-        runtime: IAgentRuntime,
-        message: Memory,
-        state?: State,
-        options?: { [key: string]: unknown },
-        callback?: HandlerCallback
-    ) => {
-        let success = false;
+//     validate: async (runtime: IAgentRuntime, message: Memory) => {
+//         return true; // No extra validation needed
+//     },
 
-        // Initialize or update state
-        if (!state) {
-            state = (await runtime.composeState(message)) as State;
-        } else {
-            state = await runtime.updateRecentMessageState(state);
-        }
+//     handler: async (
+//         runtime: IAgentRuntime,
+//         message: Memory,
+//         state?: State,
+//         options?: { [key: string]: unknown },
+//         callback?: HandlerCallback
+//     ) => {
+//         let success = false;
 
-        // Generate content based on template
-        const context = composeContext({
-            state,
-            template: confiPumpTemplate,
-        });
+//         // Initialize or update state
+//         if (!state) {
+//             state = (await runtime.composeState(message)) as State;
+//         } else {
+//             state = await runtime.updateRecentMessageState(state);
+//         }
 
-        const content = await generateObject({
-            runtime,
-            context,
-            modelClass: ModelClass.LARGE,
-            schema: PumpSchema,
-        });
+//         // Generate content based on template
+//         const context = composeContext({
+//             state,
+//             template: confiPumpTemplate,
+//         });
 
-        if (!isPumpContent(content.object)) {
-            throw new Error("Invalid content");
-        }
+//         const content = await generateObject({
+//             runtime,
+//             context,
+//             modelClass: ModelClass.LARGE,
+//             schema: PumpSchema,
+//         });
 
-        // Setup clients and account
-        const rpcUrl = runtime.getSetting("CONFLUX_ESPACE_RPC_URL");
-        const account = privateKeyToAccount(
-            runtime.getSetting("CONFLUX_ESPACE_PRIVATE_KEY") as `0x${string}`
-        );
-        const walletClient = createWalletClient({
-            transport: http(rpcUrl),
-        });
+//         if (!isPumpContent(content.object)) {
+//             throw new Error("Invalid content");
+//         }
 
-        const contentObject = content.object;
-        let data: any;
-        let value: bigint;
+//         // Setup clients and account
+//         const rpcUrl = runtime.getSetting("CONFLUX_ESPACE_RPC_URL");
+//         const account = privateKeyToAccount(
+//             runtime.getSetting("CONFLUX_ESPACE_PRIVATE_KEY") as `0x${string}`
+//         );
+//         const walletClient = createWalletClient({
+//             transport: http(rpcUrl),
+//         });
 
-        try {
-            // Handle different action types
-            switch (contentObject.action) {
-                case "CREATE_TOKEN":
-                    if (!isPumpCreateContent(contentObject)) {
-                        throw new Error("Invalid content");
-                    }
-                    elizaLogger.debug(
-                        "creating: ",
-                        contentObject.params.name,
-                        contentObject.params.symbol,
-                        contentObject.params.description
-                    );
-                    data = encodeFunctionData({
-                        abi: MEMEABI,
-                        functionName: "newToken",
-                        args: [
-                            contentObject.params.name,
-                            contentObject.params.symbol,
-                            contentObject.params.description,
-                        ],
-                    });
-                    value = parseEther("10");
-                    break;
+//         const contentObject = content.object;
+//         let data: any;
+//         let value: bigint;
 
-                case "BUY_TOKEN":
-                    if (!isPumpBuyContent(contentObject)) {
-                        throw new Error("Invalid content");
-                    }
-                    value = parseUnits(contentObject.params.value.toString(), 18);
-                    elizaLogger.debug("buying: ", contentObject.params.tokenAddress, value);
-                    data = encodeFunctionData({
-                        abi: MEMEABI,
-                        functionName: "buy",
-                        args: [
-                            contentObject.params.tokenAddress as `0x${string}`,
-                            account.address,
-                            0n,
-                            false,
-                        ],
-                    });
-                    break;
+//         try {
+//             // Handle different action types
+//             switch (contentObject.action) {
+//                 case "CREATE_TOKEN":
+//                     if (!isPumpCreateContent(contentObject)) {
+//                         throw new Error("Invalid content");
+//                     }
+//                     elizaLogger.debug(
+//                         "creating: ",
+//                         contentObject.params.name,
+//                         contentObject.params.symbol,
+//                         contentObject.params.description
+//                     );
+//                     data = encodeFunctionData({
+//                         abi: MEMEABI,
+//                         functionName: "newToken",
+//                         args: [
+//                             contentObject.params.name,
+//                             contentObject.params.symbol,
+//                             contentObject.params.description,
+//                         ],
+//                     });
+//                     value = parseEther("10");
+//                     break;
 
-                case "SELL_TOKEN":
-                    if (!isPumpSellContent(contentObject)) {
-                        throw new Error("Invalid content");
-                    }
-                    const tokenAddress = getAddress(
-                        contentObject.params.tokenAddress as `0x${string}`
-                    );
-                    elizaLogger.debug(
-                        "selling: ",
-                        tokenAddress,
-                        account.address,
-                        contentObject.params.value
-                    );
-                    const amountUnits = parseUnits(contentObject.params.value.toString(), 18);
+//                 case "BUY_TOKEN":
+//                     if (!isPumpBuyContent(contentObject)) {
+//                         throw new Error("Invalid content");
+//                     }
+//                     value = parseUnits(contentObject.params.value.toString(), 18);
+//                     elizaLogger.debug("buying: ", contentObject.params.tokenAddress, value);
+//                     data = encodeFunctionData({
+//                         abi: MEMEABI,
+//                         functionName: "buy",
+//                         args: [
+//                             contentObject.params.tokenAddress as `0x${string}`,
+//                             account.address,
+//                             0n,
+//                             false,
+//                         ],
+//                     });
+//                     break;
 
-                    await ensureAllowance(
-                        walletClient,
-                        rpcUrl,
-                        account,
-                        tokenAddress as `0x${string}`,
-                        runtime.getSetting("CONFLUX_MEME_CONTRACT_ADDRESS") as `0x${string}`,
-                        amountUnits
-                    );
+//                 case "SELL_TOKEN":
+//                     if (!isPumpSellContent(contentObject)) {
+//                         throw new Error("Invalid content");
+//                     }
+//                     const tokenAddress = getAddress(
+//                         contentObject.params.tokenAddress as `0x${string}`
+//                     );
+//                     elizaLogger.debug(
+//                         "selling: ",
+//                         tokenAddress,
+//                         account.address,
+//                         contentObject.params.value
+//                     );
+//                     const amountUnits = parseUnits(contentObject.params.value.toString(), 18);
 
-                    data = encodeFunctionData({
-                        abi: MEMEABI,
-                        functionName: "sell",
-                        args: [tokenAddress, amountUnits, 0n],
-                    });
-                    value = 0n;
-                    break;
-            }
+//                     await ensureAllowance(
+//                         walletClient,
+//                         rpcUrl,
+//                         account,
+//                         tokenAddress as `0x${string}`,
+//                         runtime.getSetting("CONFLUX_MEME_CONTRACT_ADDRESS") as `0x${string}`,
+//                         amountUnits
+//                     );
 
-            // Simulate and execute transaction
-            const publicClient = createPublicClient({
-                transport: http(rpcUrl),
-                chain: confluxESpaceTestnet,
-            });
+//                     data = encodeFunctionData({
+//                         abi: MEMEABI,
+//                         functionName: "sell",
+//                         args: [tokenAddress, amountUnits, 0n],
+//                     });
+//                     value = 0n;
+//                     break;
+//             }
 
-            const memeContractAddress = runtime.getSetting(
-                "CONFLUX_MEME_CONTRACT_ADDRESS"
-            ) as `0x${string}`;
+//             // Simulate and execute transaction
+//             const publicClient = createPublicClient({
+//                 transport: http(rpcUrl),
+//                 chain: confluxESpaceTestnet,
+//             });
 
-            const simulate = await publicClient.call({
-                to: memeContractAddress,
-                data,
-                value,
-                account,
-            });
-            elizaLogger.debug("simulate: ", simulate);
+//             const memeContractAddress = runtime.getSetting(
+//                 "CONFLUX_MEME_CONTRACT_ADDRESS"
+//             ) as `0x${string}`;
 
-            const hash = await walletClient.sendTransaction({
-                account,
-                to: memeContractAddress,
-                data,
-                chain: confluxESpaceTestnet,
-                kzg: null,
-                value,
-            });
+//             const simulate = await publicClient.call({
+//                 to: memeContractAddress,
+//                 data,
+//                 value,
+//                 account,
+//             });
+//             elizaLogger.debug("simulate: ", simulate);
 
-            success = true;
+//             const hash = await walletClient.sendTransaction({
+//                 account,
+//                 to: memeContractAddress,
+//                 data,
+//                 chain: confluxESpaceTestnet,
+//                 kzg: null,
+//                 value,
+//             });
 
-            if (callback) {
-                callback({
-                    text: `Perform the action successfully: ${content.object.action}: ${hash}`,
-                    content: content.object,
-                });
-            }
-        } catch (error) {
-            elizaLogger.error(`Error performing the action: ${error}`);
-            if (callback) {
-                callback({
-                    text: `Failed to perform the action: ${content.object.action}: ${error}`,
-                });
-            }
-        }
+//             success = true;
 
-        return success;
-    },
-};
+//             if (callback) {
+//                 callback({
+//                     text: `Perform the action successfully: ${content.object.action}: ${hash}`,
+//                     content: content.object,
+//                 });
+//             }
+//         } catch (error) {
+//             elizaLogger.error(`Error performing the action: ${error}`);
+//             if (callback) {
+//                 callback({
+//                     text: `Failed to perform the action: ${content.object.action}: ${error}`,
+//                 });
+//             }
+//         }
+
+//         return success;
+//     },
+// };

@@ -1,14 +1,30 @@
 import { Provider, IAgentRuntime, Memory, State, elizaLogger } from "@elizaos/core";
 
 /**
+ * Interface for the data service
+ */
+interface DataService {
+    fetchData: () => Promise<unknown>;
+    // Add other methods the service needs
+}
+
+/**
+ * Interface for the data manager
+ */
+interface DataManager {
+    formatToText: () => string;
+    // Add other methods the data manager needs
+}
+
+/**
  * Configuration interface for the provider
  * This is an example using token provider configuration
  */
 interface ProviderConfig {
     // Example: Service for fetching token prices/info
-    dataService?: any;
+    dataService?: DataService;
     // Example: Service for managing data
-    dataManager?: any;
+    dataManager?: DataManager;
     // Cache duration in seconds
     cacheDuration?: number;
 }

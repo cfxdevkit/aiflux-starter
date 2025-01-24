@@ -1,5 +1,5 @@
 import { elizaLogger } from "@elizaos/core";
-import { FormattedPool, PoolsResponse, TokenInfo } from "./types";
+import { FormattedPool, PoolsResponse, TokenInfo, Pool } from "./types";
 
 export class GeckoTerminal {
     private readonly BASE_URL = "https://api.geckoterminal.com/api/v2";
@@ -72,7 +72,7 @@ export class GeckoTerminal {
         );
     }
 
-    public formatPool(pool: any): FormattedPool {
+    public formatPool(pool: Pool): FormattedPool {
         elizaLogger.debug(`Formatting pool data for: ${pool.attributes.name}`);
         const formattedPool = {
             name: pool.attributes.name,
