@@ -348,20 +348,46 @@ export class CoreScanner {
     }
 
     // Block statistics methods
-    async getBlockBaseFeeStats() {
-        return this.getBasicStats("/statistics/block/base-fee");
+    async getBlockBaseFeeStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting block base fee stats");
+        return this.getBasicStats("/statistics/block/base-fee", params);
     }
 
-    async getBlockAvgPriorityFeeStats() {
-        return this.getBasicStats("/statistics/block/avg-priority-fee");
+    async getBlockAvgPriorityFeeStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting block average priority fee stats");
+        return this.getBasicStats("/statistics/block/avg-priority-fee", params);
     }
 
-    async getBlockGasUsedStats() {
-        return this.getBasicStats("/statistics/block/gas-used");
+    async getBlockGasUsedStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting block gas used stats");
+        return this.getBasicStats("/statistics/block/gas-used", params);
     }
 
-    async getBlockTxsByTypeStats() {
-        return this.getBasicStats("/statistics/block/txs-by-type");
+    async getBlockTxsByTypeStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting block transactions by type stats");
+        return this.getBasicStats("/statistics/block/txs-by-type", params);
+    }
+
+    // Reward statistics methods
+    async getPowRewardStats(params: StatsParams & { intervalType: "hour" | "day" | "month" }) {
+        elizaLogger.debug("Getting PoW reward stats");
+        return this.getBasicStats("/statistics/reward/pow", params);
+    }
+
+    async getPosRewardStats(params: StatsParams & { intervalType: "hour" | "day" | "month" }) {
+        elizaLogger.debug("Getting PoS reward stats");
+        return this.getBasicStats("/statistics/reward/pos", params);
+    }
+
+    // Burnt statistics methods
+    async getBurntFeeStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting burnt fee stats");
+        return this.getBasicStats("/statistics/burnt/fee", params);
+    }
+
+    async getBurntRateStats(params: StatsParams = {}) {
+        elizaLogger.debug("Getting burnt rate stats");
+        return this.getBasicStats("/statistics/burnt/rate", params);
     }
 
     // Supply statistics

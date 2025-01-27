@@ -109,17 +109,38 @@ async function demonstrateCoreScannerUsage() {
         console.log("Token Unique Participant Stats:", tokenUniqueParticipantStats);
 
         console.log("\n=== Block Statistics Methods ===");
-        const blockBaseFeeStats = await mainnetScanner.getBlockBaseFeeStats();
+        const blockBaseFeeStats = await mainnetScanner.getBlockBaseFeeStats(statsParams);
         console.log("Block Base Fee Stats:", blockBaseFeeStats);
 
-        const blockAvgPriorityFeeStats = await mainnetScanner.getBlockAvgPriorityFeeStats();
+        const blockAvgPriorityFeeStats =
+            await mainnetScanner.getBlockAvgPriorityFeeStats(statsParams);
         console.log("Block Avg Priority Fee Stats:", blockAvgPriorityFeeStats);
 
-        const blockGasUsedStats = await mainnetScanner.getBlockGasUsedStats();
+        const blockGasUsedStats = await mainnetScanner.getBlockGasUsedStats(statsParams);
         console.log("Block Gas Used Stats:", blockGasUsedStats);
 
-        const blockTxsByTypeStats = await mainnetScanner.getBlockTxsByTypeStats();
+        const blockTxsByTypeStats = await mainnetScanner.getBlockTxsByTypeStats(statsParams);
         console.log("Block Txs By Type Stats:", blockTxsByTypeStats);
+
+        console.log("\n=== Reward Statistics Methods ===");
+        const powRewardStats = await mainnetScanner.getPowRewardStats({
+            ...statsParams,
+            intervalType: "hour",
+        });
+        console.log("PoW Reward Stats:", powRewardStats);
+
+        const posRewardStats = await mainnetScanner.getPosRewardStats({
+            ...statsParams,
+            intervalType: "hour",
+        });
+        console.log("PoS Reward Stats:", posRewardStats);
+
+        console.log("\n=== Burnt Statistics Methods ===");
+        const burntFeeStats = await mainnetScanner.getBurntFeeStats(statsParams);
+        console.log("Burnt Fee Stats:", burntFeeStats);
+
+        const burntRateStats = await mainnetScanner.getBurntRateStats(statsParams);
+        console.log("Burnt Rate Stats:", burntRateStats);
 
         console.log("\n=== Supply Statistics ===");
         const supplyStats = await mainnetScanner.getSupplyStats();
