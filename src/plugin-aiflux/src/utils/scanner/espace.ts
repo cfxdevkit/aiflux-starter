@@ -1,90 +1,17 @@
 import { elizaLogger } from "@elizaos/core";
 import { isAddress } from "viem";
 import { ConfluxTarget } from "../../config/types";
-
-// API Response types
-export interface ESpaceApiResponse<T> {
-    status: string;
-    message: string;
-    result: T;
-}
-
-// Contract types
-export interface ContractABIData {
-    abi: string;
-}
-
-export interface ContractSourceData {
-    sourceCode: string;
-    abi: string;
-    contractName: string;
-    compiler: string;
-    optimizationUsed: boolean;
-    runs: number;
-    constructorArguments: string;
-    evmVersion: string;
-    library: string;
-    licenseType: string;
-    proxy: string;
-    implementation: string;
-    swarmSource: string;
-}
-
-export type ContractABIResponse = ContractABIData;
-export type ContractSourceResponse = ContractSourceData;
-
-// Token types
-export interface TokenData {
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: number;
-    iconUrl?: string;
-    price?: number;
-    totalSupply?: string;
-    transferCount?: number;
-    holderCount?: number;
-    type?: string;
-    amount?: string;
-    contract?: string;
-    priceInUSDT?: string;
-    quoteUrl?: string;
-}
-
-export interface TokenListResponse {
-    list: TokenData[];
-    total: number;
-}
-
-interface StatItem {
-    statTime: string;
-    [key: string]: string | number;
-}
-
-interface StatsResponse {
-    total: number;
-    list: StatItem[];
-}
-
-interface StatsParams extends Record<string, string | number | boolean> {
-    minTimestamp?: number;
-    maxTimestamp?: number;
-    sort?: "DESC" | "ASC";
-    skip?: number;
-    limit?: number;
-    intervalType?: "min" | "hour" | "day";
-}
-
-export type StatsPeriod = "24h" | "3d" | "7d";
-
-interface TopStatsResponse {
-    gasTotal?: string;
-    list: Array<{
-        address: string;
-        gas?: string;
-        [key: string]: string | undefined;
-    }>;
-}
+import {
+    ESpaceApiResponse,
+    ContractABIResponse,
+    ContractSourceResponse,
+    TokenData,
+    TokenListResponse,
+    ESpaceStatsResponse,
+    ESpaceStatsParams,
+    StatsPeriod,
+    ESpaceTopStatsResponse,
+} from "./types";
 
 export class ESpaceScanner {
     protected baseUrl: string;
@@ -101,7 +28,7 @@ export class ESpaceScanner {
     protected async fetchApi<T>(
         endpoint: string,
         params: Record<string, string | number | boolean> = {}
-    ): Promise<{ status: string; message: string; result: T }> {
+    ): Promise<ESpaceApiResponse<T>> {
         try {
             let url: URL;
             if (endpoint === "/api") {
@@ -153,7 +80,7 @@ export class ESpaceScanner {
         return Math.floor(now / 1000) - 24 * 60 * 60;
     };
 
-    protected async getBasicStats<T>(endpoint: string, params: StatsParams = {}) {
+    protected async getBasicStats<T>(endpoint: string, params: ESpaceStatsParams = {}) {
         elizaLogger.debug(`Fetching basic stats for endpoint: ${endpoint}`, params);
 
         const fetchParams = {
@@ -244,55 +171,67 @@ export class ESpaceScanner {
     }
 
     // Statistics methods
-    async getActiveAccountStats(params: StatsParams = {}) {
+    async getActiveAccountStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting active account stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/account/active", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/account/active",
+            params
+        );
         return response.result;
     }
 
-    async getCfxHolderStats(params: StatsParams = {}) {
+    async getCfxHolderStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting CFX holder stats");
-        const response = await this.fetchApi<StatsResponse>(
+        const response = await this.fetchApi<ESpaceStatsResponse>(
             "/statistics/account/cfx/holder",
             params
         );
         return response.result;
     }
 
-    async getAccountGrowthStats(params: StatsParams = {}) {
+    async getAccountGrowthStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting account growth stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/account/growth", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/account/growth",
+            params
+        );
         return response.result;
     }
 
-    async getContractStats(params: StatsParams = {}) {
+    async getContractStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting contract stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/contract", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>("/statistics/contract", params);
         return response.result;
     }
 
-    async getTransactionStats(params: StatsParams = {}) {
+    async getTransactionStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting transaction stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/transaction", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/transaction",
+            params
+        );
         return response.result;
     }
 
-    async getCfxTransferStats(params: StatsParams = {}) {
+    async getCfxTransferStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting CFX transfer stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/cfx/transfer", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/cfx/transfer",
+            params
+        );
         return response.result;
     }
 
-    async getTpsStats(params: StatsParams = {}) {
+    async getTpsStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting TPS stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/tps", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>("/statistics/tps", params);
         return response.result;
     }
 
     // Top statistics methods
     async getTopGasUsed(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top gas used stats");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/gas/used", {
+        const response = await this.fetchApi<ESpaceTopStatsResponse>("/statistics/top/gas/used", {
             spanType,
         });
         return response.result;
@@ -300,7 +239,7 @@ export class ESpaceScanner {
 
     async getTopTransactionSenders(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top transaction senders");
-        const response = await this.fetchApi<TopStatsResponse>(
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
             "/statistics/top/transaction/sender",
             { spanType }
         );
@@ -309,7 +248,7 @@ export class ESpaceScanner {
 
     async getTopTransactionReceivers(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top transaction receivers");
-        const response = await this.fetchApi<TopStatsResponse>(
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
             "/statistics/top/transaction/receiver",
             { spanType }
         );
@@ -318,7 +257,7 @@ export class ESpaceScanner {
 
     async getTopCfxSenders(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top CFX senders");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/cfx/sender", {
+        const response = await this.fetchApi<ESpaceTopStatsResponse>("/statistics/top/cfx/sender", {
             spanType,
         });
         return response.result;
@@ -326,39 +265,51 @@ export class ESpaceScanner {
 
     async getTopCfxReceivers(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top CFX receivers");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/cfx/receiver", {
-            spanType,
-        });
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
+            "/statistics/top/cfx/receiver",
+            {
+                spanType,
+            }
+        );
         return response.result;
     }
 
     async getTopTokenTransfers(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top token transfers");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/token/transfer", {
-            spanType,
-        });
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
+            "/statistics/top/token/transfer",
+            {
+                spanType,
+            }
+        );
         return response.result;
     }
 
     async getTopTokenSenders(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top token senders");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/token/sender", {
-            spanType,
-        });
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
+            "/statistics/top/token/sender",
+            {
+                spanType,
+            }
+        );
         return response.result;
     }
 
     async getTopTokenReceivers(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top token receivers");
-        const response = await this.fetchApi<TopStatsResponse>("/statistics/top/token/receiver", {
-            spanType,
-        });
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
+            "/statistics/top/token/receiver",
+            {
+                spanType,
+            }
+        );
         return response.result;
     }
 
     async getTopTokenParticipants(spanType: StatsPeriod) {
         elizaLogger.debug("Getting top token participants");
-        const response = await this.fetchApi<TopStatsResponse>(
+        const response = await this.fetchApi<ESpaceTopStatsResponse>(
             "/statistics/top/token/participant",
             { spanType }
         );
@@ -366,36 +317,42 @@ export class ESpaceScanner {
     }
 
     // Token statistics methods
-    async getTokenHolderStats(contract: string, params: StatsParams = {}) {
+    async getTokenHolderStats(contract: string, params: ESpaceStatsParams = {}) {
         elizaLogger.debug(`Getting token holder stats for contract ${contract}`);
-        const response = await this.fetchApi<StatsResponse>("/statistics/token/holder", {
+        const response = await this.fetchApi<ESpaceStatsResponse>("/statistics/token/holder", {
             contract,
             ...params,
         });
         return response.result;
     }
 
-    async getTokenUniqueSenderStats(contract: string, params: StatsParams = {}) {
+    async getTokenUniqueSenderStats(contract: string, params: ESpaceStatsParams = {}) {
         elizaLogger.debug(`Getting token unique sender stats for contract ${contract}`);
-        const response = await this.fetchApi<StatsResponse>("/statistics/token/unique/sender", {
-            contract,
-            ...params,
-        });
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/token/unique/sender",
+            {
+                contract,
+                ...params,
+            }
+        );
         return response.result;
     }
 
-    async getTokenUniqueReceiverStats(contract: string, params: StatsParams = {}) {
+    async getTokenUniqueReceiverStats(contract: string, params: ESpaceStatsParams = {}) {
         elizaLogger.debug(`Getting token unique receiver stats for contract ${contract}`);
-        const response = await this.fetchApi<StatsResponse>("/statistics/token/unique/receiver", {
-            contract,
-            ...params,
-        });
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/token/unique/receiver",
+            {
+                contract,
+                ...params,
+            }
+        );
         return response.result;
     }
 
-    async getTokenUniqueParticipantStats(contract: string, params: StatsParams = {}) {
+    async getTokenUniqueParticipantStats(contract: string, params: ESpaceStatsParams = {}) {
         elizaLogger.debug(`Getting token unique participant stats for contract ${contract}`);
-        const response = await this.fetchApi<StatsResponse>(
+        const response = await this.fetchApi<ESpaceStatsResponse>(
             "/statistics/token/unique/participant",
             {
                 contract,
@@ -406,30 +363,36 @@ export class ESpaceScanner {
     }
 
     // Block statistics methods
-    async getBlockBaseFeeStats(params: StatsParams = {}) {
+    async getBlockBaseFeeStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting block base fee stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/block/base-fee", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/block/base-fee",
+            params
+        );
         return response.result;
     }
 
-    async getBlockAvgPriorityFeeStats(params: StatsParams = {}) {
+    async getBlockAvgPriorityFeeStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting block average priority fee stats");
-        const response = await this.fetchApi<StatsResponse>(
+        const response = await this.fetchApi<ESpaceStatsResponse>(
             "/statistics/block/avg-priority-fee",
             params
         );
         return response.result;
     }
 
-    async getBlockGasUsedStats(params: StatsParams = {}) {
+    async getBlockGasUsedStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting block gas used stats");
-        const response = await this.fetchApi<StatsResponse>("/statistics/block/gas-used", params);
+        const response = await this.fetchApi<ESpaceStatsResponse>(
+            "/statistics/block/gas-used",
+            params
+        );
         return response.result;
     }
 
-    async getBlockTxsByTypeStats(params: StatsParams = {}) {
+    async getBlockTxsByTypeStats(params: ESpaceStatsParams = {}) {
         elizaLogger.debug("Getting block transactions by type stats");
-        const response = await this.fetchApi<StatsResponse>(
+        const response = await this.fetchApi<ESpaceStatsResponse>(
             "/statistics/block/txs-by-type",
             params
         );

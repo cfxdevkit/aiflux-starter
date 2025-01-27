@@ -1,76 +1,16 @@
 import { elizaLogger } from "@elizaos/core";
 import { isAddress } from "cive/utils";
 import { ConfluxTarget } from "../../config/types";
-
-// API Response types
-export interface ApiResponse<T> {
-    code: number;
-    message: string;
-    data: T;
-}
-
-// Contract types
-export interface ContractABIData {
-    abi: string;
-}
-
-export interface ContractSourceData {
-    sourceCode: string;
-    abi: string;
-    contractName: string;
-    compiler: string;
-    optimizationUsed: boolean;
-    runs: number;
-    constructorArguments: string;
-    evmVersion: string;
-    library: string;
-    licenseType: string;
-    proxy: string;
-    implementation: string;
-    swarmSource: string;
-}
-
-export type ContractABIResponse = ContractABIData;
-export type ContractSourceResponse = ContractSourceData;
-
-// Token types
-export interface TokenData {
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: number;
-    iconUrl?: string;
-    price?: number;
-    totalSupply?: string;
-    transferCount?: number;
-    holderCount?: number;
-    type?: string;
-    amount?: string;
-    contract?: string;
-    priceInUSDT?: string;
-    quoteUrl?: string;
-}
-
-export interface TokenListResponse {
-    list: TokenData[];
-    total: number;
-}
-
-export interface StatsParams {
-    minTimestamp?: number;
-    maxTimestamp?: number;
-    sort?: "DESC" | "ASC";
-    skip?: number;
-    limit?: number;
-    intervalType?: "min" | "hour" | "day";
-}
-
-export type StatsPeriod = "24h" | "3d" | "7d";
-
-export interface SupplyResponse {
-    totalSupply: string;
-    circulatingSupply: string;
-}
+import {
+    ApiResponse,
+    ContractABIResponse,
+    ContractSourceResponse,
+    TokenData,
+    TokenListResponse,
+    StatsParams,
+    StatsPeriod,
+    SupplyResponse,
+} from "./types";
 
 export class CoreScanner {
     protected baseUrl: string;
