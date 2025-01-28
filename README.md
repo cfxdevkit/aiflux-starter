@@ -1,94 +1,142 @@
-# Eliza
+# AIFlux Starter Kit
 
-## Edit the character files
+A powerful starter kit for building AI-powered blockchain applications on the Conflux network. This project serves as a foundation that you can customize and expand according to your needs.
 
-Open `src/character.ts` to modify the default character. Uncomment and edit.
+## Overview
 
-### Custom characters
+AIFlux Starter Kit is designed to help developers quickly bootstrap AI-enhanced blockchain applications. It provides a robust foundation with:
 
-To load custom characters instead:
+- Dual-network support (Conflux Core & eSpace)
+- Built-in market analysis system
+- Token management capabilities
+- Extensible architecture for custom features
 
-- Use `pnpm start --characters="path/to/your/character.json"`
-- Multiple character files can be loaded simultaneously
+## 🚀 Quick Start
 
-### Add clients
+### Prerequisites
 
+- Node.js v22 or higher
+- pnpm package manager
+- Docker (optional, for containerized deployment)
+
+### Basic Setup
+
+1. Clone the repository:
+
+```bash
+git clone <your-repo-url>
+cd aiflux-starter
 ```
-# in character.ts
-clients: [Clients.TWITTER, Clients.DISCORD],
 
-# in character.json
-clients: ["twitter", "discord"]
-```
-
-## Duplicate the .env.example template
+2. Create your environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-\* Fill out the .env file with your own values.
+3. Configure your environment variables:
 
-### Add login credentials and keys to .env
+```env
+# Required Configuration
+DISCORD_APPLICATION_ID="your-discord-app-id"
+DISCORD_API_TOKEN="your-discord-token"
+OPENROUTER_API_KEY="your-openrouter-key"
+TWITTER_USERNAME="your-twitter-username"
+TWITTER_PASSWORD="your-twitter-password"
+TWITTER_EMAIL="your-twitter-email"
 
+# Conflux Network Configuration
+CONFLUX_TARGET=mainnet|testnet
+CONFLUX_MNEMONIC=your-mnemonic                # Option 1: Use mnemonic
+# OR
+CONFLUX_CORE_PRIVATE_KEY=your-private-key     # Option 2a: Core network key
+CONFLUX_ESPACE_PRIVATE_KEY=your-private-key   # Option 2b: eSpace network key
 ```
-DISCORD_APPLICATION_ID="discord-application-id"
-DISCORD_API_TOKEN="discord-api-token"
-...
-OPENROUTER_API_KEY="sk-xx-xx-xxx"
-...
-TWITTER_USERNAME="username"
-TWITTER_PASSWORD="password"
-TWITTER_EMAIL="your@email.com"
-```
 
-## Install dependencies and start your agent
+4. Install dependencies and start:
 
 ```bash
-pnpm i && pnpm start
+pnpm install
+pnpm build
+pnpm start
 ```
 
-Note: this requires node to be at least version 22 when you install packages and run the agent.
+## 🔧 Core Features
 
-## Run with Docker
+### 1. Dual Network Support
 
-### Build and run Docker Compose (For x86_64 architecture)
+- Seamless interaction with both Conflux Core and eSpace networks
+- Automatic wallet management for both networks
+- Cross-space bridge operations
 
-#### Edit the docker-compose.yaml file with your environment variables
+### 2. Market Analysis System
 
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
+- Real-time market data analysis
+- TVL (Total Value Locked) tracking
+- Price and volume analytics
+- Trading pressure analysis
+- Pool age and performance metrics
+
+### 3. Token Management
+
+- Token list management
+- Token transfers
+- Token swaps on eSpace
+- Market analysis integration
+
+### 4. Extensible Architecture
+
+The starter kit is designed to be extended. Key extension points include:
+
+- Custom character development
+- New network integrations
+- Additional analysis metrics
+- Custom actions and evaluators
+
+## 📚 Documentation
+
+Detailed documentation is available in the following locations:
+
+- [Technical Documentation](src/plugin-aiflux/TECHNICAL.md)
+- [Analysis System](src/plugin-aiflux/ANALYSIS_SYSTEM.md)
+
+## 🛠 Customization Guide
+
+### Adding Custom Characters
+
+1. Create a character file:
+
+```typescript
+// src/character.ts
+export const character = {
+    name: "Your Character",
+    description: "Character description",
+    clients: [Clients.TWITTER, Clients.DISCORD],
+    // Add more configuration
+};
 ```
 
-#### Run the image
+2. Or use JSON configuration:
 
 ```bash
-docker compose up
+pnpm start --characters="path/to/your/character.json"
 ```
 
-### Build the image with Mac M-Series or aarch64
+### Implementing Custom Features
 
-Make sure docker is running.
+1. Create new providers in `src/plugin-aiflux/src/providers/`
+2. Add custom actions in `src/plugin-aiflux/src/actions/`
+3. Extend evaluators in `src/plugin-aiflux/src/evaluators/`
 
-```bash
-# The --load flag ensures the built image is available locally
-docker buildx build --platform linux/amd64 -t eliza-starter:v1 --load .
-```
+## 🤝 Contributing
 
-#### Edit the docker-compose-image.yaml file with your environment variables
+Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
 
-```yaml
-services:
-    eliza:
-        environment:
-            - OPENROUTER_API_KEY=blahdeeblahblahblah
-```
+## 📄 License
 
-#### Run the image
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-```bash
-docker compose -f docker-compose-image.yaml up
-```
+## 🔗 Related Resources
+
+- [Conflux Network Documentation](https://developer.confluxnetwork.org/)
+- [ElizaOS Documentation](https://docs.eliza.os/)
