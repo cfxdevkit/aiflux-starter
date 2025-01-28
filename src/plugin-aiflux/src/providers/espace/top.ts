@@ -33,10 +33,10 @@ export function getEspaceTopGasUsedProvider(config: ValidatedConfig): Provider |
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top Gas Used data");
-                const stat = await confluxScan.getFormattedTopGasUsed();
+                const stat = (await confluxScan.getTopGasUsed()).formatted;
                 const statText = `Top Gas Users:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Top Gas Used data");
                 return statText;
             } catch (error) {
@@ -79,10 +79,10 @@ export function getEspaceTopCfxSendersProvider(config: ValidatedConfig): Provide
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top CFX Senders data");
-                const stat = await confluxScan.getFormattedTopCfxSenders();
+                const stat = (await confluxScan.getTopCfxSenders()).formatted;
                 const statText = `Top CFX Senders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Top CFX Senders data");
                 return statText;
             } catch (error) {
@@ -125,10 +125,10 @@ export function getEspaceTopCfxReceiversProvider(config: ValidatedConfig): Provi
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top CFX Receivers data");
-                const stat = await confluxScan.getFormattedTopCfxReceivers();
+                const stat = (await confluxScan.getTopCfxReceivers()).formatted;
                 const statText = `Top CFX Receivers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Top CFX Receivers data");
                 return statText;
             } catch (error) {
@@ -173,10 +173,10 @@ export function getEspaceTopTransactionSendersProvider(config: ValidatedConfig):
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top Transaction Senders data");
-                const stat = await confluxScan.getFormattedTopTransactionSenders();
+                const stat = (await confluxScan.getTopTransactionSenders()).formatted;
                 const statText = `Top Transaction Senders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug(
                     "[eSpaceProvider] Successfully cached Top Transaction Senders data"
                 );
@@ -223,10 +223,10 @@ export function getEspaceTopTransactionReceiversProvider(config: ValidatedConfig
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top Transaction Receivers data");
-                const stat = await confluxScan.getFormattedTopTransactionReceivers();
+                const stat = (await confluxScan.getTopTransactionReceivers()).formatted;
                 const statText = `Top Transaction Receivers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug(
                     "[eSpaceProvider] Successfully cached Top Transaction Receivers data"
                 );
@@ -271,10 +271,10 @@ export function getEspaceTopTokenParticipantsProvider(config: ValidatedConfig): 
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top Token Participants data");
-                const stat = await confluxScan.getFormattedTopTokenParticipants();
+                const stat = (await confluxScan.getTopTokenParticipants()).formatted;
                 const statText = `Top Token Participants:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug(
                     "[eSpaceProvider] Successfully cached Top Token Participants data"
                 );
@@ -319,10 +319,10 @@ export function getEspaceTopTokenTransfersProvider(config: ValidatedConfig): Pro
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Top Token Transfers data");
-                const stat = await confluxScan.getFormattedTopTokenTransfers();
+                const stat = (await confluxScan.getTopTokenTransfers()).formatted;
                 const statText = `Top Token Transfers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Top Token Transfers data");
                 return statText;
             } catch (error) {

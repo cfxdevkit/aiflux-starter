@@ -1,5 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
-import { ConfluxScanCore, ConfluxScanESpace } from "../confluxscan";
+import { CoreScannerWrapper } from "../scanner/CoreScannerWrapper";
+import { ESpaceScannerWrapper } from "../scanner/ESpaceScannerWrapper";
 import { GeckoTerminal } from "../geckoterminal";
 import { ConfluxTarget } from "./types";
 import { CoreWallet } from "../wallet/coreWallet";
@@ -11,8 +12,8 @@ import { DeFiLlama } from "../defillama";
 export interface ValidatedConfig {
     coreWallet?: CoreWallet;
     espaceWallet?: EspaceWallet;
-    coreConfluxScan?: ConfluxScanCore;
-    espaceConfluxScan?: ConfluxScanESpace;
+    coreConfluxScan?: CoreScannerWrapper;
+    espaceConfluxScan?: ESpaceScannerWrapper;
     geckoTerminal?: GeckoTerminal;
     tokenListManager?: TokenListManager;
     defiLlama?: DeFiLlama;
@@ -43,14 +44,18 @@ export async function validateConfig(
     elizaLogger.debug("Initializing ConfluxScan clients");
     const coreConfluxScanApiKey = getSetting("CONFLUX_CORE_CONFLUXSCAN_APIKEY");
     const coreConfluxScanHost = getSetting("CONFLUX_CORE_CONFLUXSCAN_HOST");
-    const coreConfluxScan = new ConfluxScanCore(coreConfluxScanApiKey, coreConfluxScanHost, target);
+    const coreConfluxScan = new CoreScannerWrapper(
+        target,
+        coreConfluxScanApiKey,
+        coreConfluxScanHost
+    );
 
     const espaceConfluxScanApiKey = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_APIKEY");
     const espaceConfluxScanHost = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_HOST");
-    const espaceConfluxScan = new ConfluxScanESpace(
+    const espaceConfluxScan = new ESpaceScannerWrapper(
+        target,
         espaceConfluxScanApiKey,
-        espaceConfluxScanHost,
-        target
+        espaceConfluxScanHost
     );
 
     // Initialize Core Wallet

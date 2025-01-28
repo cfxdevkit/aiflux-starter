@@ -15,8 +15,6 @@
         "dist"
     ],
     "dependencies": {
-        "@conflux-lib/openapi-sdk-core": "^1.0.0",
-        "@conflux-lib/openapi-sdk-evm": "^1.0.0",
         "@elizaos/core": "0.1.7",
         "@scure/bip32": "^1.6.1",
         "@scure/bip39": "^1.5.1",

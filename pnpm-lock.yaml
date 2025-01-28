@@ -119,12 +119,6 @@ importers:
 
   src/plugin-aiflux:
     dependencies:
-      '@conflux-lib/openapi-sdk-core':
-        specifier: ^1.0.0
-        version: 1.0.0
-      '@conflux-lib/openapi-sdk-evm':
-        specifier: ^1.0.0
-        version: 1.0.0
       '@elizaos/core':
         specifier: 0.1.7
         version: 0.1.7(@google-cloud/vertexai@1.9.2)(@langchain/core@0.3.30(openai@4.78.1(zod@3.24.1)))(axios@1.7.9)(react@19.0.0)(sswr@2.1.0(svelte@5.18.0))(svelte@5.18.0)(vue@3.5.13(typescript@5.6.3))
@@ -538,12 +532,6 @@ packages:
   '@cliqz/adblocker@1.34.0':
     resolution: {integrity: sha512-d7TeUl5t+TOMJe7/CRYtf+x6hbd8N25DtH7guQTIjjr3AFVortxiAIgNejGvVqy0by4eNByw+oVil15oqxz2Eg==}
     deprecated: This project has been renamed to @ghostery/adblocker. Install using @ghostery/adblocker instead
-
-  '@conflux-lib/openapi-sdk-core@1.0.0':
-    resolution: {integrity: sha512-rfGZwJa2Hveel9AdOCaEdi12VyZ0A5eWOjmKOo75R1TAxWEE61hOOygnj4fyhlxALUoxLl7ygOTZZZ7lh4O0bQ==}
-
-  '@conflux-lib/openapi-sdk-evm@1.0.0':
-    resolution: {integrity: sha512-3OIurNLufx2fZWJQv/xZVm31lYTrSeQrvslFULGWp1bztsG4k/2ePyg5UqU/MCRBNEJwX4dyGHSFLQaFJh7fYg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -6814,18 +6802,6 @@ snapshots:
       '@types/chrome': 0.0.278
       '@types/firefox-webext-browser': 120.0.4
       tldts-experimental: 6.1.71
-
-  '@conflux-lib/openapi-sdk-core@1.0.0':
-    dependencies:
-      axios: 0.27.2
-    transitivePeerDependencies:
-      - debug
-
-  '@conflux-lib/openapi-sdk-evm@1.0.0':
-    dependencies:
-      axios: 0.27.2
-    transitivePeerDependencies:
-      - debug
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:

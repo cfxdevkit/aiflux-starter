@@ -10,6 +10,10 @@
         "start:service:all": "pm2 start pnpm --name=\"all\" --restart-delay=3000 --max-restarts=10 -- run start:all",
         "stop:service:all": "pm2 stop all",
         "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+        "example:core": "node --loader ts-node/esm src/plugin-aiflux/examples/core-scanner-usage.ts",
+        "example:core:wrapper": "node --loader ts-node/esm src/plugin-aiflux/examples/core-scanner-wrapper-usage.ts",
+        "example:espace": "node --loader ts-node/esm src/plugin-aiflux/examples/espace-scanner-usage.ts",
+        "example:espace:wrapper": "node --loader ts-node/esm src/plugin-aiflux/examples/espace-scanner-wrapper-usage.ts",
         "lint": "eslint",
         "lint:fix": "eslint --fix"
     },

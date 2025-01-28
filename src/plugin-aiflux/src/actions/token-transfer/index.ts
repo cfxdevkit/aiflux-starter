@@ -110,7 +110,9 @@ async function executeTokenTransfer(
                 fromAddress,
             });
 
-            const tokens = await scanner.filterAccountTokens(fromAddress, tokenSymbol);
+            const tokens = (await scanner.getAccountTokens(fromAddress)).raw.filter(
+                (token) => token.symbol === tokenSymbol
+            );
 
             elizaLogger.debug("Token search results", {
                 operation: "TokenTransfer",
@@ -213,9 +215,9 @@ async function executeTokenTransfer(
             });
 
             // Wait for transaction confirmation
-            network === "core"
-                ? await config.coreWallet!.waitForTransaction(tx)
-                : await config.espaceWallet!.waitForTransaction(tx);
+            await (network === "core"
+                ? config.coreWallet!.waitForTransaction(tx)
+                : config.espaceWallet!.waitForTransaction(tx));
 
             elizaLogger.debug("Transaction confirmed, fetching final balance", {
                 operation: "TokenTransfer",

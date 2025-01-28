@@ -1,5 +1,12 @@
 import { elizaLogger } from "@elizaos/core";
-import { FormattedPool, PoolsResponse, TokenInfo, Pool } from "./types";
+import {
+    FormattedPool,
+    PoolsResponse,
+    TokenInfo,
+    Pool,
+    MultiTokenResponse,
+    MultiPoolResponse,
+} from "./types";
 
 export class GeckoTerminal {
     private readonly BASE_URL = "https://api.geckoterminal.com/api/v2";
@@ -94,7 +101,6 @@ export class GeckoTerminal {
             quoteTokenPriceUSD: pool.attributes.quote_token_price_usd,
             baseTokenPriceNative: pool.attributes.base_token_price_native_currency,
         };
-        elizaLogger.debug(`Pool formatted successfully: ${formattedPool.name}`);
         return formattedPool;
     }
 
@@ -123,15 +129,13 @@ export class GeckoTerminal {
      * Get detailed information about multiple tokens (up to 30 at a time)
      * @param tokenAddresses Array of token addresses
      */
-    public async getMultiTokenInfo(
-        tokenAddresses: string[]
-    ): Promise<{ data: { attributes: any }[] }> {
+    public async getMultiTokenInfo(tokenAddresses: string[]): Promise<MultiTokenResponse> {
         elizaLogger.debug(`Fetching info for ${tokenAddresses.length} tokens`);
         if (tokenAddresses.length > 30) {
             elizaLogger.error("Token address limit exceeded");
             throw new Error("Maximum of 30 token addresses allowed per request");
         }
-        return this.fetchData<{ data: { attributes: any }[] }>(
+        return this.fetchData<MultiTokenResponse>(
             `/networks/${this.NETWORK}/tokens/multi/${tokenAddresses.join(",")}`
         );
     }
@@ -140,9 +144,9 @@ export class GeckoTerminal {
      * Get detailed information about multiple pools
      * @param poolAddresses Array of pool addresses
      */
-    public async getMultiPoolInfo(poolAddresses: string[]): Promise<{ data: any[] }> {
+    public async getMultiPoolInfo(poolAddresses: string[]): Promise<MultiPoolResponse> {
         elizaLogger.debug(`Fetching info for ${poolAddresses.length} pools`);
-        return this.fetchData<{ data: any[] }>(
+        return this.fetchData<MultiPoolResponse>(
             `/networks/${this.NETWORK}/pools/multi/${poolAddresses.join(",")}`
         );
     }

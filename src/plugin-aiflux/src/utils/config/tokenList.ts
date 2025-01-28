@@ -1,6 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
 import { Address } from "viem";
-import { ConfluxScanESpace } from "../confluxscan";
+import { ESpaceScannerWrapper } from "../scanner/ESpaceScannerWrapper";
 import { GeckoTerminal } from "../geckoterminal";
 import { FormattedPool } from "../geckoterminal/types";
 import { TokenInfo, TokenList } from "./types";
@@ -102,7 +102,7 @@ export class TokenListManager {
 
     constructor(
         private geckoTerminal?: GeckoTerminal,
-        private confluxScanESpace?: ConfluxScanESpace,
+        private confluxScanESpace?: ESpaceScannerWrapper,
         private espaceWalletAddress?: Address,
         private minReserveUSD: number = 2000
     ) {}
@@ -132,7 +132,7 @@ export class TokenListManager {
         const BATCH_SIZE = 30;
 
         try {
-            const allPools = await this.geckoTerminal.getFormattedTopPools(10);
+            const allPools = await this.geckoTerminal.getFormattedTopPools(5);
 
             const uniqueTokenAddresses = Array.from(
                 new Set(allPools.flatMap((pool) => [pool.baseTokenAddress, pool.quoteTokenAddress]))
@@ -160,7 +160,7 @@ export class TokenListManager {
                         await delay(50);
                     }
                 } catch (error) {
-                    if ((error as any).status === 429) {
+                    if ((error as { status: number }).status === 429) {
                         elizaLogger.warn(
                             "Rate limit hit, waiting for 5 seconds before retrying..."
                         );
@@ -207,11 +207,11 @@ export class TokenListManager {
 
         const walletAddress = address || this.espaceWalletAddress;
         if (!walletAddress) return [];
-
+        elizaLogger.debug("Loading tokens from wallet:", walletAddress, this.confluxScanESpace);
         try {
-            const walletTokens = await this.confluxScanESpace.getAccountTokens(walletAddress);
+            const walletTokens = (await this.confluxScanESpace.getAccountTokens(walletAddress)).raw;
+            elizaLogger.debug("Wallet tokens:", walletTokens);
             const addedTokens: TokenInfo[] = [];
-
             for (const token of walletTokens) {
                 if (token.type === "ERC20") {
                     const tokenInfo: TokenInfo = {

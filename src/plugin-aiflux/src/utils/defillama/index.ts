@@ -14,6 +14,20 @@ interface TVLSummary {
     last12Months: TVLDataPoint[];
 }
 
+interface ChainTVLDataPoint {
+    date: number; // Unix timestamp
+    tvl: number;
+}
+
+interface ProtocolTVLDataPoint {
+    date: number; // Unix timestamp
+    totalLiquidityUSD: number;
+}
+
+interface ProtocolTVLResponse {
+    tvl: ProtocolTVLDataPoint[];
+}
+
 export class DeFiLlama {
     private readonly BASE_URL = "https://api.llama.fi";
 
@@ -29,7 +43,9 @@ export class DeFiLlama {
 
     public async getChainTVL(chain: string): Promise<TVLSummary> {
         try {
-            const historicalData = await this.fetchData<any>(`/v2/historicalChainTvl/${chain}`);
+            const historicalData = await this.fetchData<ChainTVLDataPoint[]>(
+                `/v2/historicalChainTvl/${chain}`
+            );
 
             if (!historicalData || !Array.isArray(historicalData)) {
                 elizaLogger.error("Invalid response format:", { historicalData });
@@ -93,7 +109,7 @@ export class DeFiLlama {
 
     public async getProtocolTVL(protocol: string): Promise<TVLSummary> {
         try {
-            const protocolData = await this.fetchData<any>(`/protocol/${protocol}`);
+            const protocolData = await this.fetchData<ProtocolTVLResponse>(`/protocol/${protocol}`);
 
             if (!protocolData || !protocolData.tvl || !Array.isArray(protocolData.tvl)) {
                 elizaLogger.error("Invalid protocol response format:", { protocolData });
@@ -105,11 +121,11 @@ export class DeFiLlama {
             yearAgo.setMonth(yearAgo.getMonth() - 12);
 
             const last12Months = protocolData.tvl
-                .filter((d: any) => {
+                .filter((d) => {
                     const date = new Date(d.date * 1000);
                     return date >= yearAgo;
                 })
-                .map((d: any) => ({
+                .map((d) => ({
                     date: new Date(d.date * 1000).toISOString().split("T")[0],
                     tvl: Number(d.totalLiquidityUSD || 0),
                 }))

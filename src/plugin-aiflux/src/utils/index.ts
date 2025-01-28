@@ -7,7 +7,8 @@ export { deriveCoreKey, deriveESpaceKey } from "./wallet/mnemonic";
 export { validateConfig, ValidatedConfig } from "./config/configValidator";
 
 // ConfluxScan exports
-export { ConfluxScanCore, ConfluxScanESpace } from "./confluxscan";
+export { CoreScannerWrapper } from "./scanner/CoreScannerWrapper";
+export { ESpaceScannerWrapper } from "./scanner/ESpaceScannerWrapper";
 
 // GeckoTerminal exports
 export { GeckoTerminal } from "./geckoterminal";

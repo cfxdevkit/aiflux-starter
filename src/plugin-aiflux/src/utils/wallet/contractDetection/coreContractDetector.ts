@@ -1,5 +1,11 @@
 import { Address, PublicClient, parseAbi } from "cive";
-import { ContractCheckResult, INTERFACE_IDS, commonMetadataAbi, nftSpecificAbi } from "../types";
+import {
+    ContractCheckResult,
+    INTERFACE_IDS,
+    commonMetadataAbi,
+    nftSpecificAbi,
+    ContractMetadata,
+} from "../types";
 import { isAddress, getAddress } from "cive/utils";
 import ERC20ABI from "../abi/erc20";
 
@@ -14,20 +20,20 @@ const coreSpecificAbi = [
 export class CoreContractDetector {
     constructor(private publicClient: PublicClient) {}
 
-    private async extractContractMetadata(address: Address) {
-        const metadata: Record<string, any> = {};
+    private async extractContractMetadata(address: Address): Promise<ContractMetadata> {
+        const metadata: ContractMetadata = {};
 
-        const safeCall = async <T extends { functionName: string }>(
-            functionName: T["functionName"],
+        const safeCall = async <T>(
+            functionName: string,
             abi: readonly unknown[] = commonMetadataAbi
-        ) => {
+        ): Promise<T | null> => {
             try {
                 const result = await this.publicClient.readContract({
                     address,
                     abi,
                     functionName,
                 });
-                return result;
+                return result as T;
             } catch {
                 return null;
             }
@@ -35,9 +41,9 @@ export class CoreContractDetector {
 
         // Extract basic metadata
         const [name, symbol, version] = await Promise.all([
-            safeCall("name"),
-            safeCall("symbol"),
-            safeCall("version"),
+            safeCall<string>("name"),
+            safeCall<string>("symbol"),
+            safeCall<string>("version"),
         ]);
 
         if (name) metadata.name = name;
@@ -46,8 +52,8 @@ export class CoreContractDetector {
 
         // Extract ownership and implementation details
         const [owner, implementation] = await Promise.all([
-            safeCall("owner"),
-            safeCall("implementation"),
+            safeCall<string>("owner"),
+            safeCall<string>("implementation"),
         ]);
 
         if (owner) metadata.owner = owner;
@@ -59,12 +65,12 @@ export class CoreContractDetector {
         // Extract URIs and configuration
         const [baseURI, contractURI, tokenURIPrefix, paused, maxSupply, maxSupplyAlt] =
             await Promise.all([
-                safeCall("baseURI"),
-                safeCall("contractURI"),
-                safeCall("tokenURIPrefix"),
-                safeCall("paused"),
-                safeCall("maxSupply"),
-                safeCall("MAX_SUPPLY"),
+                safeCall<string>("baseURI"),
+                safeCall<string>("contractURI"),
+                safeCall<string>("tokenURIPrefix"),
+                safeCall<boolean>("paused"),
+                safeCall<bigint>("maxSupply"),
+                safeCall<bigint>("MAX_SUPPLY"),
             ]);
 
         if (baseURI) metadata.baseURI = baseURI;
@@ -76,15 +82,15 @@ export class CoreContractDetector {
 
         // Extract NFT-specific details
         const [totalSupply, maxTokenId, maxTokens] = await Promise.all([
-            safeCall("totalSupply", nftSpecificAbi),
-            safeCall("maxTokenId", nftSpecificAbi),
-            safeCall("MAX_TOKENS", nftSpecificAbi),
+            safeCall<bigint>("totalSupply", nftSpecificAbi),
+            safeCall<bigint>("maxTokenId", nftSpecificAbi),
+            safeCall<bigint>("MAX_TOKENS", nftSpecificAbi),
         ]);
 
         const [mintPrice, mintingEnabled, provenanceHash] = await Promise.all([
-            safeCall("mintPrice", nftSpecificAbi),
-            safeCall("mintingEnabled", nftSpecificAbi),
-            safeCall("provenanceHash", nftSpecificAbi),
+            safeCall<bigint>("mintPrice", nftSpecificAbi),
+            safeCall<boolean>("mintingEnabled", nftSpecificAbi),
+            safeCall<string>("provenanceHash", nftSpecificAbi),
         ]);
 
         if (totalSupply) metadata.totalSupply = totalSupply.toString();
@@ -96,8 +102,8 @@ export class CoreContractDetector {
 
         // Extract Core-specific details
         const [isCrossSpace, isInternal] = await Promise.all([
-            safeCall("isCrossSpaceCall", coreSpecificAbi),
-            safeCall("isInternalContract", coreSpecificAbi),
+            safeCall<boolean>("isCrossSpaceCall", coreSpecificAbi),
+            safeCall<boolean>("isInternalContract", coreSpecificAbi),
         ]);
 
         if (isCrossSpace) metadata.isCrossSpaceCall = true;
@@ -105,7 +111,10 @@ export class CoreContractDetector {
 
         // Check for sponsorship
         try {
-            const sponsorInfo = await safeCall("sponsorInfo", coreSpecificAbi);
+            const sponsorInfo = await safeCall<[string, bigint, bigint]>(
+                "sponsorInfo",
+                coreSpecificAbi
+            );
             if (sponsorInfo) {
                 metadata.sponsorship = {
                     sponsor: sponsorInfo[0],
@@ -160,13 +169,15 @@ export class CoreContractDetector {
             await this.detectContractType(checksummedAddress, result);
 
             return result;
-        } catch (error: any) {
+        } catch (error) {
             // Handle specific RPC errors
-            if (error.message.includes("network")) {
-                throw new Error("Network error: Please check your connection");
-            }
-            if (error.message.includes("rate limit")) {
-                throw new Error("RPC rate limit exceeded: Please try again later");
+            if (error instanceof Error) {
+                if (error.message.includes("network")) {
+                    throw new Error("Network error: Please check your connection");
+                }
+                if (error.message.includes("rate limit")) {
+                    throw new Error("RPC rate limit exceeded: Please try again later");
+                }
             }
             throw error;
         }

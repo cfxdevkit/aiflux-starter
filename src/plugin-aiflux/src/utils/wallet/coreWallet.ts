@@ -47,6 +47,9 @@ export class CoreWallet {
             chain,
             transport,
         });
+
+        // Initialize the contract detector
+        this.contractDetector = new CoreContractDetector(this.publicClient);
     }
 
     getPublicClient(): PublicClient {

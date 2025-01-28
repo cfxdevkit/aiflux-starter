@@ -16,13 +16,14 @@ import {
     AddressInfo,
     ContractInfo,
     AccountInfo,
+    ABIItem,
+    TokenData,
 } from "./types";
 import { addressLookupTemplate } from "./template";
 import { addressLookupExamples } from "./examples";
-import { isAddress } from "cive/utils";
+import { isAddress, getAddress as getCoreAddress } from "cive/utils";
 import { ContractCheckResult } from "../../utils/wallet/types";
-import { Address as CoreAddress } from "cive";
-import { Address as EspaceAddress } from "viem";
+import { getAddress as getEspaceAddress } from "viem";
 import {
     formatBaseAddressInfo,
     formatContractDetails,
@@ -97,68 +98,41 @@ async function executeAddressLookup(
             });
 
             // Contract address
-            let contractAbi;
+            let contractAbi: ABIItem[] | null = null;
+            let isVerified = false;
+
             try {
-                const abiResponse = (await scanner.getContractABI(params.address)) as any;
-                elizaLogger.debug("ABI fetch response received", {
-                    operation: "AddressLookup",
-                    hasResult: !!abiResponse?.result || !!abiResponse?.data,
-                    status: abiResponse?.status,
-                    code: abiResponse?.code,
-                });
-
-                // Parse ABI from response - handle both Core and eSpace formats
-                let abiString = null;
-                if (abiResponse?.status === "1" && abiResponse?.result) {
-                    // Core network format
-                    abiString = abiResponse.result;
-                } else if (abiResponse?.code === 0 && abiResponse?.data) {
-                    // eSpace network format
-                    abiString = abiResponse.data;
-                }
-
-                if (abiString) {
-                    try {
-                        contractAbi = JSON.parse(abiString);
-                        elizaLogger.debug("ABI successfully parsed", {
-                            operation: "AddressLookup",
-                            isArray: Array.isArray(contractAbi),
-                            length: Array.isArray(contractAbi) ? contractAbi.length : 0,
-                        });
-                    } catch (parseError) {
-                        elizaLogger.warn("Failed to parse ABI JSON", {
-                            operation: "AddressLookup",
-                            error:
-                                parseError instanceof Error
-                                    ? parseError.message
-                                    : String(parseError),
-                        });
-                        contractAbi = null;
-                    }
-                }
-
-                if (contractAbi && !Array.isArray(contractAbi)) {
-                    elizaLogger.warn("Invalid ABI format detected", {
+                // Scanner now returns ABI directly or throws if contract is not verified
+                const response = await scanner.getContractABI(params.address);
+                // Parse the raw ABI response into an array if it's not already
+                contractAbi = Array.isArray(response.raw)
+                    ? response.raw
+                    : typeof response.raw === "string"
+                      ? JSON.parse(response.raw)
+                      : null;
+                isVerified = contractAbi !== null;
+                if (isVerified) {
+                    elizaLogger.debug("Contract ABI fetched successfully", {
                         operation: "AddressLookup",
-                        abiType: typeof contractAbi,
+                        abiLength: contractAbi.length,
                     });
-                    contractAbi = null;
                 }
             } catch (error) {
-                elizaLogger.warn("Failed to fetch contract ABI", {
+                elizaLogger.debug("Contract is not verified", {
                     operation: "AddressLookup",
                     error: error instanceof Error ? error.message : String(error),
-                    address: params.address,
                 });
+                // Contract is not verified - this is an expected case
                 contractAbi = null;
+                isVerified = false;
             }
 
             successMessage += formatContractDetails(
                 contractCheck as ContractCheckResult & { isContract: true }
             );
-            successMessage += formatContractVerification(!!contractAbi);
+            successMessage += formatContractVerification(isVerified);
 
-            if (contractAbi && Array.isArray(contractAbi)) {
+            if (contractAbi) {
                 successMessage += formatViewFunctions(contractAbi);
             }
 
@@ -168,7 +142,7 @@ async function executeAddressLookup(
                     contractCheck.type === "token" || contractCheck.type === "nft"
                         ? contractCheck.type
                         : "unknown",
-                isVerified: !!contractAbi,
+                isVerified,
                 abi: contractAbi,
             };
 
@@ -179,9 +153,10 @@ async function executeAddressLookup(
                 address: params.address,
             });
 
-            let tokens = [];
+            let tokens: TokenData[] = [];
             try {
-                tokens = await scanner.getAccountTokens(params.address);
+                const response = await scanner.getAccountTokens(params.address);
+                tokens = response.raw;
                 elizaLogger.debug("Account tokens fetched", {
                     operation: "AddressLookup",
                     tokenCount: tokens.length,
@@ -196,15 +171,16 @@ async function executeAddressLookup(
 
             let balance: string;
             if (isCoreAddress) {
-                // @ts-ignore
-                balance = await wallet.getBalance(params.address as CoreAddress);
+                const checksummedAddress = getCoreAddress(params.address);
+                // @ts-ignore - Core address type mismatch
+                balance = await wallet.getBalance(checksummedAddress);
             } else {
-                // @ts-ignore
-                balance = await wallet.getBalance(params.address as EspaceAddress);
+                // For eSpace addresses, we need to ensure they're checksummed
+                const checksummedAddress = getEspaceAddress(params.address);
+                // @ts-ignore - eSpace address type mismatch
+                balance = await wallet.getBalance(checksummedAddress);
             }
 
-            // Get the balance using the appropriate address type
-            // const balance = await wallet.getBalance(params.address as any);
             const info: AccountInfo = {
                 isContract: false,
                 balance,
