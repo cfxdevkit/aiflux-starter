@@ -34,10 +34,7 @@ export async function validateConfig(
 
     let coreWallet: CoreWallet | undefined;
     let espaceWallet: EspaceWallet | undefined;
-    let coreConfluxScan: ConfluxScanCore | undefined;
-    let espaceConfluxScan: ConfluxScanESpace | undefined;
     let geckoTerminal: GeckoTerminal | undefined;
-    let tokenListManager: TokenListManager | undefined;
     let defiLlama: DeFiLlama | undefined;
 
     const mnemonic = getSetting("CONFLUX_MNEMONIC");
@@ -46,11 +43,11 @@ export async function validateConfig(
     elizaLogger.debug("Initializing ConfluxScan clients");
     const coreConfluxScanApiKey = getSetting("CONFLUX_CORE_CONFLUXSCAN_APIKEY");
     const coreConfluxScanHost = getSetting("CONFLUX_CORE_CONFLUXSCAN_HOST");
-    this.coreConfluxScan = new ConfluxScanCore(coreConfluxScanApiKey, coreConfluxScanHost, target);
+    const coreConfluxScan = new ConfluxScanCore(coreConfluxScanApiKey, coreConfluxScanHost, target);
 
     const espaceConfluxScanApiKey = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_APIKEY");
     const espaceConfluxScanHost = getSetting("CONFLUX_ESPACE_CONFLUXSCAN_HOST");
-    this.espaceConfluxScan = new ConfluxScanESpace(
+    const espaceConfluxScan = new ConfluxScanESpace(
         espaceConfluxScanApiKey,
         espaceConfluxScanHost,
         target
@@ -109,7 +106,7 @@ export async function validateConfig(
         defiLlama = new DeFiLlama();
     }
 
-    this.tokenListManager = new TokenListManager(
+    const tokenListManager = new TokenListManager(
         geckoTerminal,
         espaceConfluxScan,
         espaceWallet?.getAddress()
@@ -120,10 +117,10 @@ export async function validateConfig(
         target,
         coreWallet,
         espaceWallet,
-        coreConfluxScan: this.coreConfluxScan,
-        espaceConfluxScan: this.espaceConfluxScan,
+        coreConfluxScan,
+        espaceConfluxScan,
         geckoTerminal,
-        tokenListManager: this.tokenListManager,
+        tokenListManager,
         defiLlama,
     };
 
