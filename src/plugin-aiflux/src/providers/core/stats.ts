@@ -38,7 +38,7 @@ export function getCoreActiveAccountsProvider(config: ValidatedConfig): Provider
                 const stat = (await confluxScan.getActiveAccountStats()).formatted;
                 const statText = `Active Accounts:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Active Accounts data");
                 return statText;
             } catch (error) {
@@ -82,7 +82,7 @@ export function getCoreCfxHoldersProvider(config: ValidatedConfig): Provider | n
                 const stat = (await confluxScan.getCfxHolderStats()).formatted;
                 const statText = `CFX Holders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached CFX Holders data");
                 return statText;
             } catch (error) {
@@ -128,7 +128,7 @@ export function getCoreAccountGrowthProvider(config: ValidatedConfig): Provider 
                 const stat = (await confluxScan.getAccountGrowthStats()).formatted;
                 const statText = `Account Growth:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Account Growth data");
                 return statText;
             } catch (error) {
@@ -172,7 +172,7 @@ export function getCoreContractsProvider(config: ValidatedConfig): Provider | nu
                 const stat = (await confluxScan.getContractStats()).formatted;
                 const statText = `Contracts:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Contracts data");
                 return statText;
             } catch (error) {
@@ -216,7 +216,7 @@ export function getCoreSupplyProvider(config: ValidatedConfig): Provider | null 
                 const stat = (await confluxScan.getSupplyStats()).formatted;
                 const statText = `Supply:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Supply data");
                 return statText;
             } catch (error) {
@@ -260,7 +260,7 @@ export function getCoreTransactionsProvider(config: ValidatedConfig): Provider |
                 const stat = (await confluxScan.getTransactionStats()).formatted;
                 const statText = `Transactions:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Transactions data");
                 return statText;
             } catch (error) {
@@ -304,7 +304,7 @@ export function getCoreCfxTransfersProvider(config: ValidatedConfig): Provider |
                 const stat = (await confluxScan.getCfxTransferStats()).formatted;
                 const statText = `CFX Transfers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached CFX Transfers data");
                 return statText;
             } catch (error) {
@@ -348,7 +348,7 @@ export function getCoreTpsProvider(config: ValidatedConfig): Provider | null {
                 const stat = (await confluxScan.getTpsStats({ intervalType: "hour" })).formatted;
                 const statText = `TPS:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached TPS data");
                 return statText;
             } catch (error) {

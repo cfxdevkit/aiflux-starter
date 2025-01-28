@@ -33,7 +33,7 @@ export function getCoreTopMinersProvider(config: ValidatedConfig): Provider | nu
                 const stat = (await confluxScan.getTopMiners()).formatted;
                 const statText = `Top Miners:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Top Miners data");
                 return statText;
             } catch (error) {
@@ -77,7 +77,7 @@ export function getCoreTopGasUsedProvider(config: ValidatedConfig): Provider | n
                 const stat = (await confluxScan.getTopGasUsed()).formatted;
                 const statText = `Top Gas Users:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Top Gas Used data");
                 return statText;
             } catch (error) {
@@ -123,7 +123,7 @@ export function getCoreTopCfxSendersProvider(config: ValidatedConfig): Provider 
                 const stat = (await confluxScan.getTopCfxSenders()).formatted;
                 const statText = `Top CFX Senders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Top CFX Senders data");
                 return statText;
             } catch (error) {
@@ -169,7 +169,7 @@ export function getCoreTopCfxReceiversProvider(config: ValidatedConfig): Provide
                 const stat = (await confluxScan.getTopCfxReceivers()).formatted;
                 const statText = `Top CFX Receivers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[CoreProvider] Successfully cached Top CFX Receivers data");
                 return statText;
             } catch (error) {
@@ -215,7 +215,7 @@ export function getCoreTopTransactionSendersProvider(config: ValidatedConfig): P
                 const stat = (await confluxScan.getTopTransactionSenders()).formatted;
                 const statText = `Top Transaction Senders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug(
                     "[CoreProvider] Successfully cached Top Transaction Senders data"
                 );
@@ -265,7 +265,7 @@ export function getCoreTopTransactionReceiversProvider(config: ValidatedConfig):
                 const stat = (await confluxScan.getTopTransactionReceivers()).formatted;
                 const statText = `Top Transaction Receivers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug(
                     "[CoreProvider] Successfully cached Top Transaction Receivers data"
                 );

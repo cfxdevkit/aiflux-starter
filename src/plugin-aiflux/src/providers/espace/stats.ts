@@ -36,7 +36,7 @@ export function getEspaceActiveAccountsProvider(config: ValidatedConfig): Provid
                 const stat = (await confluxScan.getActiveAccountStats()).formatted;
                 const statText = `Active Accounts:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Active Accounts data");
                 return statText;
             } catch (error) {
@@ -80,7 +80,7 @@ export function getEspaceCfxHoldersProvider(config: ValidatedConfig): Provider |
                 const stat = (await confluxScan.getCfxHolderStats()).formatted;
                 const statText = `CFX Holders:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached CFX Holders data");
                 return statText;
             } catch (error) {
@@ -126,7 +126,7 @@ export function getEspaceAccountGrowthProvider(config: ValidatedConfig): Provide
                 const stat = (await confluxScan.getAccountGrowthStats()).formatted;
                 const statText = `Account Growth:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Account Growth data");
                 return statText;
             } catch (error) {
@@ -170,7 +170,7 @@ export function getEspaceContractsProvider(config: ValidatedConfig): Provider | 
                 const stat = (await confluxScan.getContractStats()).formatted;
                 const statText = `Contracts:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Contracts data");
                 return statText;
             } catch (error) {
@@ -216,7 +216,7 @@ export function getEspaceTransactionsProvider(config: ValidatedConfig): Provider
                 const stat = (await confluxScan.getTransactionStats()).formatted;
                 const statText = `Transactions:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached Transactions data");
                 return statText;
             } catch (error) {
@@ -262,7 +262,7 @@ export function getEspaceCfxTransfersProvider(config: ValidatedConfig): Provider
                 const stat = (await confluxScan.getCfxTransferStats()).formatted;
                 const statText = `CFX Transfers:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached CFX Transfers data");
                 return statText;
             } catch (error) {
@@ -306,7 +306,7 @@ export function getEspaceTpsProvider(config: ValidatedConfig): Provider | null {
                 const stat = (await confluxScan.getTpsStats({ intervalType: "hour" })).formatted;
                 const statText = `TPS:\n${stat}`;
 
-                await cache.set(cacheKey, statText, { expires: 21600 });
+                await cache.set(cacheKey, statText, { expires: 300 });
                 elizaLogger.debug("[eSpaceProvider] Successfully cached TPS data");
                 return statText;
             } catch (error) {
