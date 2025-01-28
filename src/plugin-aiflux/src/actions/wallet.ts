@@ -78,7 +78,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
                     const address = config.coreWallet.getAddress();
                     const balance = await config.coreWallet.getBalance();
                     const tokens = config.coreConfluxScan
-                        ? await config.coreConfluxScan.getAccountTokens(address)
+                        ? (await config.coreConfluxScan.getAccountTokens(address)).raw
                         : null;
 
                     elizaLogger.debug("Core wallet balance:", {
@@ -115,7 +115,7 @@ Balance: ${balance} CFX${tokenList}`);
                     const address = config.espaceWallet.getAddress();
                     const balance = await config.espaceWallet.getBalance();
                     const tokens = config.espaceConfluxScan
-                        ? await config.espaceConfluxScan.getAccountTokens(address)
+                        ? (await config.espaceConfluxScan.getAccountTokens(address)).raw
                         : null;
 
                     elizaLogger.debug("eSpace wallet balance:", {

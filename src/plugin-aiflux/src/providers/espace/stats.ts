@@ -33,7 +33,7 @@ export function getEspaceActiveAccountsProvider(config: ValidatedConfig): Provid
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Active Accounts data");
-                const stat = await confluxScan.getFormattedActiveAccountStats();
+                const stat = (await confluxScan.getActiveAccountStats()).formatted;
                 const statText = `Active Accounts:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -77,7 +77,7 @@ export function getEspaceCfxHoldersProvider(config: ValidatedConfig): Provider |
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh CFX Holders data");
-                const stat = await confluxScan.getFormattedCfxHolderStats();
+                const stat = (await confluxScan.getCfxHolderStats()).formatted;
                 const statText = `CFX Holders:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -123,7 +123,7 @@ export function getEspaceAccountGrowthProvider(config: ValidatedConfig): Provide
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Account Growth data");
-                const stat = await confluxScan.getFormattedAccountGrowthStats();
+                const stat = (await confluxScan.getAccountGrowthStats()).formatted;
                 const statText = `Account Growth:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -167,7 +167,7 @@ export function getEspaceContractsProvider(config: ValidatedConfig): Provider | 
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Contracts data");
-                const stat = await confluxScan.getFormattedContractStats();
+                const stat = (await confluxScan.getContractStats()).formatted;
                 const statText = `Contracts:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -213,7 +213,7 @@ export function getEspaceTransactionsProvider(config: ValidatedConfig): Provider
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh Transactions data");
-                const stat = await confluxScan.getFormattedTransactionStats();
+                const stat = (await confluxScan.getTransactionStats()).formatted;
                 const statText = `Transactions:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -259,7 +259,7 @@ export function getEspaceCfxTransfersProvider(config: ValidatedConfig): Provider
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh CFX Transfers data");
-                const stat = await confluxScan.getFormattedCfxTransferStats();
+                const stat = (await confluxScan.getCfxTransferStats()).formatted;
                 const statText = `CFX Transfers:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -303,7 +303,7 @@ export function getEspaceTpsProvider(config: ValidatedConfig): Provider | null {
                 }
 
                 elizaLogger.debug("[eSpaceProvider] Fetching fresh TPS data");
-                const stat = await confluxScan.getFormattedTpsStats();
+                const stat = (await confluxScan.getTpsStats({ intervalType: "hour" })).formatted;
                 const statText = `TPS:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });

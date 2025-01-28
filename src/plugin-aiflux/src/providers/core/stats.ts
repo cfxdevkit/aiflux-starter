@@ -35,7 +35,7 @@ export function getCoreActiveAccountsProvider(config: ValidatedConfig): Provider
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh Active Accounts data");
-                const stat = await confluxScan.getFormattedActiveAccountStats();
+                const stat = (await confluxScan.getActiveAccountStats()).formatted;
                 const statText = `Active Accounts:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -79,7 +79,7 @@ export function getCoreCfxHoldersProvider(config: ValidatedConfig): Provider | n
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh CFX Holders data");
-                const stat = await confluxScan.getFormattedCfxHolderStats();
+                const stat = (await confluxScan.getCfxHolderStats()).formatted;
                 const statText = `CFX Holders:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -125,7 +125,7 @@ export function getCoreAccountGrowthProvider(config: ValidatedConfig): Provider 
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh Account Growth data");
-                const stat = await confluxScan.getFormattedAccountGrowthStats();
+                const stat = (await confluxScan.getAccountGrowthStats()).formatted;
                 const statText = `Account Growth:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -169,7 +169,7 @@ export function getCoreContractsProvider(config: ValidatedConfig): Provider | nu
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh Contracts data");
-                const stat = await confluxScan.getFormattedContractStats();
+                const stat = (await confluxScan.getContractStats()).formatted;
                 const statText = `Contracts:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -213,7 +213,7 @@ export function getCoreSupplyProvider(config: ValidatedConfig): Provider | null 
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh Supply data");
-                const stat = await confluxScan.getFormattedSupplyStats();
+                const stat = (await confluxScan.getSupplyStats()).formatted;
                 const statText = `Supply:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -257,7 +257,7 @@ export function getCoreTransactionsProvider(config: ValidatedConfig): Provider |
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh Transactions data");
-                const stat = await confluxScan.getFormattedTransactionStats();
+                const stat = (await confluxScan.getTransactionStats()).formatted;
                 const statText = `Transactions:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -301,7 +301,7 @@ export function getCoreCfxTransfersProvider(config: ValidatedConfig): Provider |
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh CFX Transfers data");
-                const stat = await confluxScan.getFormattedCfxTransferStats();
+                const stat = (await confluxScan.getCfxTransferStats()).formatted;
                 const statText = `CFX Transfers:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });
@@ -345,7 +345,7 @@ export function getCoreTpsProvider(config: ValidatedConfig): Provider | null {
                 }
 
                 elizaLogger.debug("[CoreProvider] Fetching fresh TPS data");
-                const stat = await confluxScan.getFormattedTpsStats();
+                const stat = (await confluxScan.getTpsStats({ intervalType: "hour" })).formatted;
                 const statText = `TPS:\n${stat}`;
 
                 await cache.set(cacheKey, statText, { expires: 21600 });

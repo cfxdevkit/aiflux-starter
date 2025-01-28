@@ -181,7 +181,7 @@ async function executeAddressLookup(
 
             let tokens = [];
             try {
-                tokens = await scanner.getAccountTokens(params.address);
+                tokens = (await scanner.getAccountTokens(params.address)).raw;
                 elizaLogger.debug("Account tokens fetched", {
                     operation: "AddressLookup",
                     tokenCount: tokens.length,

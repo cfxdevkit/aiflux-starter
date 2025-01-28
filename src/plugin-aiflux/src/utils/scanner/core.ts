@@ -1,6 +1,6 @@
 import { elizaLogger } from "@elizaos/core";
 import { isAddress } from "cive/utils";
-import { ConfluxTarget } from "../../config/types";
+import { ConfluxTarget } from "../config/types";
 import {
     ApiResponse,
     ContractABIResponse,

@@ -110,7 +110,9 @@ async function executeTokenTransfer(
                 fromAddress,
             });
 
-            const tokens = await scanner.filterAccountTokens(fromAddress, tokenSymbol);
+            const tokens = (await scanner.getAccountTokens(fromAddress)).raw.filter(
+                (token) => token.symbol === tokenSymbol
+            );
 
             elizaLogger.debug("Token search results", {
                 operation: "TokenTransfer",

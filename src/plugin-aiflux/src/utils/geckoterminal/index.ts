@@ -94,7 +94,6 @@ export class GeckoTerminal {
             quoteTokenPriceUSD: pool.attributes.quote_token_price_usd,
             baseTokenPriceNative: pool.attributes.base_token_price_native_currency,
         };
-        elizaLogger.debug(`Pool formatted successfully: ${formattedPool.name}`);
         return formattedPool;
     }
 
