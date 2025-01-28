@@ -1,7 +1,7 @@
 import { ContractCheckResult } from "../../utils/wallet/types";
-import { AddressInfo, ContractInfo, AccountInfo } from "./types";
 import { getConfluxScanUrl } from "../../utils/config/tokenList";
 import { ConfluxTarget } from "../../utils/config/types";
+import { ABIItem, ABIFunction, TokenData } from "./types";
 
 export function formatBaseAddressInfo(
     address: string,
@@ -72,18 +72,14 @@ export function formatContractVerification(isVerified: boolean): string {
     return `\n\n━━(Verification Status)━━\n${isVerified ? "✅ Contract is verified" : "❌ Contract is not verified"}`;
 }
 
-export function formatViewFunctions(contractAbi: any[]): string {
+export function formatViewFunctions(contractAbi: ABIItem[]): string {
     const mainFunctions = contractAbi
         .filter(
-            (item) =>
-                item &&
-                typeof item === "object" &&
-                item.type === "function" &&
-                item.stateMutability === "view"
+            (item): item is ABIFunction =>
+                item.type === "function" && item.stateMutability === "view"
         )
         .map(
-            (func) =>
-                `• ${func.name}(${(func.inputs || []).map((input: any) => input.type).join(", ")})`
+            (func) => `• ${func.name}(${(func.inputs || []).map((input) => input.type).join(", ")})`
         )
         .slice(0, 10);
 
@@ -98,7 +94,7 @@ export function formatAccountBalance(balance: string): string {
 }
 
 export function formatTokenBalances(
-    tokens: any[],
+    tokens: TokenData[],
     formatTokenAmount: (amount: string, decimals: number) => string
 ): string {
     if (tokens.length === 0) return "";

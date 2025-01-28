@@ -101,3 +101,22 @@ export interface FormattedPool {
     quoteTokenPriceUSD: string;
     baseTokenPriceNative: string;
 }
+
+export interface MultiTokenResponse {
+    data: {
+        id: string;
+        type: string;
+        attributes: {
+            address: string;
+            name: string;
+            symbol: string;
+            decimals: number;
+            price_usd: string | null;
+            total_supply: string | null;
+        };
+    }[];
+}
+
+export interface MultiPoolResponse {
+    data: Pool[];
+}

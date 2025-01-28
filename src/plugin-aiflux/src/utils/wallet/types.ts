@@ -1,13 +1,51 @@
+export interface ContractMetadata {
+    name?: string;
+    symbol?: string;
+    version?: string;
+    owner?: string;
+    isProxy?: boolean;
+    implementation?: string;
+    baseURI?: string;
+    contractURI?: string;
+    tokenURIPrefix?: string;
+    paused?: boolean;
+    maxSupply?: string;
+    totalSupply?: string;
+    maxTokenId?: string;
+    maxTokens?: string;
+    mintPrice?: string;
+    mintingEnabled?: boolean;
+    provenanceHash?: string;
+    isCrossSpaceCall?: boolean;
+    isInternalContract?: boolean;
+    sponsorship?: {
+        sponsor: string;
+        gasLimit: string;
+        collateral: string;
+    };
+}
+
+export interface ERC20Details {
+    name: string | null;
+    symbol: string | null;
+    decimals: number | null;
+    totalSupply: string;
+}
+
+export interface ContractDetails {
+    erc20?: ERC20Details;
+}
+
 export type ContractCheckResult =
     | {
           isContract: true;
           type: string;
           supportedInterfaces: string[];
           features: string[];
-          details: Record<string, any>;
+          details: ContractDetails;
           message: string;
           category?: string;
-          metadata?: Record<string, any>;
+          metadata?: ContractMetadata;
           bytecodeSize?: number;
       }
     | {

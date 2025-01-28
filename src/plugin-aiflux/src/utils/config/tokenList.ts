@@ -160,7 +160,7 @@ export class TokenListManager {
                         await delay(50);
                     }
                 } catch (error) {
-                    if ((error as any).status === 429) {
+                    if ((error as { status: number }).status === 429) {
                         elizaLogger.warn(
                             "Rate limit hit, waiting for 5 seconds before retrying..."
                         );
