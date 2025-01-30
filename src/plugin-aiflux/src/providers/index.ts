@@ -28,13 +28,13 @@ import {
     getEspaceCfxHoldersProvider,
     getEspaceCfxTransfersProvider,
     getEspaceContractsProvider,
-    getEspaceTopCfxReceiversProvider,
-    getEspaceTopCfxSendersProvider,
-    getEspaceTopGasUsedProvider,
-    getEspaceTopTransactionReceiversProvider,
-    getEspaceTopTransactionSendersProvider,
     getEspaceTpsProvider,
     getEspaceTransactionsProvider,
+    getESpaceTopGasUsersProvider,
+    getESpaceTopCfxSendersProvider,
+    getESpaceTopCfxReceiversProvider,
+    getESpaceTopTransactionSendersProvider,
+    getESpaceTopTransactionReceiversProvider,
 } from "./espace";
 
 export class ConfluxProviders {
@@ -72,11 +72,11 @@ export class ConfluxProviders {
             getEspaceTransactionsProvider(this.confluxConfig),
             getEspaceCfxTransfersProvider(this.confluxConfig),
             getEspaceTpsProvider(this.confluxConfig),
-            getEspaceTopGasUsedProvider(this.confluxConfig),
-            getEspaceTopCfxSendersProvider(this.confluxConfig),
-            getEspaceTopCfxReceiversProvider(this.confluxConfig),
-            getEspaceTopTransactionSendersProvider(this.confluxConfig),
-            getEspaceTopTransactionReceiversProvider(this.confluxConfig),
+            getESpaceTopGasUsersProvider(this.confluxConfig),
+            getESpaceTopCfxSendersProvider(this.confluxConfig),
+            getESpaceTopCfxReceiversProvider(this.confluxConfig),
+            getESpaceTopTransactionSendersProvider(this.confluxConfig),
+            getESpaceTopTransactionReceiversProvider(this.confluxConfig),
         ];
     }
 }

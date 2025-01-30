@@ -1,12 +1,24 @@
-import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
+import { CACHE_KEYS, withCache, logOperation } from "../../utils/cache/config";
 
 export function getGeckoTerminalProvider(config: ValidatedConfig): Provider | null {
     if (!config.geckoTerminal || !config.tokenListManager) {
+        logOperation("info", "GeckoTerminal provider not initialized - missing config", {
+            provider: "geckoterminal",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.DEFI.GECKO_TERMINAL,
+        });
         return null;
     }
 
     const tokenListManager = config.tokenListManager;
+
+    logOperation("info", "GeckoTerminal provider initialized", {
+        provider: "geckoterminal",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.DEFI.GECKO_TERMINAL,
+    });
 
     return {
         get: async (
@@ -14,43 +26,19 @@ export function getGeckoTerminalProvider(config: ValidatedConfig): Provider | nu
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:espace:geckoterminal`;
-
-            try {
-                // Check cache first
-                const cachedPools = await cache.get(cacheKey);
-                elizaLogger.debug("GeckoTerminal provider cache check:", {
-                    provider: "geckoterminal",
-                    hasCachedData: cachedPools !== null,
-                });
-
-                if (cachedPools) {
-                    return cachedPools as string;
-                }
-
-                // Get pools from the existing token list
-                const pools = tokenListManager.getPools();
-                if (!pools || pools.length === 0) {
-                    elizaLogger.error("No pools found in token list manager");
-                    return null;
-                }
-
-                // Format pools without triggering a reload
-                const topPoolsText = tokenListManager.formatPoolsToText(pools);
-                if (!topPoolsText) {
-                    elizaLogger.error("Failed to format pools text");
-                    return null;
-                }
-
-                // Cache pools info for 30 minutes
-                await cache.set(cacheKey, topPoolsText, { expires: 1800 });
-
-                return topPoolsText;
-            } catch (error) {
-                elizaLogger.error("Error in GeckoTerminal provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.DEFI.GECKO_TERMINAL;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const pools = tokenListManager.getPools();
+                    if (!pools || pools.length === 0) {
+                        return null;
+                    }
+                    return tokenListManager.formatPoolsToText(pools);
+                },
+                { provider: "geckoterminal", operation: "get-top-pools" }
+            );
         },
     };
 }

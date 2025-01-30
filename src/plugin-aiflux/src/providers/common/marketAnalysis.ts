@@ -1,17 +1,13 @@
-import { Provider, IAgentRuntime, Memory, State, elizaLogger } from "@elizaos/core";
+import { Provider, IAgentRuntime, Memory, State } from "@elizaos/core";
 import { TokenListManager } from "../../utils/config/tokenList";
 import { POOL_ANALYSIS_INSTRUCTIONS } from "../../analysis/instructions";
-import { DeFiLlama } from "../../utils/defillama";
+import { DeFiLlama, TVLSummary } from "../../utils/defillama";
+import { CACHE_KEYS, withCache, logOperation } from "../../utils/cache/config";
 
 const DEFAULT_CHAIN = "conflux";
-const CACHE_KEYS = {
-    CHAIN_TVL: (chain: string) => `defillama:tvl:chain:${chain}`,
-    PROTOCOLS_TVL: (chain: string) => `defillama:tvl:protocols:${chain}`,
-} as const;
 
 interface MarketAnalysisConfig {
     tokenListManager?: TokenListManager;
-    cacheDuration?: number;
     chain?: string;
     defiLlama?: DeFiLlama;
 }
@@ -32,47 +28,88 @@ async function getTVLAnalysis(
     runtime: IAgentRuntime,
     defiLlama: DeFiLlama
 ): Promise<string> {
-    const chainCacheKey = CACHE_KEYS.CHAIN_TVL(chain);
-    const protocolsCacheKey = CACHE_KEYS.PROTOCOLS_TVL(chain);
+    const chainCacheKey = CACHE_KEYS.DEFI.CHAIN_TVL(chain);
+    const protocolsCacheKey = CACHE_KEYS.DEFI.PROTOCOLS_TVL(chain);
 
     try {
-        // Check both chain and protocols cache
-        const [chainData, protocolsData] = await Promise.all([
-            runtime.cacheManager.get<string>(chainCacheKey),
-            runtime.cacheManager.get<string>(protocolsCacheKey),
-        ]);
+        const chainData = await withCache(
+            runtime,
+            chainCacheKey,
+            async () => {
+                const chainTVL = await defiLlama.getChainTVL(chain);
+                return defiLlama.formatTVLToText(chainTVL, chain);
+            },
+            { provider: "market-analysis", operation: "get-chain-tvl" }
+        );
 
-        const hasCachedData = chainData !== null && protocolsData !== null;
+        const protocolsData = await withCache(
+            runtime,
+            protocolsCacheKey,
+            async () => {
+                const protocolPromises = ["swappi", "abc-pool", "shui", "nucleon", "moon-swap"].map(
+                    async (protocol) => {
+                        try {
+                            const data = await defiLlama.getProtocolTVL(protocol);
+                            return { name: protocol, data };
+                        } catch (error) {
+                            logOperation("error", `Error fetching protocol TVL for ${protocol}`, {
+                                provider: "market-analysis",
+                                operation: "data_fetch",
+                                cacheKey: protocolsCacheKey,
+                                error: error instanceof Error ? error.message : String(error),
+                            });
+                            return null;
+                        }
+                    }
+                );
 
-        if (hasCachedData) {
-            elizaLogger.debug("Using cached DeFiLlama TVL data");
+                const protocolResults = await Promise.all(protocolPromises);
+                const validProtocolResponses = protocolResults.filter(
+                    (r): r is { name: string; data: TVLSummary } => r !== null
+                );
+
+                return validProtocolResponses
+                    .map((protocol) => defiLlama.formatTVLToText(protocol.data, protocol.name))
+                    .join("\n\n");
+            },
+            { provider: "market-analysis", operation: "get-protocols-tvl" }
+        );
+
+        if (chainData && protocolsData) {
             return `${chainData}\n\n${protocolsData}`;
         }
 
-        // Get chain TVL
-        elizaLogger.debug("Fetching chain and protocol TVL data");
-        const chainTVL = await defiLlama.getChainTVL(chain);
-        const chainResponse = defiLlama.formatTVLToText(chainTVL, chain);
-
-        // Cache for 5 minutes by default
-        await runtime.cacheManager.set(chainCacheKey, chainResponse, { expires: 300 });
-        return chainResponse;
+        return "TVL data unavailable";
     } catch (error) {
-        elizaLogger.error("Error fetching TVL data:", error);
+        logOperation("error", "Error fetching TVL data", {
+            provider: "market-analysis",
+            operation: "data_fetch",
+            cacheKey: chainCacheKey,
+            error: error instanceof Error ? error.message : String(error),
+        });
         return "TVL data unavailable";
     }
 }
 
 export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provider | null {
-    if (!config.tokenListManager) {
-        elizaLogger.error("TokenListManager is required for market analysis provider");
+    if (!config.tokenListManager || !config.defiLlama) {
+        logOperation("info", "Market Analysis provider not initialized - missing config", {
+            provider: "market-analysis",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.MARKET_ANALYSIS.TVL,
+        });
         return null;
     }
 
-    const _cacheDuration = config.cacheDuration || 300;
     const tlm = config.tokenListManager;
+    const defiLlama = config.defiLlama;
     const chain = config.chain || DEFAULT_CHAIN;
-    const defiLlama = config.defiLlama || new DeFiLlama();
+
+    logOperation("info", "Market Analysis provider initialized", {
+        provider: "market-analysis",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.MARKET_ANALYSIS.TVL,
+    });
 
     const getAnalysisData = async (
         runtime: IAgentRuntime,
@@ -80,28 +117,53 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
     ): Promise<string> => {
         const limit = request.limit || 5;
 
-        switch (request.type) {
-            case "tvl":
-                return getTVLAnalysis(chain, runtime, defiLlama);
-            case "full":
-                return `${tlm.getMarketAnalysis()}\n\n${await getTVLAnalysis(chain, runtime, defiLlama)}`;
-            case "gainers":
-                return tlm.getTopGainers(limit);
-            case "losers":
-                return tlm.getTopLosers(limit);
-            case "volume":
-                return tlm.getTopVolume(limit);
-            case "trades":
-                return tlm.getTopTrades(limit);
-            case "age":
-                return tlm.getPoolsByAge(true, limit);
-            case "buyPressure":
-                return tlm.getMostBuyPressure(limit);
-            case "sellPressure":
-                return tlm.getMostSellPressure(limit);
-            default:
-                return "Invalid analysis type requested";
+        if (request.type !== "full") {
+            let cacheKey: string;
+            if (request.type === "tvl") {
+                cacheKey = CACHE_KEYS.MARKET_ANALYSIS.TVL;
+            } else {
+                const keyFn =
+                    CACHE_KEYS.MARKET_ANALYSIS[
+                        request.type.toUpperCase() as keyof typeof CACHE_KEYS.MARKET_ANALYSIS
+                    ];
+                if (typeof keyFn === "function") {
+                    cacheKey = keyFn(limit);
+                } else {
+                    return "Invalid analysis type requested";
+                }
+            }
+
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    switch (request.type) {
+                        case "tvl":
+                            return getTVLAnalysis(chain, runtime, defiLlama);
+                        case "gainers":
+                            return tlm.getTopGainers(limit);
+                        case "losers":
+                            return tlm.getTopLosers(limit);
+                        case "volume":
+                            return tlm.getTopVolume(limit);
+                        case "trades":
+                            return tlm.getTopTrades(limit);
+                        case "age":
+                            return tlm.getPoolsByAge(true, limit);
+                        case "buyPressure":
+                            return tlm.getMostBuyPressure(limit);
+                        case "sellPressure":
+                            return tlm.getMostSellPressure(limit);
+                        default:
+                            return "Invalid analysis type requested";
+                    }
+                },
+                { provider: "market-analysis", operation: `get-${request.type}-analysis` }
+            );
         }
+
+        // For full analysis, combine market analysis with TVL
+        return `${tlm.getMarketAnalysis()}\n\n${await getTVLAnalysis(chain, runtime, defiLlama)}`;
     };
 
     return {
@@ -121,7 +183,12 @@ export function getMarketAnalysisProvider(config: MarketAnalysisConfig): Provide
             try {
                 return `${await getAnalysisData(runtime, { type: analysisType, limit })}\n\n${POOL_ANALYSIS_INSTRUCTIONS}`;
             } catch (error) {
-                elizaLogger.error("Error in market analysis provider:", error);
+                logOperation("error", "Error in market analysis provider", {
+                    provider: "market-analysis",
+                    operation: "data_fetch",
+                    cacheKey: "N/A",
+                    error: error instanceof Error ? error.message : String(error),
+                });
                 return null;
             }
         },

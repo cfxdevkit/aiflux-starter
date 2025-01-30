@@ -1,17 +1,24 @@
-import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
-// import { TokenListManager } from "../../utils/config/tokenList";
-// import { TokenInfo, TokenList } from "../../utils/config/types";
-import { ValidatedConfig } from "../../utils/config/configValidator";
-
-const CACHE_DURATION = 1800; // 30 minutes
+import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
+import { ValidatedConfig } from "../../utils";
+import { CACHE_KEYS, withCache, logOperation } from "../../utils/cache/config";
 
 export function getTokensProvider(config: ValidatedConfig): Provider | null {
     if (!config.geckoTerminal || !config.tokenListManager) {
-        elizaLogger.error("Missing required configuration for tokens provider");
+        logOperation("info", "Tokens provider not initialized - missing config", {
+            provider: "tokens",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.DEFI.TOKENS,
+        });
         return null;
     }
 
     const tokenListManager = config.tokenListManager;
+
+    logOperation("info", "Tokens provider initialized", {
+        provider: "tokens",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.DEFI.TOKENS,
+    });
 
     return {
         get: async (
@@ -19,50 +26,22 @@ export function getTokensProvider(config: ValidatedConfig): Provider | null {
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            const cache = runtime.cacheManager;
-            const cacheKey = "conflux:espace:tokens";
-
-            try {
-                const cachedData = await cache.get(cacheKey);
-                elizaLogger.debug("Tokens provider cache check:", {
-                    provider: "tokens",
-                    hasCachedData: cachedData !== null,
-                });
-
-                if (cachedData) {
-                    return cachedData as string;
-                }
-
-                // Get the current token list without triggering a reload
-                const tokenList = tokenListManager.getTokenList();
-                if (!tokenList || Object.keys(tokenList).length === 0) {
-                    elizaLogger.error("Token list is empty or undefined");
-                    return null;
-                }
-
-                // Format tokens without triggering any API calls
-                const formattedTokens = tokenListManager.formatTokensToText(
-                    Object.values(tokenList),
-                    config.target
-                );
-                if (!formattedTokens) {
-                    elizaLogger.error("Failed to format token list");
-                    return null;
-                }
-
-                await cache.set(cacheKey, formattedTokens, { expires: CACHE_DURATION });
-                elizaLogger.debug("Token data cached successfully", {
-                    provider: "tokens",
-                    cacheKey,
-                    cacheDuration: CACHE_DURATION,
-                    tokenCount: Object.keys(tokenList).length,
-                });
-
-                return formattedTokens;
-            } catch (error) {
-                elizaLogger.error("Error in tokens provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.DEFI.TOKENS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const tokenList = tokenListManager.getTokenList();
+                    if (!tokenList || Object.keys(tokenList).length === 0) {
+                        return null;
+                    }
+                    return tokenListManager.formatTokensToText(
+                        Object.values(tokenList),
+                        config.target
+                    );
+                },
+                { provider: "tokens", operation: "get-tokens" }
+            );
         },
     };
 }

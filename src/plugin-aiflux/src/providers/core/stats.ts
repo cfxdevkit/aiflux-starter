@@ -1,14 +1,21 @@
-import { IAgentRuntime, Memory, Provider, State, elizaLogger } from "@elizaos/core";
+import { IAgentRuntime, Memory, Provider, State } from "@elizaos/core";
 import { ValidatedConfig } from "../../utils";
+import { CACHE_KEYS, withCache, logOperation } from "../../utils/cache/config";
 
 export function getCoreActiveAccountsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug(
-            "[CoreProvider] Active Accounts provider not initialized - missing config"
-        );
+        logOperation("info", "Active Accounts provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.ACTIVE_ACCOUNTS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] Active Accounts provider initialized");
+    logOperation("info", "Active Accounts provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.ACTIVE_ACCOUNTS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -18,43 +25,34 @@ export function getCoreActiveAccountsProvider(config: ValidatedConfig): Provider
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Active Accounts provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:active_accounts`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for Active Accounts:", {
-                    provider: "core-stats",
-                    statType: "active-accounts",
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh Active Accounts data");
-                const stat = (await confluxScan.getActiveAccountStats()).formatted;
-                const statText = `Active Accounts:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Active Accounts data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core Active Accounts provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.ACTIVE_ACCOUNTS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getActiveAccountStats()).formatted;
+                    return `Active Accounts:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-active-accounts" }
+            );
         },
     };
 }
 
 export function getCoreCfxHoldersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] CFX Holders provider not initialized - missing config");
+        logOperation("info", "CFX Holders provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.CFX_HOLDERS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] CFX Holders provider initialized");
+    logOperation("info", "CFX Holders provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.CFX_HOLDERS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -64,43 +62,34 @@ export function getCoreCfxHoldersProvider(config: ValidatedConfig): Provider | n
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] CFX Holders provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:cfx_holders`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for CFX Holders:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh CFX Holders data");
-                const stat = (await confluxScan.getCfxHolderStats()).formatted;
-                const statText = `CFX Holders:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached CFX Holders data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core CFX Holders provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.CFX_HOLDERS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getCfxHolderStats()).formatted;
+                    return `CFX Holders:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-cfx-holders" }
+            );
         },
     };
 }
 
 export function getCoreAccountGrowthProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug(
-            "[CoreProvider] Account Growth provider not initialized - missing config"
-        );
+        logOperation("info", "Account Growth provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.ACCOUNT_GROWTH,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] Account Growth provider initialized");
+    logOperation("info", "Account Growth provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.ACCOUNT_GROWTH,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -110,41 +99,34 @@ export function getCoreAccountGrowthProvider(config: ValidatedConfig): Provider 
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Account Growth provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:account_growth`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for Account Growth:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh Account Growth data");
-                const stat = (await confluxScan.getAccountGrowthStats()).formatted;
-                const statText = `Account Growth:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Account Growth data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core Account Growth provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.ACCOUNT_GROWTH;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getAccountGrowthStats()).formatted;
+                    return `Account Growth:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-account-growth" }
+            );
         },
     };
 }
 
 export function getCoreContractsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Contracts provider not initialized - missing config");
+        logOperation("info", "Contracts provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.CONTRACTS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] Contracts provider initialized");
+    logOperation("info", "Contracts provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.CONTRACTS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -154,41 +136,34 @@ export function getCoreContractsProvider(config: ValidatedConfig): Provider | nu
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Contracts provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:contracts`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for Contracts:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh Contracts data");
-                const stat = (await confluxScan.getContractStats()).formatted;
-                const statText = `Contracts:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Contracts data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core Contracts provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.CONTRACTS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getContractStats()).formatted;
+                    return `Contracts:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-contracts" }
+            );
         },
     };
 }
 
 export function getCoreSupplyProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Supply provider not initialized - missing config");
+        logOperation("info", "Supply provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.SUPPLY,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] Supply provider initialized");
+    logOperation("info", "Supply provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.SUPPLY,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -198,41 +173,34 @@ export function getCoreSupplyProvider(config: ValidatedConfig): Provider | null 
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Supply provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:supply`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for Supply:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh Supply data");
-                const stat = (await confluxScan.getSupplyStats()).formatted;
-                const statText = `Supply:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Supply data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core Supply provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.SUPPLY;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getSupplyStats()).formatted;
+                    return `Supply:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-supply" }
+            );
         },
     };
 }
 
 export function getCoreTransactionsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] Transactions provider not initialized - missing config");
+        logOperation("info", "Transactions provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.TRANSACTIONS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] Transactions provider initialized");
+    logOperation("info", "Transactions provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.TRANSACTIONS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -242,41 +210,34 @@ export function getCoreTransactionsProvider(config: ValidatedConfig): Provider |
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] Transactions provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:transactions`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for Transactions:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh Transactions data");
-                const stat = (await confluxScan.getTransactionStats()).formatted;
-                const statText = `Transactions:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached Transactions data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core Transactions provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.TRANSACTIONS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getTransactionStats()).formatted;
+                    return `Transactions:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-transactions" }
+            );
         },
     };
 }
 
 export function getCoreCfxTransfersProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] CFX Transfers provider not initialized - missing config");
+        logOperation("info", "CFX Transfers provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.CFX_TRANSFERS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] CFX Transfers provider initialized");
+    logOperation("info", "CFX Transfers provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.CFX_TRANSFERS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -286,41 +247,34 @@ export function getCoreCfxTransfersProvider(config: ValidatedConfig): Provider |
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] CFX Transfers provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:cfx_transfers`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for CFX Transfers:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh CFX Transfers data");
-                const stat = (await confluxScan.getCfxTransferStats()).formatted;
-                const statText = `CFX Transfers:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached CFX Transfers data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core CFX Transfers provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.CFX_TRANSFERS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getCfxTransferStats()).formatted;
+                    return `CFX Transfers:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-cfx-transfers" }
+            );
         },
     };
 }
 
 export function getCoreTpsProvider(config: ValidatedConfig): Provider | null {
     if (!config.coreConfluxScan) {
-        elizaLogger.debug("[CoreProvider] TPS provider not initialized - missing config");
+        logOperation("info", "TPS provider not initialized - missing config", {
+            provider: "core-stats",
+            operation: "initialization",
+            cacheKey: CACHE_KEYS.CORE.TPS,
+        });
         return null;
     }
-    elizaLogger.debug("[CoreProvider] TPS provider initialized");
+    logOperation("info", "TPS provider initialized", {
+        provider: "core-stats",
+        operation: "initialization",
+        cacheKey: CACHE_KEYS.CORE.TPS,
+    });
 
     const confluxScan = config.coreConfluxScan;
 
@@ -330,31 +284,17 @@ export function getCoreTpsProvider(config: ValidatedConfig): Provider | null {
             _message: Memory,
             _state?: State
         ): Promise<string | null> => {
-            elizaLogger.debug("[CoreProvider] TPS provider get method called");
-            const cache = runtime.cacheManager;
-            const cacheKey = `conflux:core:confluxscan:tps`;
-
-            try {
-                const cachedStat = await cache.get(cacheKey);
-                elizaLogger.debug("[CoreProvider] Cache check for TPS:", {
-                    hasCachedData: cachedStat !== null,
-                });
-
-                if (cachedStat) {
-                    return cachedStat as string;
-                }
-
-                elizaLogger.debug("[CoreProvider] Fetching fresh TPS data");
-                const stat = (await confluxScan.getTpsStats({ intervalType: "hour" })).formatted;
-                const statText = `TPS:\n${stat}`;
-
-                await cache.set(cacheKey, statText, { expires: 300 });
-                elizaLogger.debug("[CoreProvider] Successfully cached TPS data");
-                return statText;
-            } catch (error) {
-                elizaLogger.error("Error in Core TPS provider:", error);
-                return null;
-            }
+            const cacheKey = CACHE_KEYS.CORE.TPS;
+            return withCache(
+                runtime,
+                cacheKey,
+                async () => {
+                    const stat = (await confluxScan.getTpsStats({ intervalType: "hour" }))
+                        .formatted;
+                    return `TPS:\n${stat}`;
+                },
+                { provider: "core-stats", operation: "get-tps" }
+            );
         },
     };
 }
