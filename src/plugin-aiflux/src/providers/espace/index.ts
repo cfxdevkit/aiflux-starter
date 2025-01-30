@@ -8,11 +8,9 @@ export {
     getEspaceTpsProvider,
 } from "./stats";
 export {
-    getEspaceTopGasUsedProvider,
-    getEspaceTopCfxSendersProvider,
-    getEspaceTopCfxReceiversProvider,
-    getEspaceTopTransactionSendersProvider,
-    getEspaceTopTransactionReceiversProvider,
-    getEspaceTopTokenParticipantsProvider,
-    getEspaceTopTokenTransfersProvider,
+    getESpaceTopGasUsersProvider,
+    getESpaceTopCfxSendersProvider,
+    getESpaceTopCfxReceiversProvider,
+    getESpaceTopTransactionSendersProvider,
+    getESpaceTopTransactionReceiversProvider,
 } from "./top";

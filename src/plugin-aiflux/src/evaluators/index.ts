@@ -6,29 +6,32 @@ export class ConfluxEvaluators {
     constructor(private config: ValidatedConfig) {
         this.confluxConfig = config;
     }
+
     getGeckoTerminalEvaluator(): Evaluator | null {
         if (!this.confluxConfig.geckoTerminal) {
             return null;
         }
 
+        const triggers = [
+            "dex pools",
+            "pool info",
+            "trading pairs",
+            "liquidity pools",
+            "pool stats",
+            "pool metrics",
+        ];
+
         return {
             name: "conflux-geckoterminal",
-            description: "Evaluator for GeckoTerminal data - updates when cache expires",
-            similes: [],
+            description: "Evaluator for GeckoTerminal data - handles DEX pool related queries",
+            similes: triggers,
             examples: [],
-            validate: async (runtime: IAgentRuntime) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
-                    const cacheKey = `conflux:espace:geckoterminal`;
-                    const cachedData = await runtime.cacheManager.get(cacheKey);
-                    const needsUpdate = cachedData === null;
+                    const messageText = message.content?.text?.toLowerCase();
+                    if (!messageText) return false;
 
-                    elizaLogger.debug("GeckoTerminal evaluator check result:", {
-                        evaluator: "conflux-geckoterminal",
-                        needsUpdate,
-                        hasCachedData: !needsUpdate,
-                    });
-
-                    return needsUpdate;
+                    return triggers.some((trigger) => messageText.includes(trigger));
                 } catch (error) {
                     elizaLogger.error("Error in geckoterminal evaluator validation:", error);
                     return false;
@@ -36,7 +39,7 @@ export class ConfluxEvaluators {
             },
             handler: async () => ({
                 score: 1,
-                reason: "GeckoTerminal data needs to be updated due to expired/missing cache",
+                reason: "GeckoTerminal data requested for DEX pool information",
             }),
         };
     }
@@ -46,51 +49,34 @@ export class ConfluxEvaluators {
             return null;
         }
 
+        const triggers = [
+            "core network",
+            "core chain",
+            "core stats",
+            "core metrics",
+            "core accounts",
+            "core holders",
+            "core contracts",
+            "core transactions",
+            "core transfers",
+            "core tps",
+            "core miners",
+            "core gas",
+            "core activity",
+        ];
+
         return {
             name: "conflux-scan-core",
-            description: "Evaluator for ConfluxScan Core data - updates when cache expires",
-            similes: [],
+            description:
+                "Evaluator for ConfluxScan Core data - handles Core network related queries",
+            similes: triggers,
             examples: [],
-            validate: async (runtime: IAgentRuntime) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
-                    // Check all possible cache keys
-                    const cacheKeys = [
-                        "conflux:core:confluxscan:active_accounts",
-                        "conflux:core:confluxscan:cfx_holders",
-                        "conflux:core:confluxscan:account_growth",
-                        "conflux:core:confluxscan:contracts",
-                        "conflux:core:confluxscan:supply",
-                        "conflux:core:confluxscan:transactions",
-                        "conflux:core:confluxscan:cfx_transfers",
-                        "conflux:core:confluxscan:tps",
-                        "conflux:core:confluxscan:top_miners",
-                        "conflux:core:confluxscan:top_gas_used",
-                        "conflux:core:confluxscan:top_cfx_senders",
-                        "conflux:core:confluxscan:top_cfx_receivers",
-                        "conflux:core:confluxscan:top_tx_senders",
-                        "conflux:core:confluxscan:top_tx_receivers",
-                    ];
+                    const messageText = message.content?.text?.toLowerCase();
+                    if (!messageText) return false;
 
-                    const expiredKeys = [];
-                    // Check if any of the caches are expired
-                    for (const key of cacheKeys) {
-                        const cachedData = await runtime.cacheManager.get(key);
-                        if (cachedData === null) {
-                            expiredKeys.push(key);
-                        }
-                    }
-
-                    const needsUpdate = expiredKeys.length > 0;
-
-                    elizaLogger.debug("ConfluxScan Core evaluator check result:", {
-                        evaluator: "conflux-scan-core",
-                        needsUpdate,
-                        hasCachedData: !needsUpdate,
-                        expiredKeysCount: expiredKeys.length,
-                        expiredKeys,
-                    });
-
-                    return needsUpdate;
+                    return triggers.some((trigger) => messageText.includes(trigger));
                 } catch (error) {
                     elizaLogger.error("Error in ConfluxScan Core evaluator validation:", error);
                     return false;
@@ -98,7 +84,7 @@ export class ConfluxEvaluators {
             },
             handler: async () => ({
                 score: 1,
-                reason: "ConfluxScan Core data needs to be updated due to expired/missing cache",
+                reason: "ConfluxScan Core data requested for network metrics",
             }),
         };
     }
@@ -108,51 +94,33 @@ export class ConfluxEvaluators {
             return null;
         }
 
+        const triggers = [
+            "espace network",
+            "espace chain",
+            "espace stats",
+            "espace metrics",
+            "espace accounts",
+            "espace holders",
+            "espace contracts",
+            "espace transactions",
+            "espace transfers",
+            "espace tps",
+            "espace gas",
+            "espace activity",
+        ];
+
         return {
             name: "conflux-scan-espace",
-            description: "Evaluator for ConfluxScan eSpace data - updates when cache expires",
-            similes: [],
+            description:
+                "Evaluator for ConfluxScan eSpace data - handles eSpace network related queries",
+            similes: triggers,
             examples: [],
-            validate: async (runtime: IAgentRuntime) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
-                    // Check all possible cache keys
-                    const cacheKeys = [
-                        "conflux:espace:confluxscan:active_accounts",
-                        "conflux:espace:confluxscan:cfx_holders",
-                        "conflux:espace:confluxscan:account_growth",
-                        "conflux:espace:confluxscan:contracts",
-                        "conflux:espace:confluxscan:transactions",
-                        "conflux:espace:confluxscan:cfx_transfers",
-                        "conflux:espace:confluxscan:tps",
-                        "conflux:espace:confluxscan:top_gas_used",
-                        "conflux:espace:confluxscan:top_cfx_senders",
-                        "conflux:espace:confluxscan:top_cfx_receivers",
-                        "conflux:espace:confluxscan:top_tx_senders",
-                        "conflux:espace:confluxscan:top_tx_receivers",
-                        "conflux:espace:confluxscan:top_token_participants",
-                        "conflux:espace:confluxscan:top_token_transfers",
-                    ];
+                    const messageText = message.content?.text?.toLowerCase();
+                    if (!messageText) return false;
 
-                    const expiredKeys = [];
-                    // Check if any of the caches are expired
-                    for (const key of cacheKeys) {
-                        const cachedData = await runtime.cacheManager.get(key);
-                        if (cachedData === null) {
-                            expiredKeys.push(key);
-                        }
-                    }
-
-                    const needsUpdate = expiredKeys.length > 0;
-
-                    elizaLogger.debug("ConfluxScan eSpace evaluator check result:", {
-                        evaluator: "conflux-scan-espace",
-                        needsUpdate,
-                        hasCachedData: !needsUpdate,
-                        expiredKeysCount: expiredKeys.length,
-                        expiredKeys,
-                    });
-
-                    return needsUpdate;
+                    return triggers.some((trigger) => messageText.includes(trigger));
                 } catch (error) {
                     elizaLogger.error("Error in ConfluxScan eSpace evaluator validation:", error);
                     return false;
@@ -160,13 +128,13 @@ export class ConfluxEvaluators {
             },
             handler: async () => ({
                 score: 1,
-                reason: "ConfluxScan eSpace data needs to be updated due to expired/missing cache",
+                reason: "ConfluxScan eSpace data requested for network metrics",
             }),
         };
     }
 
     getMarketAnalysisEvaluator(): Evaluator | null {
-        if (!this.confluxConfig.geckoTerminal) {
+        if (!this.confluxConfig.geckoTerminal || !this.confluxConfig.tokenListManager) {
             return null;
         }
 
@@ -202,7 +170,7 @@ export class ConfluxEvaluators {
                     outcome: "Top gainers analysis.",
                 },
             ],
-            validate: async (runtime: IAgentRuntime, message: Memory) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
                     const messageText = message.content?.text?.toLowerCase();
                     if (!messageText) return false;
@@ -242,6 +210,7 @@ export class ConfluxEvaluators {
                             analysisType,
                             limit: limit.toString(),
                         };
+
                         return true;
                     }
 
@@ -251,7 +220,7 @@ export class ConfluxEvaluators {
                     return false;
                 }
             },
-            handler: async (runtime: IAgentRuntime, memory: Memory, _state: State) => {
+            handler: async (_runtime: IAgentRuntime, memory: Memory, _state: State) => {
                 try {
                     const analysisType = memory.content?.analysisType as string;
                     const limit = memory.content?.limit;
@@ -286,49 +255,28 @@ export class ConfluxEvaluators {
             return null;
         }
 
-        const DEFAULT_CHAIN = "conflux";
-        const CACHE_KEYS = {
-            CHAIN_TVL: (chain: string) => `defillama:tvl:chain:${chain}`,
-            PROTOCOLS_TVL: (chain: string) => `defillama:tvl:protocols:${chain}`,
-        } as const;
+        const triggers = [
+            "defi tvl",
+            "protocol tvl",
+            "chain tvl",
+            "total value locked",
+            "protocol rankings",
+            "defi rankings",
+            "defi protocols",
+            "protocol stats",
+        ];
 
         return {
             name: "conflux-defillama",
-            description: "Evaluator for DeFiLlama data - updates when cache expires",
-            similes: [],
+            description: "Evaluator for DeFiLlama data - handles TVL and protocol metrics",
+            similes: triggers,
             examples: [],
-            validate: async (runtime: IAgentRuntime) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
-                    const cacheKeys = [
-                        CACHE_KEYS.CHAIN_TVL(DEFAULT_CHAIN),
-                        CACHE_KEYS.PROTOCOLS_TVL(DEFAULT_CHAIN),
-                    ];
+                    const messageText = message.content?.text?.toLowerCase();
+                    if (!messageText) return false;
 
-                    let expiredKeys = [];
-                    // Check if any of the caches are expired
-                    const cacheResults = await Promise.all(
-                        cacheKeys.map(async (key) => ({
-                            key,
-                            data: await runtime.cacheManager.get(key),
-                        }))
-                    );
-
-                    expiredKeys = cacheResults
-                        .filter((result) => result.data === null)
-                        .map((result) => result.key);
-
-                    const needsUpdate = expiredKeys.length > 0;
-
-                    elizaLogger.debug("DeFiLlama evaluator cache check:", {
-                        evaluator: "conflux-defillama",
-                        needsUpdate,
-                        hasCachedData: !needsUpdate,
-                        expiredKeysCount: expiredKeys.length,
-                        expiredKeys,
-                        checkedKeys: cacheKeys,
-                    });
-
-                    return needsUpdate;
+                    return triggers.some((trigger) => messageText.includes(trigger));
                 } catch (error) {
                     elizaLogger.error("Error in DeFiLlama evaluator validation:", error);
                     return false;
@@ -336,7 +284,7 @@ export class ConfluxEvaluators {
             },
             handler: async () => ({
                 score: 1,
-                reason: "DeFiLlama data needs to be updated due to expired/missing cache",
+                reason: "DeFiLlama data requested for TVL and protocol metrics",
             }),
         };
     }
@@ -346,25 +294,28 @@ export class ConfluxEvaluators {
             return null;
         }
 
+        const triggers = [
+            "token list",
+            "token info",
+            "token details",
+            "token metrics",
+            "token stats",
+            "token data",
+            "supported tokens",
+            "available tokens",
+        ];
+
         return {
             name: "conflux-tokens",
-            description: "Evaluator for token data - updates when cache expires",
-            similes: [],
+            description: "Evaluator for token data - handles token-related queries",
+            similes: triggers,
             examples: [],
-            validate: async (runtime: IAgentRuntime) => {
+            validate: async (_runtime: IAgentRuntime, message: Memory) => {
                 try {
-                    const cacheKey = "conflux:espace:tokens";
-                    const cachedData = await runtime.cacheManager.get(cacheKey);
-                    const needsUpdate = cachedData === null;
+                    const messageText = message.content?.text?.toLowerCase();
+                    if (!messageText) return false;
 
-                    elizaLogger.debug("Tokens evaluator cache check:", {
-                        evaluator: "conflux-tokens",
-                        needsUpdate,
-                        hasCachedData: !needsUpdate,
-                        cacheKey,
-                    });
-
-                    return needsUpdate;
+                    return triggers.some((trigger) => messageText.includes(trigger));
                 } catch (error) {
                     elizaLogger.error("Error in tokens evaluator validation:", error);
                     return false;
@@ -372,7 +323,7 @@ export class ConfluxEvaluators {
             },
             handler: async () => ({
                 score: 1,
-                reason: "Token data needs to be updated due to expired/missing cache",
+                reason: "Token data requested for token information",
             }),
         };
     }
