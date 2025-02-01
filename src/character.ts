@@ -5,6 +5,23 @@ export const character: Character = {
     plugins: [],
     clients: [Clients.TELEGRAM],
     modelProvider: ModelProviderName.OPENAI,
+    clientConfig: {
+        telegram: {
+            shouldIgnoreBotMessages: true,
+            shouldIgnoreDirectMessages: false,
+            shouldRespondOnlyToMentions: true,
+            shouldOnlyJoinInAllowedGroups: true,
+            allowedGroupIds: ["-4723555274"],
+            autoPost: {
+                enabled: true,
+                monitorTime: 10,
+                inactivityThreshold: 5,
+                mainChannelId: "-4723555274",
+                pinnedMessagesGroups: [],
+                minTimeBetweenPosts: 2,
+            },
+        },
+    },
     settings: {
         secrets: {
             CONFLUX_TARGET: "mainnet",

@@ -1,6 +1,6 @@
 {
     "name": "@elizaos/plugin-aiflux",
-    "version": "0.1.7",
+    "version": "0.1.9",
     "type": "module",
     "main": "dist/index.js",
     "module": "dist/index.js",
@@ -15,7 +15,7 @@
         "dist"
     ],
     "dependencies": {
-        "@elizaos/core": "0.1.7",
+        "@elizaos/core": "0.1.9",
         "@scure/bip32": "^1.6.1",
         "@scure/bip39": "^1.5.1",
         "cive": "0.8.1",
