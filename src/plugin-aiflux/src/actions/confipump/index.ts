@@ -34,7 +34,7 @@
 //     memeAddress: `0x${string}`,
 //     amount: bigint
 // ) {
-//     elizaLogger.debug(
+//     elizaLogger.info(
 //         `Checking allowance: token: ${tokenAddress} meme: ${memeAddress} amount: ${amount}`
 //     );
 
@@ -50,10 +50,10 @@
 //         args: [account.address, memeAddress],
 //     });
 
-//     elizaLogger.debug("allowance:", allowance);
+//     elizaLogger.info("allowance:", allowance);
 
 //     if (allowance < amount) {
-//         elizaLogger.debug(`allowance(${allowance}) is less than amount(${amount}), approving...`);
+//         elizaLogger.info(`allowance(${allowance}) is less than amount(${amount}), approving...`);
 
 //         const hash = await walletClient.sendTransaction({
 //             account,
@@ -67,11 +67,11 @@
 //             kzg: null,
 //         });
 
-//         elizaLogger.debug(`Approving hash: ${hash}`);
+//         elizaLogger.info(`Approving hash: ${hash}`);
 //         await publicClient.waitForTransactionReceipt({ hash });
-//         elizaLogger.debug(`Approving success: ${hash}`);
+//         elizaLogger.info(`Approving success: ${hash}`);
 //     } else {
-//         elizaLogger.debug(`No need to approve`);
+//         elizaLogger.info(`No need to approve`);
 //     }
 // }
 
@@ -207,7 +207,7 @@
 //                     if (!isPumpCreateContent(contentObject)) {
 //                         throw new Error("Invalid content");
 //                     }
-//                     elizaLogger.debug(
+//                     elizaLogger.info(
 //                         "creating: ",
 //                         contentObject.params.name,
 //                         contentObject.params.symbol,
@@ -230,7 +230,7 @@
 //                         throw new Error("Invalid content");
 //                     }
 //                     value = parseUnits(contentObject.params.value.toString(), 18);
-//                     elizaLogger.debug("buying: ", contentObject.params.tokenAddress, value);
+//                     elizaLogger.info("buying: ", contentObject.params.tokenAddress, value);
 //                     data = encodeFunctionData({
 //                         abi: MEMEABI,
 //                         functionName: "buy",
@@ -250,7 +250,7 @@
 //                     const tokenAddress = getAddress(
 //                         contentObject.params.tokenAddress as `0x${string}`
 //                     );
-//                     elizaLogger.debug(
+//                     elizaLogger.info(
 //                         "selling: ",
 //                         tokenAddress,
 //                         account.address,
@@ -292,7 +292,7 @@
 //                 value,
 //                 account,
 //             });
-//             elizaLogger.debug("simulate: ", simulate);
+//             elizaLogger.info("simulate: ", simulate);
 
 //             const hash = await walletClient.sendTransaction({
 //                 account,

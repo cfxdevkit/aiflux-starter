@@ -23,10 +23,10 @@ function shouldDebounceUpdate(key: string): boolean {
  * Cache duration configuration in seconds
  */
 export const CACHE_DURATIONS = {
-    VOLATILE: 3000, // 5 mins for frequently changing data (e.g., TPS)
-    MODERATE: 9000, // 15 mins for moderately changing data (e.g., transactions)
-    STABLE: 18000, // 30 mins for relatively stable data (e.g., token lists)
-    STATIC: 36000, // 1 hour for rarely changing data (e.g., contract info)
+    VOLATILE: 300, // 5 mins for frequently changing data (e.g., TPS)
+    MODERATE: 900, // 15 mins for moderately changing data (e.g., transactions)
+    STABLE: 1800, // 30 mins for relatively stable data (e.g., token lists)
+    STATIC: 3600, // 1 hour for rarely changing data (e.g., contract info)
 } as const;
 
 /**
@@ -87,13 +87,32 @@ export const CACHE_KEYS = {
 export async function getCacheWithRetry(
     cache: ICacheManager,
     key: string,
+    cacheDuration: number = CACHE_DURATIONS.VOLATILE,
     retries = 3
 ): Promise<string | null> {
     let attempt = 0;
     while (attempt < retries) {
         try {
-            const data = await cache.get(key);
-            return data as string | null;
+            const rawData = await cache.get(key);
+            if (!rawData) return null;
+
+            try {
+                const { data, timestamp } = JSON.parse(rawData as string);
+                const now = Date.now();
+                const age = now - timestamp;
+
+                // If data is older than cacheDuration (in seconds), return null to trigger a refresh
+                if (age > cacheDuration * 1000) {
+                    return null;
+                }
+
+                return data;
+            } catch (parseError) {
+                elizaLogger.warn(`Failed to parse cached data for key ${key}:`, {
+                    error: parseError instanceof Error ? parseError.message : String(parseError),
+                });
+                return null;
+            }
         } catch (error) {
             elizaLogger.warn(`Cache retry attempt ${attempt + 1} failed for key ${key}:`, {
                 error: error instanceof Error ? error.message : String(error),
@@ -119,12 +138,17 @@ export async function setCacheWithDebounce(
     _duration: number = CACHE_DURATIONS.VOLATILE
 ): Promise<string | null> {
     if (shouldDebounceUpdate(key)) {
-        elizaLogger.debug("Cache update debounced", { key });
+        elizaLogger.info("Cache update debounced", { key });
         return null;
     }
 
     const data = await fetchFn();
-    await cache.set(key, data);
+    const cacheValue = JSON.stringify({
+        data,
+        timestamp: Date.now(),
+    });
+    await cache.set(key, cacheValue);
+    elizaLogger.info("Cache updated", { key });
     return data;
 }
 
@@ -172,17 +196,22 @@ export async function withCache(
 ): Promise<string | null> {
     try {
         const startTime = Date.now();
-        const cachedData = await getCacheWithRetry(runtime.cacheManager, cacheKey);
-
-        logOperation("info", "Cache check", {
-            provider: logContext.provider,
-            operation: "cache_check",
-            cacheKey,
-            dataSize: cachedData?.length || 0,
-        });
+        const cachedData = await getCacheWithRetry(runtime.cacheManager, cacheKey, cacheDuration);
 
         if (cachedData) {
+            logOperation("info", "Returning chached data", {
+                provider: logContext.provider,
+                operation: "cache_check",
+                cacheKey,
+                dataSize: cachedData?.length || 0,
+            });
             return cachedData;
+        } else {
+            logOperation("info", "Cache miss", {
+                provider: logContext.provider,
+                operation: "cache_check",
+                cacheKey,
+            });
         }
 
         logOperation("info", "Fetching fresh data", {
@@ -198,6 +227,11 @@ export async function withCache(
             cacheDuration
         );
         if (!freshData) {
+            elizaLogger.error("Failed to fetch fresh data", {
+                provider: logContext.provider,
+                operation: "data_fetch",
+                cacheKey,
+            });
             return null;
         }
 

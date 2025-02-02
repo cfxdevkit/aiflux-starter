@@ -14,13 +14,13 @@ export class GeckoTerminal {
     private readonly DEFAULT_DEX = "swappi";
 
     private async fetchData<T>(path: string): Promise<T> {
-        elizaLogger.debug(`Fetching data from: ${this.BASE_URL}${path}`);
+        elizaLogger.info(`Fetching data from: ${this.BASE_URL}${path}`);
         const response = await fetch(`${this.BASE_URL}${path}`);
         if (!response.ok) {
             elizaLogger.error(`API request failed with status: ${response.status}`);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        elizaLogger.debug("Data fetched successfully");
+        elizaLogger.info("Data fetched successfully");
         return await response.json();
     }
 
@@ -80,7 +80,7 @@ export class GeckoTerminal {
     }
 
     public formatPool(pool: Pool): FormattedPool {
-        elizaLogger.debug(`Formatting pool data for: ${pool.attributes.name}`);
+        elizaLogger.info(`Formatting pool data for: ${pool.attributes.name}`);
         const formattedPool = {
             name: pool.attributes.name,
             price: `$${Number(pool.attributes.base_token_price_usd).toFixed(6)}`,
@@ -130,7 +130,7 @@ export class GeckoTerminal {
      * @param tokenAddresses Array of token addresses
      */
     public async getMultiTokenInfo(tokenAddresses: string[]): Promise<MultiTokenResponse> {
-        elizaLogger.debug(`Fetching info for ${tokenAddresses.length} tokens`);
+        elizaLogger.info(`Fetching info for ${tokenAddresses.length} tokens`);
         if (tokenAddresses.length > 30) {
             elizaLogger.error("Token address limit exceeded");
             throw new Error("Maximum of 30 token addresses allowed per request");
@@ -145,7 +145,7 @@ export class GeckoTerminal {
      * @param poolAddresses Array of pool addresses
      */
     public async getMultiPoolInfo(poolAddresses: string[]): Promise<MultiPoolResponse> {
-        elizaLogger.debug(`Fetching info for ${poolAddresses.length} pools`);
+        elizaLogger.info(`Fetching info for ${poolAddresses.length} pools`);
         return this.fetchData<MultiPoolResponse>(
             `/networks/${this.NETWORK}/pools/multi/${poolAddresses.join(",")}`
         );
@@ -156,12 +156,12 @@ export class GeckoTerminal {
      * @param poolAddresses Array of pool addresses
      */
     public async getFormattedMultiPoolInfo(poolAddresses: string[]): Promise<FormattedPool[]> {
-        elizaLogger.debug(`Getting formatted info for ${poolAddresses.length} pools`);
-        elizaLogger.debug(`Pool addresses: ${poolAddresses.join(", ")}`);
+        elizaLogger.info(`Getting formatted info for ${poolAddresses.length} pools`);
+        elizaLogger.info(`Pool addresses: ${poolAddresses.join(", ")}`);
 
         try {
             const poolsInfo = await this.getMultiPoolInfo(poolAddresses);
-            elizaLogger.debug(`Retrieved raw data for ${poolsInfo.data.length} pools`);
+            elizaLogger.info(`Retrieved raw data for ${poolsInfo.data.length} pools`);
 
             const formattedPools = poolsInfo.data.map((pool) => {
                 try {
@@ -172,7 +172,7 @@ export class GeckoTerminal {
                 }
             });
 
-            elizaLogger.debug(`Successfully formatted ${formattedPools.length} pools`);
+            elizaLogger.info(`Successfully formatted ${formattedPools.length} pools`);
             return formattedPools;
         } catch (error) {
             elizaLogger.error(`Failed to get multi-pool info: ${error}`);

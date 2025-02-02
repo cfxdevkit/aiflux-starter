@@ -32,7 +32,7 @@ export class DeFiLlama {
     private readonly BASE_URL = "https://api.llama.fi";
 
     private async fetchData<T>(path: string): Promise<T> {
-        elizaLogger.debug(`Fetching DeFiLlama data from: ${path}`);
+        elizaLogger.info(`Fetching DeFiLlama data from: ${path}`);
         const response = await fetch(`${this.BASE_URL}${path}`);
         if (!response.ok) {
             elizaLogger.error(`DeFiLlama API request failed with status: ${response.status}`);
@@ -84,7 +84,7 @@ export class DeFiLlama {
             const minTVL = Math.min(...tvlValues);
             const avgTVL = tvlValues.reduce((sum, val) => sum + val, 0) / tvlValues.length;
 
-            elizaLogger.debug(`Chain TVL Summary for ${chain}:`, {
+            elizaLogger.info(`Chain TVL Summary for ${chain}:`, {
                 currentTVL: `$${currentTVL.toLocaleString()}`,
                 monthlyChange: `${monthlyChange.toFixed(2)}%`,
                 dataPoints: last12Months.length,
@@ -147,7 +147,7 @@ export class DeFiLlama {
             const minTVL = Math.min(...tvlValues);
             const avgTVL = tvlValues.reduce((sum, val) => sum + val, 0) / tvlValues.length;
 
-            elizaLogger.debug(`Protocol TVL Summary for ${protocol}:`, {
+            elizaLogger.info(`Protocol TVL Summary for ${protocol}:`, {
                 currentTVL: `$${currentTVL.toLocaleString()}`,
                 monthlyChange: `${monthlyChange.toFixed(2)}%`,
                 dataPoints: last12Months.length,

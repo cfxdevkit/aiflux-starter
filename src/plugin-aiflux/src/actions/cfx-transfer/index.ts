@@ -23,7 +23,7 @@ async function executeCfxTransfer(
     params: CfxTransferParams,
     callback: HandlerCallback
 ): Promise<{ tx: `0x${string}`; successMessage: string }> {
-    elizaLogger.debug("Starting CFX transfer operation", {
+    elizaLogger.info("Starting CFX transfer operation", {
         operation: "CFXTransfer",
         amount: params.amount,
         toAddress: params.toAddress,
@@ -36,7 +36,7 @@ async function executeCfxTransfer(
         // Check if we have the required wallet
         const wallet = params.network === "core" ? config.coreWallet : config.espaceWallet;
 
-        elizaLogger.debug("Checking wallet configuration", {
+        elizaLogger.info("Checking wallet configuration", {
             operation: "CFXTransfer",
             network: params.network,
             hasWallet: !!wallet,
@@ -60,7 +60,7 @@ async function executeCfxTransfer(
             []
         );
 
-        elizaLogger.debug("Fetching initial balance", {
+        elizaLogger.info("Fetching initial balance", {
             operation: "CFXTransfer",
             network: params.network,
         });
@@ -68,7 +68,7 @@ async function executeCfxTransfer(
         // Get initial balance
         const initialBalance = await wallet.getBalance();
 
-        elizaLogger.debug("Initial balance fetched", {
+        elizaLogger.info("Initial balance fetched", {
             operation: "CFXTransfer",
             network: params.network,
             initialBalance,
@@ -82,7 +82,7 @@ async function executeCfxTransfer(
             []
         );
 
-        elizaLogger.debug("Initiating transfer transaction", {
+        elizaLogger.info("Initiating transfer transaction", {
             operation: "CFXTransfer",
             network: params.network,
             amount: params.amount,
@@ -101,7 +101,7 @@ async function executeCfxTransfer(
             });
         }
 
-        elizaLogger.debug("Transfer transaction submitted", {
+        elizaLogger.info("Transfer transaction submitted", {
             operation: "CFXTransfer",
             network: params.network,
             transactionHash: tx,
@@ -115,7 +115,7 @@ async function executeCfxTransfer(
             []
         );
 
-        elizaLogger.debug("Waiting for transaction confirmation", {
+        elizaLogger.info("Waiting for transaction confirmation", {
             operation: "CFXTransfer",
             network: params.network,
             transactionHash: tx,
@@ -124,7 +124,7 @@ async function executeCfxTransfer(
         // Wait for transaction confirmation
         await wallet.waitForTransaction(tx);
 
-        elizaLogger.debug("Transaction confirmed, fetching final balance", {
+        elizaLogger.info("Transaction confirmed, fetching final balance", {
             operation: "CFXTransfer",
             network: params.network,
             transactionHash: tx,
@@ -133,7 +133,7 @@ async function executeCfxTransfer(
         // Get final balance
         const finalBalance = await wallet.getBalance();
 
-        elizaLogger.debug("Transfer operation completed successfully", {
+        elizaLogger.info("Transfer operation completed successfully", {
             operation: "CFXTransfer",
             network: params.network,
             transactionHash: tx,
@@ -165,7 +165,7 @@ Transaction: ${tx}`;
 }
 
 export function createCfxTransferAction(config: ValidatedConfig): Action {
-    elizaLogger.debug("Creating CFX transfer action", {
+    elizaLogger.info("Creating CFX transfer action", {
         operation: "CFXTransfer",
         hasCoreWallet: !!config.coreWallet,
         hasEspaceWallet: !!config.espaceWallet,
@@ -177,7 +177,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
         similes: ["SEND", "TRANSFER", "SEND_CFX"],
         suppressInitialMessage: false,
         validate: async (_runtime: IAgentRuntime, _message: Memory) => {
-            elizaLogger.debug("Validating transfer configuration", {
+            elizaLogger.info("Validating transfer configuration", {
                 operation: "CFXTransfer",
                 hasCoreWallet: !!config.coreWallet,
                 hasEspaceWallet: !!config.espaceWallet,
@@ -198,7 +198,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
-            elizaLogger.debug("Starting transfer handler", {
+            elizaLogger.info("Starting transfer handler", {
                 operation: "CFXTransfer",
                 messageId: message.id,
             });
@@ -214,7 +214,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
                 });
 
                 try {
-                    elizaLogger.debug("Generating transfer parameters", {
+                    elizaLogger.info("Generating transfer parameters", {
                         operation: "CFXTransfer",
                         messageId: message.id,
                     });
@@ -231,7 +231,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
                         ? "core"
                         : "espace";
 
-                    elizaLogger.debug("Network determined from address", {
+                    elizaLogger.info("Network determined from address", {
                         operation: "CFXTransfer",
                         network,
                         address: actionDetails.object.toAddress,
@@ -260,7 +260,7 @@ export function createCfxTransferAction(config: ValidatedConfig): Action {
                         network,
                     };
 
-                    elizaLogger.debug("Transfer parameters generated", {
+                    elizaLogger.info("Transfer parameters generated", {
                         operation: "CFXTransfer",
                         params,
                         messageId: message.id,

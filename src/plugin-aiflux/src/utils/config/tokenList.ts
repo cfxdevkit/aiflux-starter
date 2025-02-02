@@ -112,10 +112,10 @@ export class TokenListManager {
 
         // If tokenList is empty after GeckoTerminal load, use default list
         if (Object.keys(this.tokenList).length === 0) {
-            elizaLogger.debug("No tokens loaded from GeckoTerminal, using default token list");
+            elizaLogger.info("No tokens loaded from GeckoTerminal, using default token list");
             this.tokenList = target === "mainnet" ? MAINNET_DEFAULT_TOKENS : TESTNET_DEFAULT_TOKENS;
 
-            elizaLogger.debug(
+            elizaLogger.info(
                 `Loaded ${Object.keys(this.tokenList).length} default tokens for ${target}`
             );
         }
@@ -138,7 +138,7 @@ export class TokenListManager {
                 new Set(allPools.flatMap((pool) => [pool.baseTokenAddress, pool.quoteTokenAddress]))
             );
 
-            elizaLogger.debug(`Found ${uniqueTokenAddresses.length} unique tokens to fetch`);
+            elizaLogger.info(`Found ${uniqueTokenAddresses.length} unique tokens to fetch`);
 
             for (let i = 0; i < uniqueTokenAddresses.length; i += BATCH_SIZE) {
                 const batch = uniqueTokenAddresses.slice(i, i + BATCH_SIZE);
@@ -193,8 +193,8 @@ export class TokenListManager {
 
             this.pools = allPools.filter((pool) => Number(pool.reserveUSD) >= this.minReserveUSD);
 
-            elizaLogger.debug(`Successfully loaded ${Object.keys(this.tokenList).length} tokens`);
-            elizaLogger.debug(
+            elizaLogger.info(`Successfully loaded ${Object.keys(this.tokenList).length} tokens`);
+            elizaLogger.info(
                 `Filtered to ${this.pools.length} pools with minimum reserve of $${this.minReserveUSD}`
             );
         } catch (error) {
@@ -207,10 +207,10 @@ export class TokenListManager {
 
         const walletAddress = address || this.espaceWalletAddress;
         if (!walletAddress) return [];
-        elizaLogger.debug("Loading tokens from wallet:", walletAddress, this.confluxScanESpace);
+        elizaLogger.info("Loading tokens from wallet:", walletAddress, this.confluxScanESpace);
         try {
             const walletTokens = (await this.confluxScanESpace.getAccountTokens(walletAddress)).raw;
-            elizaLogger.debug("Wallet tokens:", walletTokens);
+            elizaLogger.info("Wallet tokens:", walletTokens);
             const addedTokens: TokenInfo[] = [];
             for (const token of walletTokens) {
                 if (token.type === "ERC20") {

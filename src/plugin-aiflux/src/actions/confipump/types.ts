@@ -97,7 +97,7 @@
 // export type SwapContent = z.infer<typeof SwapSchema>;
 
 // export function isSwapContent(object: unknown): object is SwapContent {
-//     elizaLogger.debug("Validating content:", object);
+//     elizaLogger.info("Validating content:", object);
 //     const result = SwapSchema.safeParse(object);
 //     if (!result.success) {
 //         elizaLogger.error("Validation errors:", result.error);
@@ -119,7 +119,7 @@
 // export type ERC20TransferContent = z.infer<typeof ERC20TransferSchema>;
 
 // export function isERC20TransferContent(object: unknown): object is ERC20TransferContent {
-//     elizaLogger.debug("Validating ERC20 transfer content:", object);
+//     elizaLogger.info("Validating ERC20 transfer content:", object);
 //     const result = ERC20TransferSchema.safeParse(object);
 //     if (!result.success) {
 //         elizaLogger.error("ERC20 transfer validation errors:", result.error);

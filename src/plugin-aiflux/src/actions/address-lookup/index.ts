@@ -38,7 +38,7 @@ async function executeAddressLookup(
     config: ValidatedConfig,
     params: AddressLookupParams
 ): Promise<{ info: AddressInfo; successMessage: string }> {
-    elizaLogger.debug("Starting address lookup operation", {
+    elizaLogger.info("Starting address lookup operation", {
         address: params.address,
         operation: "AddressLookup",
     });
@@ -49,7 +49,7 @@ async function executeAddressLookup(
         const wallet = isCoreAddress ? config.coreWallet : config.espaceWallet;
         const scanner = isCoreAddress ? config.coreConfluxScan : config.espaceConfluxScan;
 
-        elizaLogger.debug("Address type determined", {
+        elizaLogger.info("Address type determined", {
             operation: "AddressLookup",
             isCoreAddress,
             hasWallet: !!wallet,
@@ -77,7 +77,7 @@ async function executeAddressLookup(
         }
 
         // Check if the address is a contract
-        elizaLogger.debug("Checking if address is contract", {
+        elizaLogger.info("Checking if address is contract", {
             operation: "AddressLookup",
             address: params.address,
         });
@@ -92,7 +92,7 @@ async function executeAddressLookup(
         );
 
         if (contractCheck.isContract) {
-            elizaLogger.debug("Fetching contract details", {
+            elizaLogger.info("Fetching contract details", {
                 operation: "AddressLookup",
                 address: params.address,
             });
@@ -112,13 +112,13 @@ async function executeAddressLookup(
                       : null;
                 isVerified = contractAbi !== null;
                 if (isVerified) {
-                    elizaLogger.debug("Contract ABI fetched successfully", {
+                    elizaLogger.info("Contract ABI fetched successfully", {
                         operation: "AddressLookup",
                         abiLength: contractAbi.length,
                     });
                 }
             } catch (error) {
-                elizaLogger.debug("Contract is not verified", {
+                elizaLogger.info("Contract is not verified", {
                     operation: "AddressLookup",
                     error: error instanceof Error ? error.message : String(error),
                 });
@@ -148,7 +148,7 @@ async function executeAddressLookup(
 
             return { info, successMessage };
         } else {
-            elizaLogger.debug("Fetching account tokens", {
+            elizaLogger.info("Fetching account tokens", {
                 operation: "AddressLookup",
                 address: params.address,
             });
@@ -157,7 +157,7 @@ async function executeAddressLookup(
             try {
                 const response = await scanner.getAccountTokens(params.address);
                 tokens = response.raw;
-                elizaLogger.debug("Account tokens fetched", {
+                elizaLogger.info("Account tokens fetched", {
                     operation: "AddressLookup",
                     tokenCount: tokens.length,
                 });
@@ -204,7 +204,7 @@ async function executeAddressLookup(
 }
 
 export function createAddressLookupAction(config: ValidatedConfig): Action {
-    elizaLogger.debug("Creating address lookup action", {
+    elizaLogger.info("Creating address lookup action", {
         operation: "AddressLookup",
         hasCoreScan: !!config.coreConfluxScan,
         hasESpaceScan: !!config.espaceConfluxScan,
@@ -224,7 +224,7 @@ export function createAddressLookupAction(config: ValidatedConfig): Action {
         ],
         suppressInitialMessage: true,
         validate: async (runtime: IAgentRuntime, message: Memory) => {
-            elizaLogger.debug("Validating address lookup configuration", {
+            elizaLogger.info("Validating address lookup configuration", {
                 operation: "AddressLookup",
                 hasCoreScan: !!config.coreConfluxScan,
                 hasESpaceScan: !!config.espaceConfluxScan,
@@ -244,7 +244,7 @@ export function createAddressLookupAction(config: ValidatedConfig): Action {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
-            elizaLogger.debug("Starting address lookup handler", {
+            elizaLogger.info("Starting address lookup handler", {
                 operation: "AddressLookup",
                 messageId: message.id,
             });
@@ -269,7 +269,7 @@ export function createAddressLookupAction(config: ValidatedConfig): Action {
 
                     const params: AddressLookupParams = actionDetails.object;
 
-                    elizaLogger.debug("[AddressLookup] Generated action details", params);
+                    elizaLogger.info("[AddressLookup] Generated action details", params);
 
                     const result = await executeAddressLookup(runtime, config, params);
                     callback(

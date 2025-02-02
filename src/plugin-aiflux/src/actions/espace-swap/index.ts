@@ -21,7 +21,7 @@ export async function executeSwap(
     callback: HandlerCallback
 ): Promise<{ tx: `0x${string}`; successMessage: string }> {
     const amount = params.amount;
-    elizaLogger.debug("Starting swap operation", {
+    elizaLogger.info("Starting swap operation", {
         operation: "EspaceSwap",
         fromToken: params.fromToken,
         toToken: params.toToken,
@@ -29,7 +29,7 @@ export async function executeSwap(
     });
 
     try {
-        elizaLogger.debug("Checking configuration", {
+        elizaLogger.info("Checking configuration", {
             operation: "EspaceSwap",
             hasEspaceWallet: !!config.espaceWallet,
             hasTokenListManager: !!config.tokenListManager,
@@ -64,7 +64,7 @@ export async function executeSwap(
             []
         );
 
-        elizaLogger.debug("Resolving token information", {
+        elizaLogger.info("Resolving token information", {
             operation: "EspaceSwap",
             fromToken: params.fromToken,
             toToken: params.toToken,
@@ -97,7 +97,7 @@ export async function executeSwap(
             throw new Error(error);
         }
 
-        elizaLogger.debug("Token information resolved", {
+        elizaLogger.info("Token information resolved", {
             operation: "EspaceSwap",
             fromTokenAddress: fromToken.address,
             toTokenAddress: toToken.address,
@@ -112,7 +112,7 @@ export async function executeSwap(
                 ? ([fromToken.address, toToken.address] as `0x${string}`[])
                 : ([fromToken.address, wcfxToken.address, toToken.address] as `0x${string}`[]);
 
-        elizaLogger.debug("Swap path determined", {
+        elizaLogger.info("Swap path determined", {
             operation: "EspaceSwap",
             path,
             requiresWCFXBridge: path.length === 3,
@@ -127,7 +127,7 @@ export async function executeSwap(
         const amountIn = parseUnits(amount, parseInt(fromToken.decimals));
         const slippage = 5;
 
-        elizaLogger.debug("Calculating expected output", {
+        elizaLogger.info("Calculating expected output", {
             operation: "EspaceSwap",
             amountIn: amountIn.toString(),
             slippage,
@@ -136,14 +136,14 @@ export async function executeSwap(
         // Get expected output amount
         const { amounts, amountOutMin } = await wallet.getAmountsOut(amountIn, path, slippage);
 
-        elizaLogger.debug("Swap amounts calculated", {
+        elizaLogger.info("Swap amounts calculated", {
             operation: "EspaceSwap",
             expectedOutput: amounts[1].toString(),
             minimumOutput: amountOutMin.toString(),
             slippage: `${slippage}%`,
         });
 
-        elizaLogger.debug("Fetching initial balances", {
+        elizaLogger.info("Fetching initial balances", {
             operation: "EspaceSwap",
         });
 
@@ -157,7 +157,7 @@ export async function executeSwap(
                 : wallet.getTokenBalance(toToken.address as `0x${string}`),
         ]);
 
-        elizaLogger.debug("Initial balances fetched", {
+        elizaLogger.info("Initial balances fetched", {
             operation: "EspaceSwap",
             balances: {
                 [params.fromToken]: initialFromBalance,
@@ -167,14 +167,14 @@ export async function executeSwap(
 
         // Check allowance if needed
         if (params.fromToken !== "CFX") {
-            elizaLogger.debug("Checking token allowance", {
+            elizaLogger.info("Checking token allowance", {
                 operation: "EspaceSwap",
                 token: params.fromToken,
             });
 
             const allowance = await wallet.checkAllowance(fromToken.address as `0x${string}`);
 
-            elizaLogger.debug("Token allowance status", {
+            elizaLogger.info("Token allowance status", {
                 operation: "EspaceSwap",
                 currentAllowance: allowance.toString(),
                 requiredAmount: amountIn.toString(),
@@ -190,7 +190,7 @@ export async function executeSwap(
                     []
                 );
 
-                elizaLogger.debug("Requesting token approval", {
+                elizaLogger.info("Requesting token approval", {
                     operation: "EspaceSwap",
                     token: params.fromToken,
                     amount: amountIn.toString(),
@@ -201,7 +201,7 @@ export async function executeSwap(
                     amountIn
                 );
 
-                elizaLogger.debug("Token approval confirmed", {
+                elizaLogger.info("Token approval confirmed", {
                     operation: "EspaceSwap",
                     transactionHash: approvalTx,
                 });
@@ -224,7 +224,7 @@ export async function executeSwap(
             []
         );
 
-        elizaLogger.debug("Executing swap transaction", {
+        elizaLogger.info("Executing swap transaction", {
             operation: "EspaceSwap",
             swapType:
                 params.fromToken === "CFX"
@@ -261,7 +261,7 @@ export async function executeSwap(
             });
         }
 
-        elizaLogger.debug("Swap transaction submitted", {
+        elizaLogger.info("Swap transaction submitted", {
             operation: "EspaceSwap",
             transactionHash: tx,
             swapType:
@@ -280,14 +280,14 @@ export async function executeSwap(
             []
         );
 
-        elizaLogger.debug("Waiting for transaction confirmation", {
+        elizaLogger.info("Waiting for transaction confirmation", {
             operation: "EspaceSwap",
             transactionHash: tx,
         });
 
         await wallet.waitForTransaction(tx);
 
-        elizaLogger.debug("Transaction confirmed, fetching final balances", {
+        elizaLogger.info("Transaction confirmed, fetching final balances", {
             operation: "EspaceSwap",
             transactionHash: tx,
         });
@@ -302,7 +302,7 @@ export async function executeSwap(
                 : wallet.getTokenBalance(toToken.address as `0x${string}`),
         ]);
 
-        elizaLogger.debug("Swap operation completed successfully", {
+        elizaLogger.info("Swap operation completed successfully", {
             operation: "EspaceSwap",
             transactionHash: tx,
             balanceChanges: {
@@ -348,7 +348,7 @@ Transaction: ${tx}`;
 }
 
 export function createEspaceSwapAction(config: ValidatedConfig): Action {
-    elizaLogger.debug("Creating eSpace swap action", {
+    elizaLogger.info("Creating eSpace swap action", {
         operation: "EspaceSwap",
         hasEspaceWallet: !!config.espaceWallet,
         hasTokenListManager: !!config.tokenListManager,
@@ -360,7 +360,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
         similes: ["SWAP", "EXCHANGE", "TRADE"],
         suppressInitialMessage: false,
         validate: async (_runtime: IAgentRuntime, _message: Memory) => {
-            elizaLogger.debug("Validating swap configuration", {
+            elizaLogger.info("Validating swap configuration", {
                 operation: "EspaceSwap",
                 hasEspaceWallet: !!config.espaceWallet,
                 hasTokenListManager: !!config.tokenListManager,
@@ -374,7 +374,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
-            elizaLogger.debug("Starting swap handler", {
+            elizaLogger.info("Starting swap handler", {
                 operation: "EspaceSwap",
                 messageId: message.id,
             });
@@ -397,7 +397,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
                     "CFX",
                     ...Object.keys(config.tokenListManager.getTokenList()),
                 ];
-                elizaLogger.debug("Available tokens for swap", {
+                elizaLogger.info("Available tokens for swap", {
                     operation: "EspaceSwap",
                     availableTokens,
                 });
@@ -410,7 +410,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
                 });
 
                 try {
-                    elizaLogger.debug("Generating swap parameters", {
+                    elizaLogger.info("Generating swap parameters", {
                         operation: "EspaceSwap",
                         messageId: message.id,
                     });
@@ -422,7 +422,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
                         schema: EspaceSwapParamsSchema,
                     })) as { object: EspaceSwapParams };
 
-                    elizaLogger.debug("Validating token existence", {
+                    elizaLogger.info("Validating token existence", {
                         operation: "EspaceSwap",
                         fromToken: actionDetails.object.fromToken,
                         toToken: actionDetails.object.toToken,
@@ -464,7 +464,7 @@ export function createEspaceSwapAction(config: ValidatedConfig): Action {
                         return false;
                     }
 
-                    elizaLogger.debug("Swap parameters generated", {
+                    elizaLogger.info("Swap parameters generated", {
                         operation: "EspaceSwap",
                         params: actionDetails.object,
                         messageId: message.id,

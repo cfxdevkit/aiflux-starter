@@ -77,18 +77,18 @@ export class EspaceWallet {
 
     async getBalance(address?: Address): Promise<string> {
         const targetAddress = address || this.account.address;
-        elizaLogger.debug(`Getting eSpace wallet balance for ${targetAddress}`);
+        elizaLogger.info(`Getting eSpace wallet balance for ${targetAddress}`);
         const balance = await this.publicClient.getBalance({
             address: targetAddress,
         });
         const formatted = formatEther(balance);
         const result = Number(formatted).toFixed(4);
-        elizaLogger.debug(`eSpace wallet balance: ${result} CFX`);
+        elizaLogger.info(`eSpace wallet balance: ${result} CFX`);
         return result;
     }
 
     async sendCfx({ to, amount }: { to: Address; amount: string }) {
-        elizaLogger.debug(`Sending ${amount} CFX to ${to} on eSpace`);
+        elizaLogger.info(`Sending ${amount} CFX to ${to} on eSpace`);
         const hash = await this.walletClient.sendTransaction({
             account: this.account,
             chain: this.walletClient.chain,
@@ -96,7 +96,7 @@ export class EspaceWallet {
             value: parseEther(amount),
             kzg: undefined,
         });
-        elizaLogger.debug(`Transaction sent on eSpace: ${hash}`);
+        elizaLogger.info(`Transaction sent on eSpace: ${hash}`);
         return hash;
     }
 
@@ -111,7 +111,7 @@ export class EspaceWallet {
         tokenAddress: Address;
         decimals?: number;
     }) {
-        elizaLogger.debug(`Sending ${amount} tokens (${tokenAddress}) to ${to} on eSpace`);
+        elizaLogger.info(`Sending ${amount} tokens (${tokenAddress}) to ${to} on eSpace`);
         const value = parseUnits(amount, decimals);
 
         const hash = await this.walletClient.writeContract({
@@ -122,12 +122,12 @@ export class EspaceWallet {
             functionName: "transfer",
             args: [to, value],
         });
-        elizaLogger.debug(`Token transfer sent on eSpace: ${hash}`);
+        elizaLogger.info(`Token transfer sent on eSpace: ${hash}`);
         return hash;
     }
 
     async approveToken(tokenAddress: Address, amount: bigint): Promise<`0x${string}`> {
-        elizaLogger.debug(
+        elizaLogger.info(
             `Approving ${amount} tokens (${tokenAddress}) for ${this.account.address}`
         );
 
@@ -139,9 +139,9 @@ export class EspaceWallet {
             functionName: "approve",
             args: [this.dexRouter, amount],
         });
-        elizaLogger.debug(`Token approval sent: ${hash}`);
+        elizaLogger.info(`Token approval sent: ${hash}`);
         await this.waitForTransaction(hash);
-        elizaLogger.debug(`Token approval confirmed: ${hash}`);
+        elizaLogger.info(`Token approval confirmed: ${hash}`);
         return hash;
     }
 
@@ -156,7 +156,7 @@ export class EspaceWallet {
         path: Address[];
         deadline: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(`Swapping ${amountIn} tokens through path: ${path.join(" -> ")}`);
+        elizaLogger.info(`Swapping ${amountIn} tokens through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -167,7 +167,7 @@ export class EspaceWallet {
             args: [amountIn, amountOutMin, path, this.account.address, deadline],
         });
 
-        elizaLogger.debug(`Swap transaction sent: ${hash}`);
+        elizaLogger.info(`Swap transaction sent: ${hash}`);
         return hash;
     }
 
@@ -182,7 +182,7 @@ export class EspaceWallet {
         deadline: bigint;
         value: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(`Swapping ${value} CFX through path: ${path.join(" -> ")}`);
+        elizaLogger.info(`Swapping ${value} CFX through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -194,7 +194,7 @@ export class EspaceWallet {
             value,
         });
 
-        elizaLogger.debug(`Swap transaction sent: ${hash}`);
+        elizaLogger.info(`Swap transaction sent: ${hash}`);
         return hash;
     }
 
@@ -209,7 +209,7 @@ export class EspaceWallet {
         path: Address[];
         deadline: bigint;
     }): Promise<`0x${string}`> {
-        elizaLogger.debug(`Swapping ${amountIn} tokens for CFX through path: ${path.join(" -> ")}`);
+        elizaLogger.info(`Swapping ${amountIn} tokens for CFX through path: ${path.join(" -> ")}`);
 
         const hash = await this.walletClient.writeContract({
             account: this.account,
@@ -220,7 +220,7 @@ export class EspaceWallet {
             args: [amountIn, amountOutMin, path, this.account.address, deadline],
         });
 
-        elizaLogger.debug(`Swap transaction sent: ${hash}`);
+        elizaLogger.info(`Swap transaction sent: ${hash}`);
         return hash;
     }
 
@@ -229,7 +229,7 @@ export class EspaceWallet {
         path: Address[],
         slippage: number = 5
     ): Promise<{ amounts: readonly bigint[]; amountOutMin: bigint }> {
-        elizaLogger.debug(`Getting amounts out for ${amountIn} through path: ${path.join(" -> ")}`);
+        elizaLogger.info(`Getting amounts out for ${amountIn} through path: ${path.join(" -> ")}`);
 
         const amounts = await this.publicClient.readContract({
             address: this.dexRouter,
@@ -240,14 +240,14 @@ export class EspaceWallet {
 
         const amountOutMin = amounts[1] - (amounts[1] * BigInt(slippage)) / BigInt(100);
 
-        elizaLogger.debug(`Amounts out: ${amounts.join(" -> ")}`);
-        elizaLogger.debug(`amountOutMin: ${amountOutMin}`);
+        elizaLogger.info(`Amounts out: ${amounts.join(" -> ")}`);
+        elizaLogger.info(`amountOutMin: ${amountOutMin}`);
 
         return { amounts, amountOutMin };
     }
 
     async checkAllowance(tokenAddress: Address): Promise<bigint> {
-        elizaLogger.debug("[eSpace Wallet] Checking token allowance", {
+        elizaLogger.info("[eSpace Wallet] Checking token allowance", {
             token: tokenAddress,
             spender: this.dexRouter,
             owner: this.account.address,
@@ -260,25 +260,25 @@ export class EspaceWallet {
             args: [this.account.address, this.dexRouter],
         });
 
-        elizaLogger.debug("[eSpace Wallet] Allowance result", {
+        elizaLogger.info("[eSpace Wallet] Allowance result", {
             allowance: allowance.toString(),
         });
         return allowance;
     }
 
     async waitForTransaction(hash: `0x${string}`): Promise<void> {
-        elizaLogger.debug("[eSpace Wallet] Waiting for transaction", { hash });
+        elizaLogger.info("[eSpace Wallet] Waiting for transaction", { hash });
         const receipt = await this.publicClient.waitForTransactionReceipt({
             hash,
         });
-        elizaLogger.debug("[eSpace Wallet] Transaction confirmed", {
+        elizaLogger.info("[eSpace Wallet] Transaction confirmed", {
             status: receipt.status,
             blockNumber: receipt.blockNumber,
         });
     }
 
     async getTokenBalance(tokenAddress: Address): Promise<string> {
-        elizaLogger.debug("[eSpace Wallet] Fetching token balance", {
+        elizaLogger.info("[eSpace Wallet] Fetching token balance", {
             token: tokenAddress,
             account: this.account.address,
         });
@@ -293,7 +293,7 @@ export class EspaceWallet {
         // Format the balance before returning
         const formatted = this.formatTokenAmount(balance.toString(), 18); // We could also fetch decimals from the contract
 
-        elizaLogger.debug("[eSpace Wallet] Token balance result", {
+        elizaLogger.info("[eSpace Wallet] Token balance result", {
             rawBalance: balance.toString(),
             formattedBalance: formatted,
         });

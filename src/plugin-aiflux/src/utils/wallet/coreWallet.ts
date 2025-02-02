@@ -69,7 +69,7 @@ export class CoreWallet {
     }
 
     async getBalance(tokenAddress?: Address): Promise<string> {
-        elizaLogger.debug(
+        elizaLogger.info(
             tokenAddress
                 ? `Getting Core token balance for ${tokenAddress}`
                 : "Getting Core wallet balance"
@@ -82,7 +82,7 @@ export class CoreWallet {
                 });
                 const formatted = formatCFX(balance);
                 const result = Number(formatted).toFixed(4);
-                elizaLogger.debug(`Core wallet balance: ${result} CFX`);
+                elizaLogger.info(`Core wallet balance: ${result} CFX`);
                 return result;
             }
 
@@ -102,7 +102,7 @@ export class CoreWallet {
 
             const formatted = formatUnits(balance, decimals);
             const result = Number(formatted).toFixed(4);
-            elizaLogger.debug(`Core token balance: ${result}`);
+            elizaLogger.info(`Core token balance: ${result}`);
             return result;
         } catch (error) {
             elizaLogger.error("Error getting balance:", error);
@@ -111,19 +111,19 @@ export class CoreWallet {
     }
 
     async sendCfx({ to, amount }: { to: Address; amount: string }) {
-        elizaLogger.debug(`Sending ${amount} CFX to ${to} on Core`);
+        elizaLogger.info(`Sending ${amount} CFX to ${to} on Core`);
         const hash = await this.walletClient.sendTransaction({
             account: this.account,
             chain: this.walletClient.chain,
             to,
             value: parseCFX(amount),
         });
-        elizaLogger.debug(`Transaction sent on Core: ${hash}`);
+        elizaLogger.info(`Transaction sent on Core: ${hash}`);
         return hash;
     }
 
     async crossSpaceCall({ to, amount }: { to: `0x${string}`; amount: string }) {
-        elizaLogger.debug(`Initiating cross-space transfer of ${amount} CFX to ${to}`);
+        elizaLogger.info(`Initiating cross-space transfer of ${amount} CFX to ${to}`);
         const tx = await this.walletClient.sendTransaction({
             account: this.account,
             chain: this.walletClient.chain,
@@ -138,7 +138,7 @@ export class CoreWallet {
                 args: [to],
             }),
         });
-        elizaLogger.debug(`Cross-space transfer initiated: ${tx}`);
+        elizaLogger.info(`Cross-space transfer initiated: ${tx}`);
         return tx;
     }
 
@@ -153,7 +153,7 @@ export class CoreWallet {
         tokenAddress: Address;
         decimals?: number;
     }) {
-        elizaLogger.debug(`Sending ${amount} tokens (${tokenAddress}) to ${to} on Core`);
+        elizaLogger.info(`Sending ${amount} tokens (${tokenAddress}) to ${to} on Core`);
         const value = parseUnits(amount, decimals);
 
         const hash = await this.walletClient.writeContract({
@@ -164,23 +164,23 @@ export class CoreWallet {
             functionName: "transfer",
             args: [to, value],
         });
-        elizaLogger.debug(`Token transfer sent on Core: ${hash}`);
+        elizaLogger.info(`Token transfer sent on Core: ${hash}`);
         return hash;
     }
 
     async waitForTransaction(hash: `0x${string}`): Promise<void> {
-        elizaLogger.debug("[Core Wallet] Waiting for transaction", { hash });
+        elizaLogger.info("[Core Wallet] Waiting for transaction", { hash });
         const receipt = await this.publicClient.waitForTransactionReceipt({
             hash,
         });
-        elizaLogger.debug("[Core Wallet] Transaction confirmed", {
+        elizaLogger.info("[Core Wallet] Transaction confirmed", {
             status: receipt.outcomeStatus,
             blockNumber: receipt.epochNumber,
         });
     }
 
     async getTokenBalance(tokenAddress: Address): Promise<string> {
-        elizaLogger.debug("[Core Wallet] Fetching token balance", {
+        elizaLogger.info("[Core Wallet] Fetching token balance", {
             token: tokenAddress,
             account: this.account.address,
         });
@@ -194,7 +194,7 @@ export class CoreWallet {
 
         const formatted = this.formatTokenAmount(balance.toString(), 18);
 
-        elizaLogger.debug("[Core Wallet] Token balance result", {
+        elizaLogger.info("[Core Wallet] Token balance result", {
             rawBalance: balance.toString(),
             formattedBalance: formatted,
         });

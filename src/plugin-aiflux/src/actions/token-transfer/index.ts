@@ -23,7 +23,7 @@ async function executeTokenTransfer(
     params: TokenTransferParams,
     callback: HandlerCallback
 ): Promise<{ tx: `0x${string}`; successMessage: string }> {
-    elizaLogger.debug("Starting token transfer operation", {
+    elizaLogger.info("Starting token transfer operation", {
         operation: "TokenTransfer",
         token: params.token,
         amount: params.amount,
@@ -40,7 +40,7 @@ async function executeTokenTransfer(
         // Validate token exists in wallet
         const scanner = network === "core" ? config.coreConfluxScan : config.espaceConfluxScan;
 
-        elizaLogger.debug("Checking configuration", {
+        elizaLogger.info("Checking configuration", {
             operation: "TokenTransfer",
             network,
             hasScanner: !!scanner,
@@ -69,7 +69,7 @@ async function executeTokenTransfer(
                 ? config.coreWallet?.getAddress()
                 : config.espaceWallet?.getAddress();
 
-        elizaLogger.debug("Checking wallet configuration", {
+        elizaLogger.info("Checking wallet configuration", {
             operation: "TokenTransfer",
             network,
             hasFromAddress: !!fromAddress,
@@ -87,7 +87,7 @@ async function executeTokenTransfer(
 
         // Parse and validate amount
         const numAmount = parseFloat(params.amount);
-        elizaLogger.debug("Validating transfer amount", {
+        elizaLogger.info("Validating transfer amount", {
             operation: "TokenTransfer",
             rawAmount: amount,
             parsedAmount: numAmount,
@@ -104,7 +104,7 @@ async function executeTokenTransfer(
         }
 
         try {
-            elizaLogger.debug("Fetching token information", {
+            elizaLogger.info("Fetching token information", {
                 operation: "TokenTransfer",
                 token: tokenSymbol,
                 fromAddress,
@@ -114,7 +114,7 @@ async function executeTokenTransfer(
                 (token) => token.symbol === tokenSymbol
             );
 
-            elizaLogger.debug("Token search results", {
+            elizaLogger.info("Token search results", {
                 operation: "TokenTransfer",
                 tokenCount: tokens.length,
                 searchedSymbol: tokenSymbol,
@@ -144,7 +144,7 @@ async function executeTokenTransfer(
             const token = tokens[0];
             let tx: `0x${string}`;
 
-            elizaLogger.debug("Fetching initial balance", {
+            elizaLogger.info("Fetching initial balance", {
                 operation: "TokenTransfer",
                 token: token.symbol,
                 contract: token.contract,
@@ -156,7 +156,7 @@ async function executeTokenTransfer(
                     ? await config.coreWallet!.getTokenBalance(token.contract as CoreAddress)
                     : await config.espaceWallet!.getTokenBalance(token.contract as EspaceAddress);
 
-            elizaLogger.debug("Initial balance fetched", {
+            elizaLogger.info("Initial balance fetched", {
                 operation: "TokenTransfer",
                 token: token.symbol,
                 balance: initialBalance.toString(),
@@ -170,7 +170,7 @@ async function executeTokenTransfer(
                 []
             );
 
-            elizaLogger.debug("Initiating transfer transaction", {
+            elizaLogger.info("Initiating transfer transaction", {
                 operation: "TokenTransfer",
                 token: token.symbol,
                 amount: params.amount,
@@ -195,7 +195,7 @@ async function executeTokenTransfer(
                 });
             }
 
-            elizaLogger.debug("Transfer transaction submitted", {
+            elizaLogger.info("Transfer transaction submitted", {
                 operation: "TokenTransfer",
                 transactionHash: tx,
                 token: token.symbol,
@@ -209,7 +209,7 @@ async function executeTokenTransfer(
                 []
             );
 
-            elizaLogger.debug("Waiting for transaction confirmation", {
+            elizaLogger.info("Waiting for transaction confirmation", {
                 operation: "TokenTransfer",
                 transactionHash: tx,
             });
@@ -219,7 +219,7 @@ async function executeTokenTransfer(
                 ? config.coreWallet!.waitForTransaction(tx)
                 : config.espaceWallet!.waitForTransaction(tx));
 
-            elizaLogger.debug("Transaction confirmed, fetching final balance", {
+            elizaLogger.info("Transaction confirmed, fetching final balance", {
                 operation: "TokenTransfer",
                 transactionHash: tx,
             });
@@ -230,7 +230,7 @@ async function executeTokenTransfer(
                     ? await config.coreWallet!.getTokenBalance(token.contract as CoreAddress)
                     : await config.espaceWallet!.getTokenBalance(token.contract as EspaceAddress);
 
-            elizaLogger.debug("Transfer operation completed successfully", {
+            elizaLogger.info("Transfer operation completed successfully", {
                 operation: "TokenTransfer",
                 token: token.symbol,
                 transactionHash: tx,
@@ -275,7 +275,7 @@ Transaction: ${tx}`;
 }
 
 export function createTokenTransferAction(config: ValidatedConfig): Action {
-    elizaLogger.debug("Creating token transfer action", {
+    elizaLogger.info("Creating token transfer action", {
         operation: "TokenTransfer",
         hasCoreWallet: !!config.coreWallet,
         hasEspaceWallet: !!config.espaceWallet,
@@ -289,7 +289,7 @@ export function createTokenTransferAction(config: ValidatedConfig): Action {
         similes: ["SEND", "TRANSFER", "SEND_TOKEN", "SENDTOKEN"],
         suppressInitialMessage: false,
         validate: async (_runtime: IAgentRuntime, _message: Memory) => {
-            elizaLogger.debug("Validating transfer configuration", {
+            elizaLogger.info("Validating transfer configuration", {
                 operation: "TokenTransfer",
                 hasCoreWallet: !!config.coreWallet,
                 hasEspaceWallet: !!config.espaceWallet,
@@ -320,7 +320,7 @@ export function createTokenTransferAction(config: ValidatedConfig): Action {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
-            elizaLogger.debug("Starting transfer handler", {
+            elizaLogger.info("Starting transfer handler", {
                 operation: "TokenTransfer",
                 messageId: message.id,
             });
@@ -336,7 +336,7 @@ export function createTokenTransferAction(config: ValidatedConfig): Action {
                 });
 
                 try {
-                    elizaLogger.debug("Generating transfer parameters", {
+                    elizaLogger.info("Generating transfer parameters", {
                         operation: "TokenTransfer",
                         messageId: message.id,
                     });
@@ -353,7 +353,7 @@ export function createTokenTransferAction(config: ValidatedConfig): Action {
                         ? "core"
                         : "espace";
 
-                    elizaLogger.debug("Network determined from address", {
+                    elizaLogger.info("Network determined from address", {
                         operation: "TokenTransfer",
                         network,
                         address: actionDetails.object.toAddress,
@@ -381,7 +381,7 @@ export function createTokenTransferAction(config: ValidatedConfig): Action {
                         network,
                     };
 
-                    elizaLogger.debug("Transfer parameters generated", {
+                    elizaLogger.info("Transfer parameters generated", {
                         operation: "TokenTransfer",
                         params,
                         messageId: message.id,

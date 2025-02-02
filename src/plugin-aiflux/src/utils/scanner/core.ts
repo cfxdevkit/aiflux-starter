@@ -44,7 +44,7 @@ export class CoreScanner {
                 Accept: "application/json",
             };
 
-            elizaLogger.debug(`Fetching from Core API: ${url.toString()}`);
+            elizaLogger.info(`Fetching from Core API: ${url.toString()}`);
             const response = await fetch(url.toString(), { headers });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -89,7 +89,7 @@ export class CoreScanner {
     };
 
     protected async getBasicStats<T>(endpoint: string, params: StatsParams = {}) {
-        elizaLogger.debug(`Fetching basic stats for endpoint: ${endpoint}`, params);
+        elizaLogger.info(`Fetching basic stats for endpoint: ${endpoint}`, params);
 
         const fetchParams = {
             minTimestamp: params.minTimestamp || this.get24HoursAgo(),
@@ -108,7 +108,7 @@ export class CoreScanner {
     }
 
     protected async getTopStats<T>(endpoint: string, spanType: StatsPeriod = "24h") {
-        elizaLogger.debug(`Fetching top stats for endpoint: ${endpoint}, spanType: ${spanType}`);
+        elizaLogger.info(`Fetching top stats for endpoint: ${endpoint}, spanType: ${spanType}`);
 
         const response = await this.fetchApi<T>(endpoint, { spanType });
         if (!response.data) {
@@ -119,7 +119,7 @@ export class CoreScanner {
 
     // Contract methods
     async getContractABI(address: string): Promise<ContractABIResponse> {
-        elizaLogger.debug(`Getting contract ABI for ${address}`);
+        elizaLogger.info(`Getting contract ABI for ${address}`);
         if (!this.validateAddress(address)) {
             throw new Error(`Invalid address: ${address}`);
         }
@@ -133,7 +133,7 @@ export class CoreScanner {
     }
 
     async getContractSourceCode(address: string): Promise<ContractSourceResponse> {
-        elizaLogger.debug(`Getting contract source code for ${address}`);
+        elizaLogger.info(`Getting contract source code for ${address}`);
         if (!this.validateAddress(address)) {
             throw new Error(`Invalid address: ${address}`);
         }
@@ -153,7 +153,7 @@ export class CoreScanner {
         skip = 0,
         limit = 10
     ): Promise<TokenData[]> {
-        elizaLogger.debug(`Getting ${tokenType} tokens for address ${address}`);
+        elizaLogger.info(`Getting ${tokenType} tokens for address ${address}`);
         if (!this.validateAddress(address)) {
             throw new Error(`Invalid address: ${address}`);
         }
@@ -169,7 +169,7 @@ export class CoreScanner {
     async getTokenInfos(
         params: { contracts?: string | string[]; skip?: number; limit?: number } = {}
     ) {
-        elizaLogger.debug("Getting token infos");
+        elizaLogger.info("Getting token infos");
         const { contracts, ...paginationParams } = params;
         const contractList = Array.isArray(contracts) ? contracts.join(",") : contracts;
 
@@ -252,7 +252,7 @@ export class CoreScanner {
 
     // Token statistics methods
     async getTokenHolderStats(contract: string, params: StatsParams = {}) {
-        elizaLogger.debug(`Getting token holder stats for contract ${contract}`);
+        elizaLogger.info(`Getting token holder stats for contract ${contract}`);
         const response = await this.fetchApi("/statistics/token/holder", {
             contract,
             ...params,
@@ -261,7 +261,7 @@ export class CoreScanner {
     }
 
     async getTokenUniqueSenderStats(contract: string, params: StatsParams = {}) {
-        elizaLogger.debug(`Getting token unique sender stats for contract ${contract}`);
+        elizaLogger.info(`Getting token unique sender stats for contract ${contract}`);
         const response = await this.fetchApi("/statistics/token/unique/sender", {
             contract,
             ...params,
@@ -270,7 +270,7 @@ export class CoreScanner {
     }
 
     async getTokenUniqueReceiverStats(contract: string, params: StatsParams = {}) {
-        elizaLogger.debug(`Getting token unique receiver stats for contract ${contract}`);
+        elizaLogger.info(`Getting token unique receiver stats for contract ${contract}`);
         const response = await this.fetchApi("/statistics/token/unique/receiver", {
             contract,
             ...params,
@@ -279,7 +279,7 @@ export class CoreScanner {
     }
 
     async getTokenUniqueParticipantStats(contract: string, params: StatsParams = {}) {
-        elizaLogger.debug(`Getting token unique participant stats for contract ${contract}`);
+        elizaLogger.info(`Getting token unique participant stats for contract ${contract}`);
         const response = await this.fetchApi("/statistics/token/unique/participant", {
             contract,
             ...params,
@@ -289,44 +289,44 @@ export class CoreScanner {
 
     // Block statistics methods
     async getBlockBaseFeeStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting block base fee stats");
+        elizaLogger.info("Getting block base fee stats");
         return this.getBasicStats("/statistics/block/base-fee", params);
     }
 
     async getBlockAvgPriorityFeeStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting block average priority fee stats");
+        elizaLogger.info("Getting block average priority fee stats");
         return this.getBasicStats("/statistics/block/avg-priority-fee", params);
     }
 
     async getBlockGasUsedStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting block gas used stats");
+        elizaLogger.info("Getting block gas used stats");
         return this.getBasicStats("/statistics/block/gas-used", params);
     }
 
     async getBlockTxsByTypeStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting block transactions by type stats");
+        elizaLogger.info("Getting block transactions by type stats");
         return this.getBasicStats("/statistics/block/txs-by-type", params);
     }
 
     // Reward statistics methods
     async getPowRewardStats(params: StatsParams & { intervalType: "hour" | "day" | "month" }) {
-        elizaLogger.debug("Getting PoW reward stats");
+        elizaLogger.info("Getting PoW reward stats");
         return this.getBasicStats("/statistics/reward/pow", params);
     }
 
     async getPosRewardStats(params: StatsParams & { intervalType: "hour" | "day" | "month" }) {
-        elizaLogger.debug("Getting PoS reward stats");
+        elizaLogger.info("Getting PoS reward stats");
         return this.getBasicStats("/statistics/reward/pos", params);
     }
 
     // Burnt statistics methods
     async getBurntFeeStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting burnt fee stats");
+        elizaLogger.info("Getting burnt fee stats");
         return this.getBasicStats("/statistics/burnt/fee", params);
     }
 
     async getBurntRateStats(params: StatsParams = {}) {
-        elizaLogger.debug("Getting burnt rate stats");
+        elizaLogger.info("Getting burnt rate stats");
         return this.getBasicStats("/statistics/burnt/rate", params);
     }
 

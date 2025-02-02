@@ -21,7 +21,7 @@ async function executeBridgeOperation(
     params: BridgeParams,
     callback: HandlerCallback
 ): Promise<{ tx: `0x${string}`; successMessage: string }> {
-    elizaLogger.debug("Starting bridge operation", {
+    elizaLogger.info("Starting bridge operation", {
         operation: "BridgeCFX",
         amount: params.amount,
         toAddress: params.toAddress,
@@ -38,7 +38,7 @@ async function executeBridgeOperation(
             []
         );
 
-        elizaLogger.debug("Fetching initial balances", {
+        elizaLogger.info("Fetching initial balances", {
             operation: "BridgeCFX",
             coreWalletAvailable: !!config.coreWallet,
             espaceWalletAvailable: !!config.espaceWallet,
@@ -50,7 +50,7 @@ async function executeBridgeOperation(
             config.espaceWallet?.getBalance() || "0",
         ]);
 
-        elizaLogger.debug("Initial balances fetched", {
+        elizaLogger.info("Initial balances fetched", {
             operation: "BridgeCFX",
             initialCoreBalance,
             initialEspaceBalance,
@@ -64,7 +64,7 @@ async function executeBridgeOperation(
             []
         );
 
-        elizaLogger.debug("Initiating cross-space transaction", {
+        elizaLogger.info("Initiating cross-space transaction", {
             operation: "BridgeCFX",
             toAddress: params.toAddress,
             amount: params.amount,
@@ -75,7 +75,7 @@ async function executeBridgeOperation(
             amount: params.amount,
         });
 
-        elizaLogger.debug("Bridge transaction submitted", {
+        elizaLogger.info("Bridge transaction submitted", {
             operation: "BridgeCFX",
             transactionHash: tx,
         });
@@ -88,7 +88,7 @@ async function executeBridgeOperation(
             []
         );
 
-        elizaLogger.debug("Waiting for transaction confirmation", {
+        elizaLogger.info("Waiting for transaction confirmation", {
             operation: "BridgeCFX",
             transactionHash: tx,
         });
@@ -96,7 +96,7 @@ async function executeBridgeOperation(
         // Wait for transaction confirmation on Core
         await config.coreWallet.waitForTransaction(tx);
 
-        elizaLogger.debug("Transaction confirmed, fetching final balances", {
+        elizaLogger.info("Transaction confirmed, fetching final balances", {
             operation: "BridgeCFX",
             transactionHash: tx,
         });
@@ -107,7 +107,7 @@ async function executeBridgeOperation(
             config.espaceWallet?.getBalance() || "0",
         ]);
 
-        elizaLogger.debug("Bridge operation completed successfully", {
+        elizaLogger.info("Bridge operation completed successfully", {
             operation: "BridgeCFX",
             transactionHash: tx,
             balanceChanges: {
@@ -148,7 +148,7 @@ Transaction: ${tx}`;
 }
 
 export function createBridgeAction(config: ValidatedConfig): Action {
-    elizaLogger.debug("Creating bridge action", {
+    elizaLogger.info("Creating bridge action", {
         operation: "BridgeCFX",
         hasCoreWallet: !!config.coreWallet,
         hasEspaceWallet: !!config.espaceWallet,
@@ -160,7 +160,7 @@ export function createBridgeAction(config: ValidatedConfig): Action {
         similes: ["BRIDGE", "BRIDGE_CFX", "CROSS_SPACE"],
         suppressInitialMessage: false,
         validate: async (_runtime: IAgentRuntime, _message: Memory) => {
-            elizaLogger.debug("Validating bridge configuration", {
+            elizaLogger.info("Validating bridge configuration", {
                 operation: "BridgeCFX",
                 hasCoreWallet: !!config.coreWallet,
             });
@@ -173,7 +173,7 @@ export function createBridgeAction(config: ValidatedConfig): Action {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ) => {
-            elizaLogger.debug("Starting bridge handler", {
+            elizaLogger.info("Starting bridge handler", {
                 operation: "BridgeCFX",
                 messageId: message.id,
             });
@@ -189,7 +189,7 @@ export function createBridgeAction(config: ValidatedConfig): Action {
                 });
 
                 try {
-                    elizaLogger.debug("Generating bridge parameters", {
+                    elizaLogger.info("Generating bridge parameters", {
                         operation: "BridgeCFX",
                         messageId: message.id,
                     });
@@ -207,7 +207,7 @@ export function createBridgeAction(config: ValidatedConfig): Action {
                         toNetwork: "espace",
                     };
 
-                    elizaLogger.debug("Bridge parameters generated", {
+                    elizaLogger.info("Bridge parameters generated", {
                         operation: "BridgeCFX",
                         params,
                         messageId: message.id,

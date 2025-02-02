@@ -12,7 +12,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
         description: "Check wallet balances for both Core and eSpace networks",
         suppressInitialMessage: true,
         validate: async (_runtime: IAgentRuntime, _message: Memory) => {
-            elizaLogger.debug("Validating wallet action configuration");
+            elizaLogger.info("Validating wallet action configuration");
             return !!(config.coreWallet || config.espaceWallet);
         },
         examples: [
@@ -65,7 +65,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
             _options: { [key: string]: unknown },
             callback: HandlerCallback
         ): Promise<boolean> => {
-            elizaLogger.debug("Wallet action handler called:", {
+            elizaLogger.info("Wallet action handler called:", {
                 userId: memory.userId,
                 messageText: memory.content?.text,
             });
@@ -81,7 +81,7 @@ export function getWalletAction(config: ValidatedConfig): Action | null {
                         ? (await config.coreConfluxScan.getAccountTokens(address)).raw
                         : null;
 
-                    elizaLogger.debug("Core wallet balance:", {
+                    elizaLogger.info("Core wallet balance:", {
                         address,
                         balance: balance.toString(),
                     });
@@ -118,7 +118,7 @@ Balance: ${balance} CFX${tokenList}`);
                         ? (await config.espaceConfluxScan.getAccountTokens(address)).raw
                         : null;
 
-                    elizaLogger.debug("eSpace wallet balance:", {
+                    elizaLogger.info("eSpace wallet balance:", {
                         address,
                         balance: balance.toString(),
                     });

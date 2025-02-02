@@ -31,7 +31,7 @@ export async function validateConfig(
         return null;
     }
 
-    elizaLogger.debug(`Initializing Conflux config for ${target}`);
+    elizaLogger.info(`Initializing Conflux config for ${target}`);
 
     let coreWallet: CoreWallet | undefined;
     let espaceWallet: EspaceWallet | undefined;
@@ -41,7 +41,7 @@ export async function validateConfig(
     const mnemonic = getSetting("CONFLUX_MNEMONIC");
 
     // Initialize ConfluxScan instances
-    elizaLogger.debug("Initializing ConfluxScan clients");
+    elizaLogger.info("Initializing ConfluxScan clients");
     const coreConfluxScanApiKey = getSetting("CONFLUX_CORE_CONFLUXSCAN_APIKEY");
     const coreConfluxScanHost = getSetting("CONFLUX_CORE_CONFLUXSCAN_HOST");
     const coreConfluxScan = new CoreScannerWrapper(
@@ -62,14 +62,14 @@ export async function validateConfig(
     const corePrivateKey = getSetting("CONFLUX_CORE_PRIVATE_KEY");
     const coreRpcUrl = getSetting("CONFLUX_CORE_RPC_URL");
     if (corePrivateKey) {
-        elizaLogger.debug("Initializing Core wallet with private key");
+        elizaLogger.info("Initializing Core wallet with private key");
         try {
             coreWallet = new CoreWallet(corePrivateKey as `0x${string}`, target, coreRpcUrl);
         } catch (error) {
             elizaLogger.error("Failed to initialize Core wallet with private key:", error);
         }
     } else if (mnemonic) {
-        elizaLogger.debug("Initializing Core wallet with mnemonic");
+        elizaLogger.info("Initializing Core wallet with mnemonic");
         try {
             const derivedKey = deriveCoreKey(mnemonic);
             coreWallet = new CoreWallet(derivedKey, target, coreRpcUrl);
@@ -82,7 +82,7 @@ export async function validateConfig(
     const espacePrivateKey = getSetting("CONFLUX_ESPACE_PRIVATE_KEY");
     const espaceRpcUrl = getSetting("CONFLUX_ESPACE_RPC_URL");
     if (espacePrivateKey) {
-        elizaLogger.debug("Initializing eSpace wallet with private key");
+        elizaLogger.info("Initializing eSpace wallet with private key");
         try {
             espaceWallet = new EspaceWallet(
                 espacePrivateKey as `0x${string}`,
@@ -93,7 +93,7 @@ export async function validateConfig(
             elizaLogger.error("Failed to initialize eSpace wallet with private key:", error);
         }
     } else if (mnemonic) {
-        elizaLogger.debug("Initializing eSpace wallet with mnemonic");
+        elizaLogger.info("Initializing eSpace wallet with mnemonic");
         try {
             const derivedKey = deriveESpaceKey(mnemonic);
             espaceWallet = new EspaceWallet(derivedKey, target, espaceRpcUrl);
@@ -104,10 +104,10 @@ export async function validateConfig(
 
     // Initialize TokenListManager and GeckoTerminal for mainnet only
     if (target === "mainnet") {
-        elizaLogger.debug("Initializing GeckoTerminal");
+        elizaLogger.info("Initializing GeckoTerminal");
         geckoTerminal = new GeckoTerminal();
 
-        elizaLogger.debug("Initializing DeFiLlama");
+        elizaLogger.info("Initializing DeFiLlama");
         defiLlama = new DeFiLlama();
     }
 
@@ -129,7 +129,7 @@ export async function validateConfig(
         defiLlama,
     };
 
-    elizaLogger.debug("Config validation completed", {
+    elizaLogger.info("Config validation completed", {
         hasCoreWallet: !!coreWallet,
         hasEspaceWallet: !!espaceWallet,
         hasCoreConfluxScan: !!coreConfluxScan,
